@@ -1,0 +1,24 @@
+project_phase: "INITIALIZATION"
+current_milestone: "MVP_SCAFFOLDING"
+
+teams:
+  - id: "TEAM_1"
+    name: "Core Platform"
+    members: ["Harshit Divekar", "Anirudh P.S Yadav"]
+  - id: "TEAM_2"
+    name: "Intelligence & Dashboard"
+    members: ["Parth Shrivastav", "Mohd Rehan"]
+  - id: "TEAM_3"
+    name: "Offline, Content & Design System"
+    members: ["Srujna", "Ananya"]
+
+status:
+  tasks:
+    total: 13
+    completed: 0
+    in_progress: 0
+    not_started: 13
+  checkpoints:
+    total: 234
+    completed: 0
+  integration: "NOT_STARTED"

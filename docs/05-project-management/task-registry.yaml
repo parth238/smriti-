@@ -1,0 +1,96 @@
+tasks:
+  - task_id: "T0-INF-001"
+    team: "TEAM 1"
+    member: "Harshit Divekar"
+    title: "Scaffold Monorepo Structure"
+    priority: "CRITICAL"
+    scope: "MVP"
+    dependencies: []
+    source_docs: ["06-folder-structure.md"]
+    files: ["apps/", "packages/"]
+    branch: "feature/repo-scaffold"
+    checkpoints: ["CP-01", "CP-02", "CP-03", "CP-04", "CP-05", "CP-06", "CP-07", "CP-12", "CP-13", "CP-14", "CP-15", "CP-16", "CP-17", "CP-18"]
+    tests: ["NOT_APPLICABLE"]
+    reviewer: "Anirudh P.S Yadav"
+    handoff: "Provide base folders to all teams"
+    status: "NOT_STARTED"
+
+  - task_id: "T1-FE-001"
+    team: "TEAM 1"
+    member: "Anirudh P.S Yadav"
+    title: "Scaffold Vite PWA App"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T0-INF-001"]
+    source_docs: ["01-architecture.md"]
+    files: ["apps/elderly-app/"]
+    branch: "feature/elderly-scaffold"
+    checkpoints: ["CP-01", "CP-02", "CP-03", "CP-04", "CP-05", "CP-06", "CP-07", "CP-12", "CP-13", "CP-14", "CP-15", "CP-16", "CP-17", "CP-18"]
+    tests: ["npm run build"]
+    reviewer: "Harshit Divekar"
+    handoff: "Provide React foundation to Srujna/Ananya"
+    status: "NOT_STARTED"
+
+  - task_id: "T2-FE-001"
+    team: "TEAM 2"
+    member: "Parth Shrivastav"
+    title: "Scaffold Caregiver Dashboard"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T0-INF-001"]
+    source_docs: ["01-architecture.md"]
+    files: ["apps/caregiver-dashboard/"]
+    branch: "feature/dashboard-scaffold"
+    checkpoints: ["CP-01", "CP-02", "CP-03", "CP-04", "CP-05", "CP-06", "CP-07", "CP-12", "CP-13", "CP-14", "CP-15", "CP-16", "CP-17", "CP-18"]
+    tests: ["npm run build"]
+    reviewer: "Mohd Rehan"
+    handoff: "Provide Dashboard foundation to Srujna"
+    status: "NOT_STARTED"
+
+  - task_id: "T2-AI-001"
+    team: "TEAM 2"
+    member: "Mohd Rehan"
+    title: "Build Adaptive Difficulty Engine"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: []
+    source_docs: ["03-features.md"]
+    files: ["apps/backend/app/services/adaptive_difficulty.py"]
+    branch: "feature/adaptive-difficulty"
+    checkpoints: ["CP-01", "CP-02", "CP-03", "CP-04", "CP-05", "CP-06", "CP-07", "CP-08", "CP-12", "CP-13", "CP-14", "CP-15", "CP-16", "CP-17", "CP-18"]
+    tests: ["pytest apps/backend/tests/"]
+    reviewer: "Parth Shrivastav"
+    handoff: "Provide engine import path to Harshit"
+    status: "NOT_STARTED"
+
+  - task_id: "T3-DS-001"
+    team: "TEAM 3"
+    member: "Srujna"
+    title: "Configure Tailwind Design Tokens"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T1-FE-001", "T2-FE-001"]
+    source_docs: ["15-ui-ux-design.md"]
+    files: ["packages/ui/tailwind.config.ts"]
+    branch: "feature/design-tokens"
+    checkpoints: ["CP-01", "CP-02", "CP-03", "CP-04", "CP-05", "CP-06", "CP-12", "CP-13", "CP-14", "CP-15", "CP-16", "CP-17", "CP-18"]
+    tests: ["npm run build:ui"]
+    reviewer: "Ananya"
+    handoff: "Provide Tailwind variables to Frontend teams"
+    status: "NOT_STARTED"
+
+  - task_id: "T3-OS-001"
+    team: "TEAM 3"
+    member: "Ananya"
+    title: "Initialize Dexie & IndexedDB Schema"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T0-INF-001"]
+    source_docs: ["04-database.md"]
+    files: ["apps/elderly-app/src/db/"]
+    branch: "feature/offline-schema"
+    checkpoints: ["CP-01", "CP-02", "CP-03", "CP-04", "CP-05", "CP-06", "CP-07", "CP-08", "CP-12", "CP-13", "CP-14", "CP-15", "CP-16", "CP-17", "CP-18"]
+    tests: ["Offline Browser Verification"]
+    reviewer: "Srujna"
+    handoff: "Provide offline schema to Anirudh"
+    status: "NOT_STARTED"
