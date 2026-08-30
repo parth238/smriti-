@@ -18,6 +18,10 @@ class SessionPoint:
     accuracy: float
     reaction_time_ms: int
     completed: bool
+    errors: int | None = None
+    hints_used: int | None = None
+    session_duration_sec: int | None = None
+    game_type: str | None = None
 
 
 @dataclass(frozen=True)
@@ -25,6 +29,10 @@ class BaselineStats:
     avg_accuracy: float | None
     avg_reaction_time_ms: float | None
     sessions_count: int
+    avg_errors: float | None = None
+    avg_hints_used: float | None = None
+    avg_session_duration_sec: float | None = None
+    completion_rate: float | None = None
 
 
 @dataclass(frozen=True)
@@ -37,6 +45,12 @@ class PeriodStats:
     reaction_time_delta_pct: float | None
     accuracy_delta_pct: float | None
     note: str | None
+    avg_errors: float | None = None
+    avg_hints_used: float | None = None
+    avg_session_duration_sec: float | None = None
+    errors_delta_pct: float | None = None
+    hints_delta_pct: float | None = None
+    duration_delta_pct: float | None = None
 
 
 def _aware(moment: datetime) -> datetime:
@@ -56,10 +70,14 @@ def personal_baseline(
     *,
     now: datetime | None = None,
     window_days: int = BASELINE_WINDOW_DAYS,
+    game_type: str | None = None,
 ) -> BaselineStats:
     """First `window_days` of play define the personal baseline."""
+    if game_type:
+        sessions = [s for s in sessions if s.game_type == game_type]
+
     if not sessions:
-        return BaselineStats(None, None, 0)
+        return BaselineStats(None, None, 0, None, None, None, None)
 
     ordered = sorted(sessions, key=lambda row: _aware(row.played_at))
     first = _aware(ordered[0].played_at)
@@ -70,10 +88,20 @@ def personal_baseline(
 
     accuracies = [row.accuracy for row in window]
     reactions = [float(row.reaction_time_ms) for row in window]
+    errors_list = [float(row.errors or 0) for row in window]
+    hints_list = [float(row.hints_used or 0) for row in window]
+    durations = [float(row.session_duration_sec or 0) for row in window]
+    completed = sum(1 for row in window if row.completed)
+    completion_rate = completed / len(window)
+
     return BaselineStats(
         avg_accuracy=_mean(accuracies),
         avg_reaction_time_ms=_mean(reactions),
         sessions_count=len(window),
+        avg_errors=_mean(errors_list),
+        avg_hints_used=_mean(hints_list),
+        avg_session_duration_sec=_mean(durations),
+        completion_rate=completion_rate,
     )
 
 
@@ -88,10 +116,15 @@ def rolling_period_stats(
     *,
     period_days: int = 7,
     now: datetime | None = None,
+    game_type: str | None = None,
 ) -> PeriodStats:
     """Rolling window stats vs personal baseline (cautious copy only)."""
     clock = _aware(now or datetime.now(timezone.utc))
     period_label = f"{period_days}d"
+    
+    if game_type:
+        sessions = [s for s in sessions if s.game_type == game_type]
+        
     baseline = personal_baseline(sessions, now=clock)
 
     start = clock - timedelta(days=period_days)
@@ -106,14 +139,28 @@ def rolling_period_stats(
             reaction_time_delta_pct=None,
             accuracy_delta_pct=None,
             note=None,
+            avg_errors=None,
+            avg_hints_used=None,
+            avg_session_duration_sec=None,
+            errors_delta_pct=None,
+            hints_delta_pct=None,
+            duration_delta_pct=None,
         )
 
     avg_accuracy = _mean([row.accuracy for row in window])
     avg_reaction = _mean([float(row.reaction_time_ms) for row in window])
+    avg_errors = _mean([float(row.errors or 0) for row in window])
+    avg_hints = _mean([float(row.hints_used or 0) for row in window])
+    avg_duration = _mean([float(row.session_duration_sec or 0) for row in window])
+
     completed = sum(1 for row in window if row.completed)
     completion_rate = completed / len(window)
+    
     reaction_delta = _delta_pct(avg_reaction, baseline.avg_reaction_time_ms)
     accuracy_delta = _delta_pct(avg_accuracy, baseline.avg_accuracy)
+    errors_delta = _delta_pct(avg_errors, baseline.avg_errors)
+    hints_delta = _delta_pct(avg_hints, baseline.avg_hints_used)
+    duration_delta = _delta_pct(avg_duration, baseline.avg_session_duration_sec)
 
     note: str | None = None
     if (
@@ -137,6 +184,12 @@ def rolling_period_stats(
         reaction_time_delta_pct=reaction_delta,
         accuracy_delta_pct=accuracy_delta,
         note=note,
+        avg_errors=round(avg_errors, 2) if avg_errors is not None else None,
+        avg_hints_used=round(avg_hints, 2) if avg_hints is not None else None,
+        avg_session_duration_sec=round(avg_duration) if avg_duration is not None else None,
+        errors_delta_pct=errors_delta,
+        hints_delta_pct=hints_delta,
+        duration_delta_pct=duration_delta,
     )
 
 
