@@ -121,10 +121,10 @@ def rolling_period_stats(
     """Rolling window stats vs personal baseline (cautious copy only)."""
     clock = _aware(now or datetime.now(timezone.utc))
     period_label = f"{period_days}d"
-    
+
     if game_type:
         sessions = [s for s in sessions if s.game_type == game_type]
-        
+
     baseline = personal_baseline(sessions, now=clock)
 
     start = clock - timedelta(days=period_days)
@@ -155,7 +155,7 @@ def rolling_period_stats(
 
     completed = sum(1 for row in window if row.completed)
     completion_rate = completed / len(window)
-    
+
     reaction_delta = _delta_pct(avg_reaction, baseline.avg_reaction_time_ms)
     accuracy_delta = _delta_pct(avg_accuracy, baseline.avg_accuracy)
     errors_delta = _delta_pct(avg_errors, baseline.avg_errors)
@@ -186,7 +186,9 @@ def rolling_period_stats(
         note=note,
         avg_errors=round(avg_errors, 2) if avg_errors is not None else None,
         avg_hints_used=round(avg_hints, 2) if avg_hints is not None else None,
-        avg_session_duration_sec=round(avg_duration) if avg_duration is not None else None,
+        avg_session_duration_sec=(
+            round(avg_duration) if avg_duration is not None else None
+        ),
         errors_delta_pct=errors_delta,
         hints_delta_pct=hints_delta,
         duration_delta_pct=duration_delta,

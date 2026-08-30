@@ -25,10 +25,12 @@ from app.services.game_sessions import list_user_sessions
 router = APIRouter()
 
 
-def _points_from_db(db: Session, user_id: UUID, game_type: str | None = None) -> list[SessionPoint]:
+def _points_from_db(
+    db: Session, user_id: UUID, game_type: str | None = None
+) -> list[SessionPoint]:
     games = ensure_games(db)
     game_map = {g.id: g.game_type for g in games}
-    
+
     rows = list_user_sessions(db, user_id, limit=200, game_type=game_type)
     return [
         SessionPoint(
@@ -61,7 +63,9 @@ def user_analytics(
         except ValueError:
             days = 7
     stats = rolling_period_stats(
-        _points_from_db(db, user_id, game_type=game_type), period_days=days, game_type=game_type
+        _points_from_db(db, user_id, game_type=game_type),
+        period_days=days,
+        game_type=game_type,
     )
     return AnalyticsPeriodResponse(
         period=stats.period,
@@ -91,7 +95,9 @@ def user_baseline(
     db: Session = Depends(get_db),
 ) -> BaselineResponse:
     verify_user_access(user_id, principal, db)
-    baseline = personal_baseline(_points_from_db(db, user_id, game_type=game_type), game_type=game_type)
+    baseline = personal_baseline(
+        _points_from_db(db, user_id, game_type=game_type), game_type=game_type
+    )
     return BaselineResponse(
         avg_accuracy=(
             round(baseline.avg_accuracy, 1)

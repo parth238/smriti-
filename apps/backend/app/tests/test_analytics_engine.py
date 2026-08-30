@@ -76,25 +76,39 @@ def test_game_type_filtering() -> None:
     simon_baseline = personal_baseline(sessions, game_type="simon_says")
     assert simon_baseline.sessions_count == 2
     assert simon_baseline.avg_accuracy == 72.5
-    
+
     word_baseline = personal_baseline(sessions, game_type="word_recall")
     assert word_baseline.sessions_count == 1
     assert word_baseline.avg_accuracy == 80.0
 
     # Rolling stats filtering
     now = datetime(2026, 8, 5, 12, 0, tzinfo=timezone.utc)
-    simon_stats = rolling_period_stats(sessions, period_days=7, now=now, game_type="simon_says")
+    simon_stats = rolling_period_stats(
+        sessions, period_days=7, now=now, game_type="simon_says"
+    )
     assert simon_stats.sessions_count == 2
     assert simon_stats.avg_accuracy == 72.5
 
 
 def test_new_metrics() -> None:
     sessions = [
-        _point(0, 70, 1000, errors=2, hints_used=1, session_duration_sec=120, completed=True),
-        _point(1, 80, 800, errors=0, hints_used=0, session_duration_sec=90, completed=False),
-        _point(20, 90, 700, errors=0, hints_used=0, session_duration_sec=60, completed=True),
+        _point(
+            0,
+            70,
+            1000,
+            errors=2,
+            hints_used=1,
+            session_duration_sec=120,
+            completed=True,
+        ),
+        _point(
+            1, 80, 800, errors=0, hints_used=0, session_duration_sec=90, completed=False
+        ),
+        _point(
+            20, 90, 700, errors=0, hints_used=0, session_duration_sec=60, completed=True
+        ),
     ]
-    
+
     # Check baseline new metrics (window includes day 0, 1)
     baseline = personal_baseline(sessions)
     assert baseline.sessions_count == 2
@@ -111,7 +125,7 @@ def test_new_metrics() -> None:
     assert stats.avg_hints_used == 0.0
     assert stats.avg_session_duration_sec == 60.0
     assert stats.completion_rate == 1.0
-    
+
     # Deltas
     # Baseline avg_errors=1.0, current=0.0 -> -100%
     assert stats.errors_delta_pct == -100.0
