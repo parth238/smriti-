@@ -2,8 +2,8 @@ from app.services.adaptive_difficulty import (
     DEFAULT_DIFFICULTY,
     MAX_DIFFICULTY,
     MIN_DIFFICULTY,
-    next_difficulty,
     get_difficulty_summary,
+    next_difficulty,
 )
 
 
