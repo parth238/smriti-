@@ -3,20 +3,20 @@
 Tracking document for all Smriti MVP tasks.
 
 ## Repository & Infrastructure
-- [ ] `T0-INF-001` Scaffold monorepo structure (Owner: Harshit)
+- [x] `T0-INF-001` Scaffold monorepo structure (Owner: Harshit, implemented by Anirudh covering)
 - [ ] `T0-INF-002` Initialize Supabase project (Owner: Harshit)
-- [ ] `T0-INF-003` Configure CI/CD linting/tests (Owner: Harshit)
+- [x] `T0-INF-003` Configure CI/CD linting/tests (Owner: Harshit, implemented by Anirudh covering)
 
 ## Backend (Team 1)
-- [ ] `T1-BE-001` Initialize FastAPI application (Owner: Harshit)
-- [ ] `T1-BE-002` Setup Alembic and DB Models (Owner: Harshit)
-- [ ] `T1-BE-003` Implement JWT Authentication (Owner: Harshit)
+- [x] `T1-BE-001` Initialize FastAPI application (Owner: Harshit)
+- [x] `T1-BE-002` Setup Alembic and DB Models (Owner: Harshit)
+- [x] `T1-BE-003` Implement JWT Authentication (Owner: Harshit)
 - [ ] `T1-BE-004` Implement Role-Based Access Control (Owner: Harshit)
 - [ ] `T1-BE-005` Setup Game Session API Endpoints (Owner: Harshit)
 - [ ] `T1-BE-006` Integrate Sync Batch logic (Owner: Harshit/Ananya)
 
 ## Elderly App Shell (Team 1)
-- [ ] `T1-FE-001` Scaffold Vite PWA App (Owner: Anirudh)
+- [x] `T1-FE-001` Scaffold Vite PWA App (Owner: Anirudh)
 - [ ] `T1-FE-002` Implement Caregiver Profile Setup Flow (Owner: Anirudh)
 - [ ] `T1-FE-003` Implement Elderly User PIN Login (Owner: Anirudh)
 - [ ] `T1-FE-004` Build Game Hub Navigation (Owner: Anirudh)
@@ -28,7 +28,7 @@ Tracking document for all Smriti MVP tasks.
 - [ ] `T2-AI-003` Implement Analytics API Endpoints (Owner: Rehan)
 
 ## Caregiver Dashboard (Team 2)
-- [ ] `T2-FE-001` Scaffold Caregiver Dashboard Vite App (Owner: Parth)
+- [x] `T2-FE-001` Scaffold Caregiver Dashboard Vite App (Owner: Parth)
 - [ ] `T2-FE-002` Implement Caregiver Login (Owner: Parth)
 - [ ] `T2-FE-003` Build Patient Overview Screen (Owner: Parth)
 - [ ] `T2-FE-004` Implement Analytics Charts (Recharts) (Owner: Parth)

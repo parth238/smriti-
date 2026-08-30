@@ -16,8 +16,8 @@ status:
   tasks:
     total: 13
     completed: 0
-    in_progress: 0
-    not_started: 13
+    in_progress: 1
+    not_started: 12
   checkpoints:
     total: 234
     completed: 0

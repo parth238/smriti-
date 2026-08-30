@@ -1,0 +1,16 @@
+{
+  "name": "smriti",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Smriti / SIH26003 monorepo toolchain pin",
+  "engines": {
+    "node": "20.x",
+    "npm": ">=10"
+  },
+  "scripts": {
+    "dev:elderly": "npm run dev --prefix apps/elderly-app",
+    "build:elderly": "npm run build --prefix apps/elderly-app",
+    "dev:dashboard": "npm run dev --prefix apps/caregiver-dashboard",
+    "build:dashboard": "npm run build --prefix apps/caregiver-dashboard"
+  }
+}

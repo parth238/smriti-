@@ -1,0 +1,369 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #1e2a2f;
+  background: #fbf9f4;
+  font-family: "Noto Sans", "Noto Sans Bengali", sans-serif;
+  font-size: 22px;
+}
+
+html[lang="as"] {
+  font-family: "Noto Sans Bengali", "Noto Sans", sans-serif;
+}
+
+html[lang="as"] .font-display {
+  font-family: "Baloo 2", "Noto Sans Bengali", sans-serif;
+}
+
+html[data-size="large"] {
+  font-size: 26px;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(ellipse at 18% 0%, rgba(224, 165, 66, 0.16), transparent 44%),
+    radial-gradient(ellipse at 100% 100%, rgba(75, 110, 88, 0.12), transparent 48%),
+    #fbf9f4;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.cloth-bg {
+  min-height: 100vh;
+  background-color: transparent;
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 47px,
+      rgba(168, 52, 42, 0.03) 47px,
+      rgba(168, 52, 42, 0.03) 48px
+    );
+}
+
+.splash-root {
+  min-height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+.splash-sky {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.companion-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 26%;
+  z-index: 1;
+  height: 11rem;
+  pointer-events: none;
+}
+
+.hill-window {
+  position: relative;
+  height: 7.25rem;
+  overflow: hidden;
+}
+
+.hill-window svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 240%;
+  top: -8%;
+}
+
+.page-enter {
+  animation: rise 280ms ease-in-out;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.gamosa-line {
+  height: 7px;
+  border-radius: 999px;
+  background: repeating-linear-gradient(
+    90deg,
+    #a8342a 0 9px,
+    #fbf9f4 9px 13px,
+    #a8342a 13px 18px,
+    #1e2a2f 18px 20px
+  );
+}
+
+.gamosa-draw {
+  transform-origin: left center;
+  animation: draw-line 1.7s ease-in-out forwards;
+}
+
+@keyframes draw-line {
+  from {
+    transform: scaleX(0.08);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.instruction {
+  min-height: 3.4rem;
+  margin: 0 0 1.15rem;
+  font-size: 1.375rem;
+  line-height: 1.5;
+}
+
+.surface {
+  background: #ffffff;
+  border-radius: 1.65rem;
+  box-shadow: 0 10px 0 rgba(30, 42, 47, 0.04);
+}
+
+.table-tile {
+  background: #ffffff;
+  border-radius: 1.65rem;
+  box-shadow: 0 10px 0 rgba(30, 42, 47, 0.04);
+}
+
+.companion-walk {
+  animation: companion-step 2.8s ease-in-out forwards;
+}
+
+.companion-bob {
+  animation: companion-bob 900ms ease-in-out infinite;
+}
+
+@keyframes companion-step {
+  from {
+    transform: translateX(0.75rem);
+  }
+  to {
+    transform: translateX(13.5rem);
+  }
+}
+
+@keyframes companion-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.pressable {
+  transition:
+    transform 100ms ease-in-out,
+    box-shadow 200ms ease-in-out,
+    background-color 200ms ease-in-out;
+}
+
+.pressable:active {
+  transform: scale(0.98);
+}
+
+.bloom {
+  animation: bloom 320ms ease-in-out;
+}
+
+@keyframes bloom {
+  from {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.steam,
+.steam-late {
+  stroke-linecap: round;
+  animation: steam 2.4s ease-in-out infinite;
+}
+
+.steam-late {
+  animation-delay: 0.5s;
+}
+
+@keyframes steam {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateY(-3px);
+  }
+}
+
+.tile-back {
+  background:
+    repeating-linear-gradient(
+      45deg,
+      #a8342a 0 6px,
+      #fbf9f4 6px 10px
+    );
+}
+
+.tile-flip {
+  perspective: 900px;
+  background: transparent;
+  padding: 0;
+}
+
+.tile-flip-inner {
+  display: grid;
+  min-height: 132px;
+  transform-style: preserve-3d;
+  transition: transform 280ms ease-in-out;
+}
+
+.tile-flip-inner.is-up {
+  transform: rotateY(180deg);
+}
+
+.tile-flip-face {
+  grid-area: 1 / 1;
+  display: flex;
+  min-height: 132px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1.4rem;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.tile-front {
+  transform: rotateY(180deg);
+  background: #ffffff;
+  box-shadow: 0 10px 0 rgba(30, 42, 47, 0.04);
+}
+
+.dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: #7c93a3;
+}
+
+.dot-on {
+  background: #4b6e58;
+}
+
+.clock-face {
+  width: 7.4rem;
+  height: 7.4rem;
+  overflow: visible;
+  filter: drop-shadow(0 8px 0 rgba(30, 42, 47, 0.05));
+}
+
+.garden-bed {
+  min-height: 156px;
+  border-radius: 1.5rem;
+  background:
+    radial-gradient(ellipse at 50% 88%, rgba(75, 110, 88, 0.38), transparent 52%),
+    #ffffff;
+  box-shadow: inset 0 -20px 0 rgba(75, 110, 88, 0.16);
+}
+
+.photo-plate {
+  display: flex;
+  min-height: 220px;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: 12px solid #fbf9f4;
+  outline: 7px solid #a8342a;
+  box-shadow: 0 12px 0 rgba(30, 42, 47, 0.05);
+}
+
+.scene-art {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.photo-frame {
+  min-height: 220px;
+  background:
+    linear-gradient(#fbf9f4, #fbf9f4) padding-box,
+    repeating-linear-gradient(
+      90deg,
+      #a8342a 0 9px,
+      #fbf9f4 9px 13px,
+      #a8342a 13px 18px,
+      #1e2a2f 18px 20px
+    ) border-box;
+  border: 10px solid transparent;
+}
+
+.companion-enter {
+  animation: companion-enter 420ms ease-in-out;
+}
+
+@keyframes companion-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .companion-walk {
+    animation: none;
+    transform: translateX(36%);
+  }
+
+  .companion-bob,
+  .companion-enter,
+  .page-enter,
+  .gamosa-draw,
+  .bloom,
+  .steam,
+  .steam-late,
+  .tile-flip-inner {
+    animation: none;
+    transition: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

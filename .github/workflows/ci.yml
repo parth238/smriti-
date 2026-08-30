@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  backend:
+    name: backend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/backend
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: smriti
+          POSTGRES_PASSWORD: smriti_dev
+          POSTGRES_DB: smriti_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U smriti -d smriti_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://smriti:smriti_dev@localhost:5432/smriti_test
+      JWT_SECRET_KEY: ci-test-secret-do-not-use-in-prod
+      ALLOWED_ORIGINS: http://localhost:5173
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Lint
+        run: |
+          ruff check .
+          black --check .
+      - name: Test
+        run: pytest
+
+  frontend:
+    name: frontend
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [elderly-app, caregiver-dashboard]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check app exists
+        id: check
+        shell: bash
+        run: |
+          if [ -f "apps/${{ matrix.app }}/package.json" ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-node@v4
+        if: steps.check.outputs.exists == 'true'
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: apps/${{ matrix.app }}/package-lock.json
+      - name: Install, lint, typecheck, build
+        if: steps.check.outputs.exists == 'true'
+        working-directory: apps/${{ matrix.app }}
+        run: |
+          npm ci
+          npx tsc --noEmit
+          npm run build
+      - name: Skip missing app
+        if: steps.check.outputs.exists != 'true'
+        run: echo "apps/${{ matrix.app }} is not scaffolded yet. Skipping."

@@ -8,12 +8,12 @@ tasks:
     dependencies: []
     source_docs: ["06-folder-structure.md"]
     files: ["apps/", "packages/"]
-    branch: "feature/repo-scaffold"
+    branch: "feature/T0-INF-001-scaffold"
     checkpoints: ["CP-01", "CP-02", "CP-03", "CP-04", "CP-05", "CP-06", "CP-07", "CP-12", "CP-13", "CP-14", "CP-15", "CP-16", "CP-17", "CP-18"]
     tests: ["NOT_APPLICABLE"]
     reviewer: "Anirudh P.S Yadav"
     handoff: "Provide base folders to all teams"
-    status: "NOT_STARTED"
+    status: "IN_PROGRESS"
 
   - task_id: "T1-FE-001"
     team: "TEAM 1"
