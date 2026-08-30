@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
 BASELINE_WINDOW_DAYS = 14
@@ -55,7 +55,7 @@ class PeriodStats:
 
 def _aware(moment: datetime) -> datetime:
     if moment.tzinfo is None:
-        return moment.replace(tzinfo=timezone.utc)
+        return moment.replace(tzinfo=UTC)
     return moment
 
 
@@ -119,7 +119,7 @@ def rolling_period_stats(
     game_type: str | None = None,
 ) -> PeriodStats:
     """Rolling window stats vs personal baseline (cautious copy only)."""
-    clock = _aware(now or datetime.now(timezone.utc))
+    clock = _aware(now or datetime.now(UTC))
     period_label = f"{period_days}d"
 
     if game_type:
@@ -162,15 +162,25 @@ def rolling_period_stats(
     hints_delta = _delta_pct(avg_hints, baseline.avg_hints_used)
     duration_delta = _delta_pct(avg_duration, baseline.avg_session_duration_sec)
 
-    note: str | None = None
+    notes = []
     if (
         reaction_delta is not None
         and abs(reaction_delta) >= DEVIATION_ALERT_THRESHOLD_PCT
     ):
         direction = "higher" if reaction_delta > 0 else "lower"
-        note = (
+        notes.append(
             f"Reaction time is {abs(reaction_delta):.0f}% {direction} "
-            "than this user's personal baseline over the selected period."
+            "than personal baseline."
+        )
+
+    if (
+        accuracy_delta is not None
+        and abs(accuracy_delta) >= DEVIATION_ALERT_THRESHOLD_PCT
+    ):
+        direction = "higher" if accuracy_delta > 0 else "lower"
+        notes.append(
+            f"Accuracy is {abs(accuracy_delta):.0f}% {direction} "
+            "than personal baseline."
         )
 
     return PeriodStats(
@@ -183,7 +193,7 @@ def rolling_period_stats(
         sessions_count=len(window),
         reaction_time_delta_pct=reaction_delta,
         accuracy_delta_pct=accuracy_delta,
-        note=note,
+        note=" ".join(notes) if notes else None,
         avg_errors=round(avg_errors, 2) if avg_errors is not None else None,
         avg_hints_used=round(avg_hints, 2) if avg_hints is not None else None,
         avg_session_duration_sec=(
