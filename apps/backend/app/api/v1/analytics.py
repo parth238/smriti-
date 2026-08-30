@@ -56,7 +56,9 @@ def user_analytics(
             days = max(1, int(period[:-1]))
         except ValueError:
             days = 7
-    stats = rolling_period_stats(_points_from_db(db, user_id), period_days=days, game_type=game_type)
+    stats = rolling_period_stats(
+        _points_from_db(db, user_id), period_days=days, game_type=game_type
+    )
     return AnalyticsPeriodResponse(
         period=stats.period,
         avg_accuracy=stats.avg_accuracy,
@@ -88,22 +90,32 @@ def user_baseline(
     baseline = personal_baseline(_points_from_db(db, user_id), game_type=game_type)
     return BaselineResponse(
         avg_accuracy=(
-            round(baseline.avg_accuracy, 1) if baseline.avg_accuracy is not None else None
+            round(baseline.avg_accuracy, 1)
+            if baseline.avg_accuracy is not None
+            else None
         ),
         avg_reaction_time_ms=(
-            round(baseline.avg_reaction_time_ms) if baseline.avg_reaction_time_ms is not None else None
+            round(baseline.avg_reaction_time_ms)
+            if baseline.avg_reaction_time_ms is not None
+            else None
         ),
         avg_errors=(
             round(baseline.avg_errors, 2) if baseline.avg_errors is not None else None
         ),
         avg_hints_used=(
-            round(baseline.avg_hints_used, 2) if baseline.avg_hints_used is not None else None
+            round(baseline.avg_hints_used, 2)
+            if baseline.avg_hints_used is not None
+            else None
         ),
         avg_session_duration_sec=(
-            round(baseline.avg_session_duration_sec) if baseline.avg_session_duration_sec is not None else None
+            round(baseline.avg_session_duration_sec)
+            if baseline.avg_session_duration_sec is not None
+            else None
         ),
         completion_rate=(
-            round(baseline.completion_rate, 2) if baseline.completion_rate is not None else None
+            round(baseline.completion_rate, 2)
+            if baseline.completion_rate is not None
+            else None
         ),
         sessions_count=baseline.sessions_count,
     )
@@ -144,12 +156,12 @@ def user_trend(
         if not bucket:
             trend.append(
                 TrendPoint(
-                    day=day.strftime("%a"), 
-                    accuracy=None, 
+                    day=day.strftime("%a"),
+                    accuracy=None,
                     reaction_time_ms=None,
                     errors=None,
                     hints_used=None,
-                    session_duration_sec=None
+                    session_duration_sec=None,
                 )
             )
             continue
@@ -173,19 +185,27 @@ def user_trend(
         metric=metric,
         days=days,
         baseline_accuracy=(
-            round(baseline.avg_accuracy, 1) if baseline.avg_accuracy is not None else None
+            round(baseline.avg_accuracy, 1)
+            if baseline.avg_accuracy is not None
+            else None
         ),
         baseline_reaction_time_ms=(
-            round(baseline.avg_reaction_time_ms) if baseline.avg_reaction_time_ms is not None else None
+            round(baseline.avg_reaction_time_ms)
+            if baseline.avg_reaction_time_ms is not None
+            else None
         ),
         baseline_errors=(
             round(baseline.avg_errors, 2) if baseline.avg_errors is not None else None
         ),
         baseline_hints_used=(
-            round(baseline.avg_hints_used, 2) if baseline.avg_hints_used is not None else None
+            round(baseline.avg_hints_used, 2)
+            if baseline.avg_hints_used is not None
+            else None
         ),
         baseline_session_duration_sec=(
-            round(baseline.avg_session_duration_sec) if baseline.avg_session_duration_sec is not None else None
+            round(baseline.avg_session_duration_sec)
+            if baseline.avg_session_duration_sec is not None
+            else None
         ),
         points=trend,
     )
