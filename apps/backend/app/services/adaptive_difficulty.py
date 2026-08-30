@@ -23,6 +23,7 @@ def clamp_difficulty(level: int) -> int:
 def next_difficulty(
     current_difficulty: int,
     recent_accuracies: Sequence[float],
+    game_type: str | None = None,
 ) -> int:
     """Walk oldest→newest accuracies and step the staircase.
 
@@ -52,3 +53,19 @@ def next_difficulty(
             poor_streak = 0
 
     return level
+
+
+def get_difficulty_summary(
+    game_accuracies: dict[str, Sequence[float]],
+    current_difficulties: dict[str, int] | None = None,
+) -> dict[str, int]:
+    """Returns the recommended next difficulty for multiple games."""
+    current_difficulties = current_difficulties or {}
+    return {
+        g_type: next_difficulty(
+            current_difficulties.get(g_type, DEFAULT_DIFFICULTY),
+            accuracies,
+            game_type=g_type,
+        )
+        for g_type, accuracies in game_accuracies.items()
+    }
