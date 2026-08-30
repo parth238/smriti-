@@ -1,8 +1,12 @@
 # TEAM STATUS BOARD
 
-**Snapshot:** 2026-08-30. Branch `feature/sih-2026`. PR https://github.com/Rehan-2024/smriti-/pull/5
+**Snapshot:** 2026-08-30. `main` already contains merged PR 5 (SIH stack) plus Rehan PRs 6, 7, and 8 (analytics). Living docs continue on `feature/sih-2026` (PR 9). Plan: `docs/05-project-management/NEXT_PLAN.md`.
 
 **Covering:** Anirudh P.S Yadav (TEAM 1 Elderly UI) landed Harshit backend/infra and scaffolded Parth / Rehan / Ananya / Srujna slices so the SIH demo loop exists. Owners below are who must work **next**. Covering is not ownership transfer.
+
+**Ports:** elderly PWA `5173`, caregiver desk `5174`, API `8000`.
+
+**Honest gaps:** reminder/memory APIs (schema only), Sequencing/Naming craft, Assamese playtest with a real elder, STT not MVP (Phase 2 Web Speech EN/HI, Phase 3 Bhashini).
 
 **Plan:** `docs/05-project-management/NEXT_PLAN.md`
 

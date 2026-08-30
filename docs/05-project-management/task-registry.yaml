@@ -1,4 +1,4 @@
-# Last reconciled: 2026-08-30 against feature/sih-2026 (PR 5).
+# Last reconciled: 2026-08-30 against main (PR 5 stack + Rehan PRs 6-8) and leftover docs on feature/sih-2026.
 # Status: DONE | PARTIAL | NOT_STARTED
 # covering: who landed the start. member: who owns next work.
 
@@ -311,12 +311,12 @@ tasks:
     dependencies: []
     source_docs: ["03-features.md", "12-config.md"]
     files: ["apps/backend/app/services/adaptive_difficulty.py"]
-    branch: "feature/sih-2026"
-    checkpoints: ["CP-01", "CP-06", "CP-07"]
+    branch: "feature/T2-AI-001-adaptive-difficulty"
+    checkpoints: ["CP-01", "CP-06", "CP-07", "CP-15", "CP-18"]
     tests: ["pytest apps/backend/app/tests/test_adaptive_difficulty.py"]
     reviewer: "Parth Shrivastav"
-    handoff: "Rule-based 3-up/2-down. Rehan owns the file. No ML."
-    status: "PARTIAL"
+    handoff: "Merged PR 7. Rule-based 3-up/2-down plus get_difficulty_summary. Not ML. KT-AI still open."
+    status: "DONE"
 
   - task_id: "T2-AI-002"
     team: "TEAM 2"
@@ -328,12 +328,12 @@ tasks:
     dependencies: ["T1-BE-002"]
     source_docs: ["03-features.md"]
     files: ["apps/backend/app/services/analytics_engine.py"]
-    branch: "feature/sih-2026"
-    checkpoints: ["CP-01", "CP-06", "CP-07"]
+    branch: "feature/T2-AI-002-analytics-engine"
+    checkpoints: ["CP-01", "CP-06", "CP-07", "CP-15", "CP-18"]
     tests: ["pytest apps/backend/app/tests/test_analytics_engine.py"]
     reviewer: "Parth Shrivastav"
-    handoff: "Accuracy + reaction vs 14-day personal baseline. More metrics still open."
-    status: "PARTIAL"
+    handoff: "Merged PR 8. Accuracy, reaction, errors, hints, duration, completion vs 14-day personal baseline. No population norms."
+    status: "DONE"
 
   - task_id: "T2-AI-003"
     team: "TEAM 2"
@@ -345,12 +345,12 @@ tasks:
     dependencies: ["T2-AI-002"]
     source_docs: ["05-api.md"]
     files: ["apps/backend/app/api/v1/analytics.py"]
-    branch: "feature/sih-2026"
-    checkpoints: ["CP-06"]
+    branch: "feature/T2-AI-003-analytics-api"
+    checkpoints: ["CP-06", "CP-15", "CP-18"]
     tests: ["pytest"]
     reviewer: "Parth Shrivastav"
-    handoff: "7d / baseline / trend exist. Completeness is Rehan's."
-    status: "PARTIAL"
+    handoff: "Merged PR 6. Period, baseline, trend JSON with optional game_type. Dashboard copy review still Rehan+Parth."
+    status: "DONE"
 
   - task_id: "T3-DS-001"
     team: "TEAM 3"

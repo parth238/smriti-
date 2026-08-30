@@ -1,10 +1,25 @@
 # NEXT PLAN: SIH 2026 demo (as of 2026-08-30)
 
-This is the living phase plan. Rehan owns the original execution skeleton. Anirudh P.S Yadav (TEAM 1, Elderly UI) updated it to match the repo on `feature/sih-2026` (PR 5).
+This is the living phase plan. Rehan owns the original execution skeleton. Anirudh P.S Yadav (TEAM 1, Elderly UI) updated it to match the repo after PR 5 merged the SIH stack to `main`, then Rehan merged T2-AI-001/002/003 as PRs 6, 7, and 8.
 
-**Covering note:** Anirudh landed backend, infra, dashboard scaffold, Dexie/outbox, staircase, and a cultural JSON pack so the SIH loop can be shown. Folder owners did not change. Covering is not a handoff. Each owner must take their files, review them, and finish the gaps below.
+**Covering note:** Anirudh landed backend, infra, dashboard scaffold, Dexie/outbox, the first staircase, and a cultural JSON pack so the SIH loop can be shown. Rehan then owned and extended the analytics files (verified in `apps/backend` on `main`: errors, hints, duration, completion, `game_type` filter, extra tests). Folder owners did not change. Covering is not a handoff. Each owner must take their files, review them, and finish the gaps below.
 
 **How to read status:** DONE means the code is in this branch and behaves as described. PARTIAL means a start exists and must not be rewritten from scratch. NOT STARTED means do not claim it in the pitch.
+
+### At a glance: Anirudh covering vs owner remaining
+
+| Owner | Anirudh covered (already on main) | Owner still owes next |
+|---|---|---|
+| Harshit | Monorepo, CI, Docker Postgres, Alembic, JWT, game-sessions, `/me` | Own `apps/backend/`. Reminder CRUD, memory upload, sync decision, hosted Postgres (T0-INF-002) |
+| Parth | Dashboard 5174 scaffold, API login, live Overview/Analytics/Sessions + labeled demo | Own `apps/caregiver-dashboard/`. Reminders/Memories/Alerts off `demo.ts`, chart polish, no diagnosis copy |
+| Rehan | First staircase so the loop closed | DONE on main (PRs 6-8). Next: dashboard copy review + KT-AI. No RL/XGBoost |
+| Ananya | Dexie tables, game outbox flush, Workbox plugin start | Extend Dexie (do not rewrite). More outbox kinds, Workbox polish, reminder scheduling |
+| Srujna | Palette in both apps, Assam + Hornbill JSON | Design QA vs doc 15, real cultural assets, tokens / `packages/ui` |
+| Anirudh | Own elderly 5173: splash, PIN, home, four games, en/as | Sequencing + Picture Naming craft. Stop covering other folders unless Phase 1 is blocked |
+
+**Ports:** elderly `5173`, caregiver desk `5174`, API `8000` (`/docs`).
+
+**Later voice (not MVP):** Phase 2 = browser Web Speech (EN/HI). Phase 3 = Assamese via Bhashini. Do not pitch STT as done.
 
 Canonical feature tiers remain `docs/00-source-of-truth/03-features.md`. Voice/STT is not MVP.
 
@@ -50,7 +65,7 @@ There is no linked-demo seed script yet. Create a caregiver (`POST /api/v1/auth/
 
 ## Phase 0: Now (this PR / already demoable)
 
-What Anirudh already landed on `feature/sih-2026`. Owners still must review.
+What is already on `main` (PR 5 stack plus Rehan PRs 6-8). Owners still must review covering work that is not theirs.
 
 ### Infra and backend (covering Harshit)
 
@@ -59,8 +74,8 @@ What Anirudh already landed on `feature/sih-2026`. Owners still must review.
 - JWT: caregiver register/login, elderly PIN login, refresh, logout, rate limit (`T1-BE-003`).
 - Role check `verify_user_access` on game and analytics routes (RBAC started, not a full audit).
 - `POST /game-sessions` with `client_generated_id` idempotency, session list, next-difficulty.
-- `/me`, `/me/patients`, 7-day analytics vs personal baseline, trend points.
-- **Not done:** reminder CRUD, memory upload, `/sync/batch`, live Supabase project (`T0-INF-002`).
+- `/me`, `/me/patients`, 7-day analytics vs personal baseline, trend points (Rehan PRs 6-8 added errors, hints, duration, and optional `game_type`).
+- **Not done:** reminder CRUD, memory upload, `/sync/batch`, live Supabase project (`T0-INF-002`). Verified: `apps/backend/app/api/router.py` still mounts only auth, me, patients, games, analytics. `reminders` and `memory_items` tables exist; those routers do not.
 
 ### Elderly PWA 5173 (Anirudh's own slice, plus covering)
 
@@ -70,7 +85,7 @@ What Anirudh already landed on `feature/sih-2026`. Owners still must review.
 - Honest offline PIN: unpaired devices do not fake success. Previously paired devices may reopen offline.
 - Dexie tables: sessions, outbox, reminder cache, paired user. Outbox flushes game sessions to `POST /game-sessions` on `online` (`T3-OS-001` / `003` partial, covering Ananya).
 - Workbox via `vite-plugin-pwa`. Not a finished background-sync engine. No install prompt yet (that is Tier 2 in doc 03).
-- Rule-based staircase hook + backend `adaptive_difficulty.py` (`T2-AI-001` partial, covering Rehan). Not ML.
+- Rule-based staircase hook + backend `adaptive_difficulty.py` and `get_difficulty_summary` (`T2-AI-001` DONE on `main` via PR 7; Anirudh covered the start, Rehan owned tests and extension). Not ML.
 
 ### Caregiver dashboard 5174 (scaffold covering Parth)
 
@@ -133,10 +148,8 @@ Do not start Phase 2 until this list is solid.
 - Dashboard hosting on Vercel remains yours.
 
 **Rehan (adaptive + analytics)**
-- Own `adaptive_difficulty.py` and `analytics_engine.py` (and their tests).
-- Completeness: baseline on more session fields if the schema already has them (errors, hints, duration), without inventing clinical scores.
-- Do not jump to RL, XGBoost, or population norms. ADR-002 still holds.
-- Hand Parth stable JSON. Review dashboard language for diagnostic claims.
+- T2-AI-001/002/003 are on `main` (PRs 6, 7, 8): staircase + `get_difficulty_summary`, personal baseline on accuracy/reaction/errors/hints/duration/completion, analytics JSON with optional `game_type`. Not ML.
+- Remaining: review Parth's dashboard copy so nothing reads as a diagnosis. Schedule KT-AI. Do not jump to RL, XGBoost, or population norms. ADR-002 still holds.
 
 **Ananya (Dexie / outbox / SW)**
 - Own `apps/elderly-app/src/db/` and the Workbox config. Do not rewrite Anirudh's start. Extend it.
