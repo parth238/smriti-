@@ -3,6 +3,11 @@ current_milestone: "SIH_DEMO_PLAY_TO_DASHBOARD"
 as_of: "2026-08-30"
 branch: "feature/sih-2026"
 pr: "https://github.com/Rehan-2024/smriti-/pull/5"
+merged:
+  - "PR 5 Smriti SIH 2026 full stack (code on main)"
+  - "PR 6 analytics API game_type and full metrics"
+  - "PR 7 adaptive difficulty tests"
+  - "PR 8 analytics engine all metrics"
 plan_doc: "docs/05-project-management/NEXT_PLAN.md"
 
 covering:
@@ -25,28 +30,30 @@ teams:
 
 status:
   tasks:
-    total: 26
-    done: 8
-    partial: 13
-    not_started: 5
-    completed: 8
-    in_progress: 13
-    not_started_legacy_alias: 5
+    total: 27
+    done: 11
+    partial: 10
+    not_started: 6
+    completed: 11
+    in_progress: 10
+    not_started_legacy_alias: 6
   checkpoints:
     total: 234
     completed: null
-    note: "Checkpoint CP-18 merge to main has not happened. Work is on PR 5."
+    note: "PR 5 merged to main on 2026-08-30. Rehan PRs 6-8 also merged. Remaining work is Phase 1 honesty gaps, not a second stack PR."
   integration: "PARTIAL"
 
 honesty:
   demoable_now:
     - "Elderly PWA 5173 splash, PIN, home, four games, en/as"
     - "Caregiver dashboard 5174 live sessions/charts with labeled demo fallback"
-    - "POST /game-sessions idempotent + personal-baseline analytics"
+    - "POST /game-sessions idempotent + personal-baseline analytics (accuracy, reaction, errors, hints, duration, game_type)"
   not_done:
     - "Reminder CRUD APIs"
     - "Memory upload APIs"
     - "Hosted Supabase"
+    - "Sequencing and Picture Naming visual craft"
+    - "Assamese playtest with a real elder"
     - "Background sync engine"
     - "Voice/STT (Tier 2 Web Speech at most; Bhashini Tier 3)"
     - "KT sessions (process, not product)"

@@ -124,4 +124,4 @@ Accidental commit to main? `git reset --hard HEAD~1`, checkout branch, cherry-pi
 Adaptive difficulty increments by 1 on 3 successes, drops by 1 on 2 failures. Baseline accurately averages the first 14 days. No ML libraries imported.
 
 ## 22 FIRST TASK
-**Now:** Own `apps/backend/app/services/adaptive_difficulty.py` and `analytics_engine.py`. Add tests. Baseline on more session fields if they already exist. Review Parth's dashboard copy so nothing reads as a diagnosis. No ML libraries. Schedule KT-AI with Anirudh.
+**Now:** T2-AI-001/002/003 are merged (PRs 6-8). Review Parth's dashboard copy so nothing reads as a diagnosis. Schedule KT-AI with Anirudh. Do not add RL or ML libraries.

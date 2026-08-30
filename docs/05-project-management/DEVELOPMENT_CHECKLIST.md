@@ -1,6 +1,6 @@
 # MASTER DEVELOPMENT CHECKLIST
 
-Definitive MVP task board as of 2026-08-30. **PARTIAL is not DONE.** Covering = Anirudh landed a start in someone else's folder. Phase plan: `NEXT_PLAN.md`.
+Definitive MVP task board as of 2026-08-30. **PARTIAL is not DONE.** Covering = Anirudh landed a start in someone else's folder. T2-AI-001/002/003 are DONE on `main` (PRs 6-8). Phase plan: `NEXT_PLAN.md`.
 
 Status values: `DONE` | `PARTIAL` | `NOT_STARTED`
 

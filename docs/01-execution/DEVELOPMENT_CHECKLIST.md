@@ -1,6 +1,6 @@
 # SMRITI DEVELOPMENT CHECKLIST
 
-Tracking document for Smriti MVP tasks. Snapshot 2026-08-30 on `feature/sih-2026`.
+Tracking document for Smriti MVP tasks. Snapshot 2026-08-30. Stack is on `main` via PR 5. Rehan T2-AI PRs 6-8 are also on `main`.
 
 **PARTIAL work is listed as unchecked** with a note of what exists. Do not treat covering as the owner's sign-off. Phase plan: `docs/05-project-management/NEXT_PLAN.md`.
 
@@ -27,9 +27,9 @@ Tracking document for Smriti MVP tasks. Snapshot 2026-08-30 on `feature/sih-2026
 - [x] `T1-FE-005` Attention game MVP (Owner: Anirudh)
 
 ## Intelligence & Analytics (Team 2)
-- [ ] `T2-AI-001` Adaptive difficulty engine (Owner: Rehan). PARTIAL: rule-based staircase in `adaptive_difficulty.py` with tests (Anirudh covering). Rehan must take ownership. Not ML.
-- [ ] `T2-AI-002` Analytics engine and baseline (Owner: Rehan). PARTIAL: 14-day personal baseline, 7/30-day windows, accuracy + reaction. More metrics still open.
-- [ ] `T2-AI-003` Analytics API endpoints (Owner: Rehan). PARTIAL: period, baseline, trend routes exist (Anirudh covering).
+- [x] `T2-AI-001` Adaptive difficulty engine (Owner: Rehan). DONE on `main` (PR 7). Rule-based staircase + `get_difficulty_summary` + tests. Anirudh covered the start. Not ML.
+- [x] `T2-AI-002` Analytics engine and baseline (Owner: Rehan). DONE on `main` (PR 8). 14-day personal baseline including accuracy, reaction, errors, hints, duration, completion.
+- [x] `T2-AI-003` Analytics API endpoints (Owner: Rehan). DONE on `main` (PR 6). Period, baseline, trend, optional `game_type`. Dashboard copy review and KT-AI still open.
 
 ## Caregiver Dashboard (Team 2)
 - [x] `T2-FE-001` Scaffold Caregiver Dashboard Vite App (Owner: Parth, implemented by Anirudh covering for SIH demo). Port 5174, sidebar, Inter, Recharts. Parth takes over.
