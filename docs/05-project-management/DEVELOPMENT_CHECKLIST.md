@@ -22,9 +22,9 @@ Status values: `DONE` | `PARTIAL` | `NOT_STARTED`
 | T1-FE-003 | Anirudh | PARTIAL | CP-06 | Four games demo-ready | All four persist. Match + Attention deepened | Sequencing / Naming need visual craft. |
 | T1-FE-004 | Anirudh | DONE | CP-06 | Game hub | `/games` select | |
 | T1-FE-005 | Anirudh | DONE | CP-06 | Attention game | Hook + bloom/difficulty | |
-| T2-AI-001 | Rehan | PARTIAL | CP-07 | Staircase engine | `adaptive_difficulty.py` + tests | Anirudh covering. Rehan must own it. No ML. |
-| T2-AI-002 | Rehan | PARTIAL | CP-07 | Personal baseline analytics | Accuracy + reaction vs 14-day baseline | More metrics still open. |
-| T2-AI-003 | Rehan | PARTIAL | CP-06 | Analytics HTTP | 7d, baseline, trend | Anirudh covering. |
+| T2-AI-001 | Rehan | DONE | CP-15 | Staircase engine | `adaptive_difficulty.py` + tests | Owned. Complete test coverage added. No ML. |
+| T2-AI-002 | Rehan | DONE | CP-15 | Personal baseline analytics | Accuracy, reaction, errors, hints, duration vs baseline | Expanded to all metrics. Alerts added. |
+| T2-AI-003 | Rehan | DONE | CP-15 | Analytics HTTP | 7d, baseline, trend | Game type filtering and full JSON contract stable. |
 | T2-FE-001 | Parth | DONE | CP-06 | Dashboard on 5174 | Sidebar, Inter, Recharts | Anirudh covering for demo. Parth takes over. |
 | T2-FE-002 | Parth | PARTIAL | CP-06 | Caregiver login | Hits API; labeled demo if down | No register UI. |
 | T2-FE-003 | Parth | PARTIAL | CP-06 | Patient overview | Live + labeled demo fallback | No patient switcher. |

@@ -68,9 +68,9 @@ As of 2026-08-30. Anirudh covered a rule-based start so games and the dashboard 
 
 | TASK ID | TASK NAME | DEPENDENCY | STATUS |
 |---------|-----------|------------|--------|
-| T2-AI-001 | Build Adaptive Difficulty Engine | None | PARTIAL (`adaptive_difficulty.py` + tests; Anirudh covering; you own next) |
-| T2-AI-002 | Analytics Engine (Pure Python) | T1-BE-002 | PARTIAL (14-day personal baseline; accuracy + reaction; more metrics open) |
-| T2-AI-003 | Analytics API Endpoints | T2-AI-002 | PARTIAL (7d / baseline / trend routes exist) |
+| T2-AI-001 | Build Adaptive Difficulty Engine | None | DONE (`adaptive_difficulty.py` + exhaustive tests complete) |
+| T2-AI-002 | Analytics Engine (Pure Python) | T1-BE-002 | DONE (all metrics mapped and tested against personal baseline) |
+| T2-AI-003 | Analytics API Endpoints | T2-AI-002 | DONE (routes stable with game_type filters and full json contract) |
 
 ## 12 BRANCH SETUP
 ```bash
