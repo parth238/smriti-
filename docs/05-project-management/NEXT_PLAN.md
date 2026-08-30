@@ -6,6 +6,21 @@ This is the living phase plan. Rehan owns the original execution skeleton. Aniru
 
 **How to read status:** DONE means the code is in this branch and behaves as described. PARTIAL means a start exists and must not be rewritten from scratch. NOT STARTED means do not claim it in the pitch.
 
+### At a glance: Anirudh covering vs owner remaining
+
+| Owner | Anirudh covered (already on main) | Owner still owes next |
+|---|---|---|
+| Harshit | Monorepo, CI, Docker Postgres, Alembic, JWT, game-sessions, `/me` | Own `apps/backend/`. Reminder CRUD, memory upload, sync decision, hosted Postgres (T0-INF-002) |
+| Parth | Dashboard 5174 scaffold, API login, live Overview/Analytics/Sessions + labeled demo | Own `apps/caregiver-dashboard/`. Reminders/Memories/Alerts off `demo.ts`, chart polish, no diagnosis copy |
+| Rehan | First staircase so the loop closed | DONE on main (PRs 6-8). Next: dashboard copy review + KT-AI. No RL/XGBoost |
+| Ananya | Dexie tables, game outbox flush, Workbox plugin start | Extend Dexie (do not rewrite). More outbox kinds, Workbox polish, reminder scheduling |
+| Srujna | Palette in both apps, Assam + Hornbill JSON | Design QA vs doc 15, real cultural assets, tokens / `packages/ui` |
+| Anirudh | Own elderly 5173: splash, PIN, home, four games, en/as | Sequencing + Picture Naming craft. Stop covering other folders unless Phase 1 is blocked |
+
+**Ports:** elderly `5173`, caregiver desk `5174`, API `8000` (`/docs`).
+
+**Later voice (not MVP):** Phase 2 = browser Web Speech (EN/HI). Phase 3 = Assamese via Bhashini. Do not pitch STT as done.
+
 Canonical feature tiers remain `docs/00-source-of-truth/03-features.md`. Voice/STT is not MVP.
 
 ---

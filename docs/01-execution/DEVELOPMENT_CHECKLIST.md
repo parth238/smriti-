@@ -1,8 +1,8 @@
 # SMRITI DEVELOPMENT CHECKLIST
 
-Tracking document for Smriti MVP tasks. Snapshot 2026-08-30. Stack is on `main` via PR 5. Rehan T2-AI PRs 6-8 are also on `main`.
+Tracking document for Smriti MVP tasks. Snapshot 2026-08-30. Stack is on `main` via PR 5. Rehan T2-AI PRs 6-8 are also on `main`. Living docs / NEXT_PLAN: PR 9 on `feature/sih-2026`.
 
-**PARTIAL work is listed as unchecked** with a note of what exists. Do not treat covering as the owner's sign-off. Phase plan: `docs/05-project-management/NEXT_PLAN.md`.
+**PARTIAL work is listed as unchecked** with a note of what exists. Do not treat covering as the owner's sign-off. Ports: elderly 5173, caregiver desk 5174, API 8000. STT is not MVP (Phase 2 Web Speech, Phase 3 Bhashini). Phase plan: `docs/05-project-management/NEXT_PLAN.md`.
 
 ## Repository & Infrastructure
 - [x] `T0-INF-001` Scaffold monorepo structure (Owner: Harshit, implemented by Anirudh covering)
