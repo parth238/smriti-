@@ -1,17 +1,38 @@
+import { useEffect, useState } from "react";
+
+import { loadCaregiverAnalytics, type AnalyticsBundle } from "../api/analytics";
 import { Notice } from "../components/Notice";
 import { PageHeader } from "../components/PageHeader";
 import { StatTile } from "../components/StatTile";
-import { PATIENT, REMINDERS, SESSIONS } from "../data/demo";
+import { REMINDERS } from "../data/demo";
 
 export function Overview() {
-  const done = SESSIONS.filter((row) => row.completed).length;
+  const [bundle, setBundle] = useState<AnalyticsBundle | null>(null);
+
+  useEffect(() => {
+    void loadCaregiverAnalytics().then(setBundle);
+  }, []);
+
+  if (!bundle) {
+    return <p className="text-mist-blue">Loading overview…</p>;
+  }
+
   const missed = REMINDERS.filter((row) => row.missed).length;
   return (
     <>
       <PageHeader
-        title={`${PATIENT.label} this week`}
-        hint={`${PATIENT.region} · ${PATIENT.language}. Comparisons are against their own usual week, never a population range.`}
+        title={`${bundle.patient.label} this week`}
+        hint={`${bundle.patient.region} · ${bundle.patient.language}. Comparisons are against their own usual week, never a population range.`}
       />
+      <p className="mb-4 text-sm text-mist-blue">{bundle.updatedLabel}</p>
+      {bundle.source === "demo" ? (
+        <div className="mb-5">
+          <Notice>
+            Showing labeled demo or last-cached sample data. This is not live session truth until
+            the API is reachable and a family member is linked.
+          </Notice>
+        </div>
+      ) : null}
       {missed ? (
         <div className="mb-5">
           <Notice>
@@ -21,11 +42,19 @@ export function Overview() {
         </div>
       ) : null}
       <div className="grid gap-4 sm:grid-cols-3">
-        <StatTile label="Sessions" value={`${SESSIONS.length}`} hint="Games opened this week" />
-        <StatTile label="Finished" value={`${done}`} hint="They stayed until the warm ending" />
+        <StatTile
+          label="Sessions"
+          value={`${bundle.sessionsCount}`}
+          hint="Games opened this week"
+        />
+        <StatTile
+          label="Finished"
+          value={`${bundle.finishedCount}`}
+          hint="They stayed until the warm ending"
+        />
         <StatTile
           label="Usual accuracy"
-          value={`${PATIENT.baselineAccuracy}%`}
+          value={`${Math.round(bundle.patient.baselineAccuracy)}%`}
           hint="Personal baseline only"
         />
       </div>

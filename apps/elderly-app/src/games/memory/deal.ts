@@ -1,6 +1,6 @@
-export type MotifId = "tea" | "bird" | "lamp" | "cloth";
+export type MotifId = "tea" | "bird" | "lamp" | "cloth" | "river";
 
-export const MOTIFS: MotifId[] = ["tea", "bird", "lamp", "cloth"];
+export const MOTIFS: MotifId[] = ["tea", "bird", "lamp", "cloth", "river"];
 
 export type MemoryCard = {
   uid: string;
@@ -22,7 +22,7 @@ export function shuffle<T>(items: T[]): T[] {
   return next;
 }
 
-export function dealMemoryCards(motifs: MotifId[] = MOTIFS): MemoryCard[] {
+export function dealMemoryCards(motifs: MotifId[] = MOTIFS.slice(0, 4)): MemoryCard[] {
   const doubled = [...motifs, ...motifs];
   return shuffle(doubled).map((motif, index) => ({
     uid: `${motif}-${index}`,

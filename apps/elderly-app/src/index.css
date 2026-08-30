@@ -268,6 +268,20 @@ input {
   box-shadow: 0 10px 0 rgba(30, 42, 47, 0.04);
 }
 
+.pair-bloom .tile-front {
+  box-shadow: 0 0 0 4px rgba(75, 110, 88, 0.35);
+  animation: pair-bloom 300ms ease-in-out;
+}
+
+@keyframes pair-bloom {
+  from {
+    box-shadow: 0 0 0 0 rgba(75, 110, 88, 0.05);
+  }
+  to {
+    box-shadow: 0 0 0 4px rgba(75, 110, 88, 0.35);
+  }
+}
+
 .dot {
   width: 14px;
   height: 14px;
@@ -354,7 +368,8 @@ input {
   .bloom,
   .steam,
   .steam-late,
-  .tile-flip-inner {
+  .tile-flip-inner,
+  .pair-bloom .tile-front {
     animation: none;
     transition: none;
   }

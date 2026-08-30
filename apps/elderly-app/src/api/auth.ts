@@ -2,13 +2,14 @@ export const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:8000/a
 
 export type ElderlyLoginOk = {
   ok: true;
-  accessToken?: string;
+  accessToken: string;
+  userId?: string;
   offline: boolean;
 };
 
 export type ElderlyLoginFail = {
   ok: false;
-  reason: "pin" | "rejected";
+  reason: "pin" | "rejected" | "offline_unpaired";
 };
 
 export type ElderlyLoginResult = ElderlyLoginOk | ElderlyLoginFail;
@@ -22,6 +23,24 @@ function readAccessToken(data: unknown): string | undefined {
   }
   const token = data.access_token;
   return typeof token === "string" ? token : undefined;
+}
+
+async function readUserIdFromMe(token: string): Promise<string | undefined> {
+  try {
+    const response = await fetch(`${API_BASE}/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) {
+      return undefined;
+    }
+    const data: unknown = await response.json();
+    if (typeof data === "object" && data !== null && "id" in data && typeof data.id === "string") {
+      return data.id;
+    }
+  } catch {
+    return undefined;
+  }
+  return undefined;
 }
 
 export async function elderlyLogin(phone: string, pin: string): Promise<ElderlyLoginResult> {
@@ -38,8 +57,20 @@ export async function elderlyLogin(phone: string, pin: string): Promise<ElderlyL
       return { ok: false, reason: "rejected" };
     }
     const data: unknown = await response.json();
-    return { ok: true, accessToken: readAccessToken(data), offline: false };
+    const accessToken = readAccessToken(data);
+    if (!accessToken) {
+      return { ok: false, reason: "rejected" };
+    }
+    const userId = await readUserIdFromMe(accessToken);
+    return { ok: true, accessToken, userId, offline: false };
   } catch {
-    return { ok: true, offline: true };
+    // Offline: only succeed if a previous online pairing exists for this device.
+    const pairedFlag = window.localStorage.getItem("smriti.paired");
+    const storedUser = window.localStorage.getItem("smriti.userId");
+    const storedToken = window.localStorage.getItem("smriti.access");
+    if (pairedFlag === "1" && storedUser && storedToken) {
+      return { ok: true, accessToken: storedToken, userId: storedUser, offline: true };
+    }
+    return { ok: false, reason: "offline_unpaired" };
   }
 }

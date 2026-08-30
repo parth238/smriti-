@@ -1,6 +1,6 @@
 import type { MotifId } from "../games/memory";
 
-export type MotifKind = MotifId | "flower" | "river";
+export type MotifKind = MotifId | "flower";
 
 type MotifProps = {
   id: MotifKind;

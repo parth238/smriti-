@@ -1,5 +1,6 @@
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import type { FormEvent } from "react";
 
 import { caregiverLogin } from "../api/auth";
 import { signInCaregiver } from "../auth/session";
@@ -18,7 +19,7 @@ export function Login() {
       setMessage("Let us try that phone or email and password again.");
       return;
     }
-    signInCaregiver();
+    signInCaregiver(result.accessToken);
     if (result.offline) {
       setOffline(true);
     }
@@ -54,7 +55,11 @@ export function Login() {
           />
         </label>
         {message ? <p className="text-tea-garden">{message}</p> : null}
-        {offline ? <p className="text-mist-blue">We will save this when we can.</p> : null}
+        {offline ? (
+          <p className="text-mist-blue">
+            API unreachable. Opening with clearly labeled demo data, not live truth.
+          </p>
+        ) : null}
         <button
           type="submit"
           className="w-full rounded-lg bg-gamosa-red px-4 py-3 font-semibold text-rice-white"

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Chrome } from "../../components/Chrome";
@@ -6,19 +6,21 @@ import { Instruction } from "../../components/game/Instruction";
 import { LargeButton } from "../../components/LargeButton";
 import { Motif } from "../../components/Motif";
 import { useI18n } from "../../context/LanguageContext";
-import { rememberGame } from "../../store/demoStore";
+import { useGameSession } from "../../hooks/useGameSession";
 import { NAMING_ITEMS, type NameKey } from "./items";
 
 export function NamingGame() {
   const { tx } = useI18n();
   const navigate = useNavigate();
+  const { markStarted, recordResult, elapsedSec } = useGameSession();
   const [index, setIndex] = useState(0);
   const [nudge, setNudge] = useState("");
+  const errors = useRef(0);
   const current = NAMING_ITEMS[index];
 
   useEffect(() => {
-    rememberGame("/games/picture-naming");
-  }, []);
+    markStarted("/games/picture-naming");
+  }, [markStarted]);
 
   if (!current) {
     return null;
@@ -27,10 +29,26 @@ export function NamingGame() {
   function choose(key: NameKey) {
     if (key !== current.yes) {
       setNudge(tx("tryAgainGentle"));
+      errors.current += 1;
       return;
     }
     if (index + 1 >= NAMING_ITEMS.length) {
-      navigate("/games/picture-naming/result", { replace: true });
+      const total = NAMING_ITEMS.length;
+      const accuracy = Math.max(
+        0,
+        Math.min(100, Math.round((total / Math.max(total, total + errors.current)) * 100)),
+      );
+      void recordResult({
+        gameType: "picture_naming",
+        gamePath: "/games/picture-naming",
+        difficulty: 3,
+        accuracy,
+        reactionTimeMs: Math.round((elapsedSec() * 1000) / total),
+        errors: errors.current,
+        sessionDurationSec: elapsedSec(),
+      }).then(() => {
+        navigate("/games/picture-naming/result", { replace: true });
+      });
       return;
     }
     setNudge("");
