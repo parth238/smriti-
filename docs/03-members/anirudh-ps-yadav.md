@@ -63,11 +63,15 @@ You require the `VITE_API_BASE_URL` from Harshit to connect to the FastAPI backe
 `apps/caregiver-dashboard/`
 
 ## 11 TASK ROADMAP
+As of 2026-08-30. You also covered other teams' folders for the SIH demo. That covering is documented in TEAM_STATUS. Your own next work is elderly polish. Stop covering unless a Phase 1 blocker has no owner.
+
 | TASK ID | TASK NAME | DEPENDENCY | STATUS |
 |---------|-----------|------------|--------|
-| T1-FE-001 | Scaffold Vite PWA App | T0-INF-001 | NOT_STARTED |
-| T1-FE-002 | Elderly App Auth & Home UI | T1-BE-003, T1-FE-001 | NOT_STARTED |
-| T1-FE-003 | 4 Core Games UI & Logic | T1-FE-001 | NOT_STARTED |
+| T1-FE-001 | Scaffold Vite PWA App | T0-INF-001 | DONE (5173, splash, Workbox plugin) |
+| T1-FE-002 | Elderly App Auth & Home UI | T1-BE-003, T1-FE-001 | DONE (honest unpaired PIN) |
+| T1-FE-003 | 4 Core Games UI & Logic | T1-FE-001 | PARTIAL (Match + Attention deep; Sequencing/Naming persist, less craft) |
+| T1-FE-004 | Game hub | T1-FE-001 | DONE |
+| T1-FE-005 | Attention game | T1-FE-001 | DONE |
 
 ## 12 BRANCH SETUP
 ```bash
@@ -121,4 +125,4 @@ Accidental commit to main? `git reset --hard HEAD~1`, checkout branch, cherry-pi
 Vite builds without TS errors. All touch targets are >= 48px. App shell renders successfully.
 
 ## 22 FIRST TASK
-**T1-FE-001:** Scaffold Vite PWA App (Once Harshit merges T0-INF-001).
+**Now:** Phase 1 elderly polish. Sequencing and Naming visual craft. Keep i18n complete. Protect the judge path (splash → PIN → one game → caregiver chart). PWA install prompt is Phase 2. Voice/STT is Phase 2 (Web Speech) / Phase 3 (Bhashini). Run KT sessions so owners can take their folders.

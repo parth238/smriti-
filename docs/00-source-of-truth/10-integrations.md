@@ -14,7 +14,7 @@
 
 | Integration | Purpose | Notes |
 |---|---|---|
-| **Web Speech API** (browser-native) | Voice input/output demo | No external API key needed, works in Chrome/Edge; English/Hindi only realistically |
+| **Web Speech API** (browser-native STT/TTS) | Voice input/output demo | No external API key needed, works in Chrome/Edge; English/Hindi only realistically. Assamese ASR is Bhashini/AI4Bharat in section 3. |
 | **Firebase Cloud Messaging / Web Push** | Caregiver push alerts | For missed-reminder or trend alerts beyond in-dashboard notices |
 
 ## 3. Roadmap Integrations (Tier 3 — documented, not built)

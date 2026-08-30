@@ -61,11 +61,14 @@ You must NEVER modify the backend database schema. You provide styling tokens an
 `apps/backend/`
 
 ## 11 TASK ROADMAP
+As of 2026-08-30. Palette and a JSON cultural pack are in the branch so the elderly app could ship a gamosa look. That is not a finished design system. `packages/ui` does not exist. Verify culture. No generic AI stock.
+
 | TASK ID | TASK NAME | DEPENDENCY | STATUS |
 |---------|-----------|------------|--------|
-| T3-DS-001 | Configure Tailwind Design Tokens | T1-FE-001, T2-FE-001 | NOT_STARTED |
-| T3-DS-002 | Content Packs & i18n Wiring | T1-FE-001 | NOT_STARTED |
-| T3-DS-003 | Reminiscence Gallery UI | T3-DS-002 | NOT_STARTED |
+| T3-DS-001 | Configure Tailwind Design Tokens | T1-FE-001, T2-FE-001 | PARTIAL (colors in both app configs; no `packages/ui`) |
+| T3-DS-002 | Accessible UI components | T3-DS-001 | PARTIAL (elderly LargeButton / 56px; not shared) |
+| T3-DS-003 | Assamese cultural content pack | T1-FE-001 | PARTIAL (JSON Assam + Hornbill; unverified assets) |
+| T3-DS-004 | i18n on all views | T3-DS-002 | PARTIAL (elderly en/as; dashboard still English) |
 
 ## 12 BRANCH SETUP
 ```bash
@@ -119,4 +122,4 @@ Accidental commit to main? `git reset --hard HEAD~1`, checkout branch, cherry-pi
 Tailwind config includes `gamosa-red` and `tea-garden`. Buttons are 48px minimum. No hardcoded English text in components.
 
 ## 22 FIRST TASK
-**T3-DS-001:** Configure Tailwind Design Tokens (Once Anirudh/Parth scaffold the Vite apps).
+**Now:** Design QA vs doc 15 on both apps. Figma/token handoff. Verify cultural pack names and art. Motion/accessibility pass (gamosa line as loading signature). Help Anirudh on Sequencing/Naming craft. Schedule KT-UX.

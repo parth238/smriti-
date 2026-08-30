@@ -3,6 +3,8 @@
 ## 1. TEAM MISSION
 Build the Caregiver Dashboard and the backend analytics engines that process patient gameplay into actionable insights and adaptive difficulty tuning, without relying on Tier 2 ML.
 
+**As of 2026-08-30:** Anirudh scaffolded the 5174 dashboard and a rule-based staircase so play can show on a chart. Parth still owns the dashboard. Rehan still owns `adaptive_difficulty.py` and `analytics_engine.py`. Reminder/memory pages are demo data. No RL. See NEXT_PLAN.
+
 ## 2. MEMBERS
 - Parth Shrivastav
 - Mohd Rehan
@@ -93,6 +95,7 @@ START MY WORK
 ```
 
 ## 22. FINAL TEAM CHECKLIST
-- [ ] Caregiver Dashboard live on Vercel.
-- [ ] Recharts properly displaying analytics.
-- [ ] Adaptive difficulty strictly rule-based (no ML).
+- [ ] Caregiver Dashboard live on Vercel (local 5174 exists; Parth takes over).
+- [x] Recharts can display live analytics or a labeled demo fallback.
+- [x] Adaptive difficulty is rule-based in code (Rehan must own the files; no ML claims).
+- [ ] Reminder and memory management on live APIs (blocked on Team 1).

@@ -7,7 +7,7 @@ When an AI agent (Cursor, Antigravity) is initialized with the `NAME` and `TEAM`
 ## The 23-Step Deterministic Execution Path
 
 1. **Read boot protocol:** Understand this 23-step flow.
-2. **Read master execution:** Read `docs/01-execution/MASTER_EXECUTION.md` for project boundaries.
+2. **Read master execution:** Read `docs/01-execution/MASTER_EXECUTION.md` for project boundaries, then `docs/05-project-management/NEXT_PLAN.md` and `TEAM_STATUS.md` so you do not treat covering work as the owner's next task.
 3. **Validate name:** Ensure the provided name exists in `docs/05-project-management/team-manifest.yaml`.
 4. **Validate team:** Ensure the provided team matches the manifest.
 5. **Load team document:** Read the specific `docs/02-teams/TEAM_X...md`.

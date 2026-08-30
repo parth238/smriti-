@@ -64,11 +64,13 @@ You require the local `DATABASE_URL` from Harshit to run your analytics logic ag
 `apps/caregiver-dashboard/`
 
 ## 11 TASK ROADMAP
+As of 2026-08-30. Anirudh covered a rule-based start so games and the dashboard could close the loop. You own the files. Do not jump to RL. ADR-002 still holds.
+
 | TASK ID | TASK NAME | DEPENDENCY | STATUS |
 |---------|-----------|------------|--------|
-| T2-AI-001 | Build Adaptive Difficulty Engine | None | NOT_STARTED |
-| T2-AI-002 | Analytics Engine (Pure Python) | T1-BE-002 | NOT_STARTED |
-| T2-AI-003 | Analytics API Endpoints | T2-AI-002 | NOT_STARTED |
+| T2-AI-001 | Build Adaptive Difficulty Engine | None | PARTIAL (`adaptive_difficulty.py` + tests; Anirudh covering; you own next) |
+| T2-AI-002 | Analytics Engine (Pure Python) | T1-BE-002 | PARTIAL (14-day personal baseline; accuracy + reaction; more metrics open) |
+| T2-AI-003 | Analytics API Endpoints | T2-AI-002 | PARTIAL (7d / baseline / trend routes exist) |
 
 ## 12 BRANCH SETUP
 ```bash
@@ -122,4 +124,4 @@ Accidental commit to main? `git reset --hard HEAD~1`, checkout branch, cherry-pi
 Adaptive difficulty increments by 1 on 3 successes, drops by 1 on 2 failures. Baseline accurately averages the first 14 days. No ML libraries imported.
 
 ## 22 FIRST TASK
-**T2-AI-001:** Build Adaptive Difficulty Engine (Unblocked, can be built purely in Python immediately).
+**Now:** Own `apps/backend/app/services/adaptive_difficulty.py` and `analytics_engine.py`. Add tests. Baseline on more session fields if they already exist. Review Parth's dashboard copy so nothing reads as a diagnosis. No ML libraries. Schedule KT-AI with Anirudh.

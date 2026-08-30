@@ -3,6 +3,24 @@
 ## Quick Start
 To begin development on the Smriti project (SIH26003), follow the AI-Agent Boot Protocol.
 
+Pinned toolchain (do not drift): Node 20, Python 3.11. See `docs/05-project-management/TOOLING_VERSIONS.md`.
+
+```bash
+docker compose up -d postgres
+cd apps/backend
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+copy .env.example .env
+uvicorn app.main:app --reload --port 8000
+```
+
+Elderly app (T1-FE-001+): `cd apps/elderly-app && npm ci && npm run dev` on port 5173.
+
+Caregiver dashboard (T2-FE-001): `cd apps/caregiver-dashboard && npm ci && npm run dev` on port 5174.
+
+Who does what next: `docs/05-project-management/NEXT_PLAN.md`. Status: `docs/05-project-management/TEAM_STATUS.md`.
+
 ## Repository Structure
 ```
 /

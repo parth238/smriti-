@@ -3,6 +3,8 @@
 ## 1. TEAM MISSION
 Ensure the Elderly App functions flawlessly without internet access (Offline-First), curate the Assamese cultural reminiscence content, and establish the universal UI/UX design tokens for accessibility.
 
+**As of 2026-08-30:** Anirudh started Dexie/outbox/Workbox and a cultural JSON pack. Ananya extends Dexie (does not rewrite it). Srujna verifies tokens and culture. Voice/STT is not this team's MVP. See NEXT_PLAN.
+
 ## 2. MEMBERS
 - Srujna
 - Ananya
@@ -95,6 +97,7 @@ START MY WORK
 ```
 
 ## 22. FINAL TEAM CHECKLIST
-- [ ] Tailwind tokens active globally.
-- [ ] App operates fully offline.
-- [ ] No duplicate data upon reconnect (Idempotency verified).
+- [ ] Tailwind tokens in `packages/ui` (palette currently copied in both apps).
+- [ ] App operates fully offline (games persist in Dexie; reminders/memories do not sync yet).
+- [ ] No duplicate data upon reconnect (game sessions use `client_generated_id`; not proven for other entities).
+- [ ] Cultural pack verified (JSON exists; assets not community-signed).

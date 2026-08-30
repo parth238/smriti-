@@ -28,7 +28,11 @@ sync_events (audit/log of offline sync batches)
 | preferred_language | text | e.g. `as` (Assamese), `en` |
 | date_of_birth | date, nullable | |
 | profile_photo_url | text, nullable | |
-| home_location_lat/lng | numeric, nullable | for future reality-orientation / geofencing (Tier 3) |
+| home_location_lat | numeric, nullable | for future reality-orientation / geofencing (Tier 3) |
+| home_location_lng | numeric, nullable | for future reality-orientation / geofencing (Tier 3) |
+| pin_hash | text | hashed 4-digit PIN (doc 08). Never store plaintext. |
+| consent_given_by | UUID FK → caregivers.id, nullable | caregiver-proxy consent actor (doc 08 §5) |
+| consent_timestamp | timestamptz, nullable | required before storing real (non-test) user data |
 | created_at | timestamptz | |
 | updated_at | timestamptz | |
 
@@ -138,6 +142,19 @@ sync_events (audit/log of offline sync batches)
 | message | text | plain-language, never a diagnostic claim |
 | severity | text | `info` / `notice` |
 | is_read | boolean | |
+| created_at | timestamptz | |
+
+### `refresh_tokens` (server-side refresh, doc 08 §2)
+| Column | Type | Notes |
+|---|---|---|
+| id | UUID PK | |
+| subject_id | UUID | caregiver or elderly user id |
+| role | text | `caregiver` / `elderly_user` |
+| token_hash | text, unique | hashed refresh token |
+| caregiver_id | UUID FK, nullable | |
+| user_id | UUID FK, nullable | |
+| revoked_at | timestamptz, nullable | set on logout or rotation |
+| expires_at | timestamptz | |
 | created_at | timestamptz | |
 
 ### `sync_events` (audit log)
