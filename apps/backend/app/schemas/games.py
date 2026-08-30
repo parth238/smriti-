@@ -59,6 +59,10 @@ class NextDifficultyResponse(BaseModel):
 class BaselineResponse(BaseModel):
     avg_accuracy: float | None
     avg_reaction_time_ms: float | None
+    avg_errors: float | None = None
+    avg_hints_used: float | None = None
+    avg_session_duration_sec: float | None = None
+    completion_rate: float | None = None
     sessions_count: int
     note: str = (
         "Personal baseline from early play only. Not a population norm or diagnosis."
@@ -68,6 +72,9 @@ class BaselineResponse(BaseModel):
 class BaselineComparison(BaseModel):
     reaction_time_delta_pct: float | None = None
     accuracy_delta_pct: float | None = None
+    errors_delta_pct: float | None = None
+    hints_delta_pct: float | None = None
+    duration_delta_pct: float | None = None
     note: str | None = None
 
 
@@ -75,6 +82,9 @@ class AnalyticsPeriodResponse(BaseModel):
     period: str
     avg_accuracy: float | None
     avg_reaction_time_ms: float | None
+    avg_errors: float | None = None
+    avg_hints_used: float | None = None
+    avg_session_duration_sec: float | None = None
     completion_rate: float | None
     sessions_count: int
     baseline_comparison: BaselineComparison
@@ -82,13 +92,19 @@ class AnalyticsPeriodResponse(BaseModel):
 
 class TrendPoint(BaseModel):
     day: str
-    accuracy: float | None
-    reaction_time_ms: float | None
+    accuracy: float | None = None
+    reaction_time_ms: float | None = None
+    errors: float | None = None
+    hints_used: float | None = None
+    session_duration_sec: float | None = None
 
 
 class TrendResponse(BaseModel):
     metric: str
     days: int
-    baseline_accuracy: float | None
-    baseline_reaction_time_ms: float | None
+    baseline_accuracy: float | None = None
+    baseline_reaction_time_ms: float | None = None
+    baseline_errors: float | None = None
+    baseline_hints_used: float | None = None
+    baseline_session_duration_sec: float | None = None
     points: list[TrendPoint]
