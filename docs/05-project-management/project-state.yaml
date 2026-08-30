@@ -1,5 +1,16 @@
-project_phase: "INITIALIZATION"
-current_milestone: "MVP_SCAFFOLDING"
+project_phase: "PHASE_1_CLOSE_HONESTY_LOOP"
+current_milestone: "SIH_DEMO_PLAY_TO_DASHBOARD"
+as_of: "2026-08-30"
+branch: "feature/sih-2026"
+pr: "https://github.com/Rehan-2024/smriti-/pull/5"
+plan_doc: "docs/05-project-management/NEXT_PLAN.md"
+
+covering:
+  author: "Anirudh P.S Yadav"
+  role: "TEAM 1 Elderly UI"
+  note: >
+    Anirudh covered Harshit backend/infra and scaffolded Parth, Rehan, Ananya, and Srujna
+    slices for the SIH demo. Folder owners did not change.
 
 teams:
   - id: "TEAM_1"
@@ -14,11 +25,33 @@ teams:
 
 status:
   tasks:
-    total: 13
-    completed: 0
-    in_progress: 1
-    not_started: 12
+    total: 26
+    done: 8
+    partial: 13
+    not_started: 5
+    completed: 8
+    in_progress: 13
+    not_started_legacy_alias: 5
   checkpoints:
     total: 234
-    completed: 0
-  integration: "NOT_STARTED"
+    completed: null
+    note: "Checkpoint CP-18 merge to main has not happened. Work is on PR 5."
+  integration: "PARTIAL"
+
+honesty:
+  demoable_now:
+    - "Elderly PWA 5173 splash, PIN, home, four games, en/as"
+    - "Caregiver dashboard 5174 live sessions/charts with labeled demo fallback"
+    - "POST /game-sessions idempotent + personal-baseline analytics"
+  not_done:
+    - "Reminder CRUD APIs"
+    - "Memory upload APIs"
+    - "Hosted Supabase"
+    - "Background sync engine"
+    - "Voice/STT (Tier 2 Web Speech at most; Bhashini Tier 3)"
+    - "KT sessions (process, not product)"
+
+ports:
+  elderly: 5173
+  dashboard: 5174
+  api: 8000

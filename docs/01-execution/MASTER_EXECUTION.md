@@ -1,5 +1,9 @@
 # MASTER EXECUTION PLAN — SMRITI / SIH26003
 
+**Current phase (2026-08-30):** Phase 1, close the honesty loop. Living plan: `docs/05-project-management/NEXT_PLAN.md`. Status board: `docs/05-project-management/TEAM_STATUS.md`.
+
+Anirudh P.S Yadav covered Harshit backend/infra and scaffolded other slices on `feature/sih-2026` so the play-to-dashboard loop exists. Owners did not change. Covering is not a handoff.
+
 ## 1. Project Overview
 Smriti is an offline-first cognitive gaming, memory-assistance, reminiscence, and caregiver-monitoring platform for elderly dementia patients in North-East India (NER). It provides culturally familiar digital therapeutics without requiring constant internet access.
 
@@ -8,8 +12,8 @@ The MVP strictly focuses on 4 rule-based games, local Assamese/English support, 
 
 ## 3. Tier 1/2/3 Boundary
 - **Tier 1 (MUST BUILD):** Assamese/English toggle, 4 Cognitive Games, rule-based adaptive difficulty (staircase), Reminders, Reminiscence Gallery, Offline-first IndexedDB sync, Caregiver Dashboard, JWT Auth.
-- **Tier 2 (STRETCH):** Voice interaction demo, Caregiver email alerts, Manipuri language pack.
-- **Tier 3 (DO NOT BUILD):** Real-time multiplayer, RL/ML decline detection, Geofencing, Bhashini TTS.
+- **Tier 2 (STRETCH):** Voice/STT/TTS demo via Web Speech API (English/Hindi, "When is my medicine?"), caregiver email alerts, Manipuri language pack as architecture proof, PWA install prompt.
+- **Tier 3 (DO NOT BUILD):** Real-time multiplayer, RL/ML decline detection, Geofencing, Bhashini / AI4Bharat Assamese ASR-TTS, clinician portal.
 
 ## 4. Architecture Reference
 - **Frontend:** React + Vite + TypeScript (PWA for Elderly, SPA for Dashboard).
@@ -62,11 +66,12 @@ The MVP strictly focuses on 4 rule-based games, local Assamese/English support, 
 7. Content Packs (T3) → Reminiscence UI (T1)
 
 ## 11. Implementation Order
-1. Repository Scaffold (T0-INF-001)
-2. Design Tokens & Database Migrations (T3-DS-001, T1-BE-002)
-3. Backend APIs & Adaptive Engine (T1-BE-003, T2-AI-001)
-4. UI Scaffolds (T1-FE-001, T2-FE-001)
-5. Core Feature Integration & Offline Wiring (T3-OS-001)
+Follow `docs/05-project-management/NEXT_PLAN.md`. Do not skip to Phase 2 voice/STT or Phase 3 RL.
+
+1. Phase 0 already landed on this PR (see NEXT_PLAN).
+2. Phase 1: reminder/memory APIs, Parth takes dashboard, Rehan owns staircase, Ananya extends Dexie, Srujna verifies culture, linked demo seed, 10-minute judge path.
+3. Phase 2 only if Phase 1 is solid: Web Speech STT demo, PWA install prompt, KT recordings, optional Manipuri pack.
+4. Phase 3 is pitch-only.
 
 ## 12. Task IDs
 All work must map to an official MVP task ID. E.g., `T1-FE-001`. See `docs/05-project-management/task-registry.yaml`.
@@ -117,4 +122,4 @@ Code is merged, tests pass in CI, UI is accessible (48px targets), offline behav
 If an instruction is missing, a dependency is blocked, or a document conflicts, explicitly mark it `[DECISION REQUIRED]` and halt work. Do not guess. Escalate to Harshit.
 
 ## 25. Final MVP Checklist
-Tracked centrally in `docs/05-project-management/DEVELOPMENT_CHECKLIST.md`. SIH submission requires 100% completion of Tier 1 features with no hardcoded UI strings.
+Tracked centrally in `docs/05-project-management/DEVELOPMENT_CHECKLIST.md`. SIH submission requires honest Tier 1: play → persist → caregiver chart, plus real reminders/memories. Do not claim 100% while those APIs are missing. Voice/STT is not a Tier 1 gate.

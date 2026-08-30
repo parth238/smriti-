@@ -3,6 +3,8 @@
 ## 1. TEAM MISSION
 Build the robust backend foundation (PostgreSQL + FastAPI + Auth), establish the API contracts, and scaffold the Elderly PWA interface so that all other teams can integrate their features.
 
+**As of 2026-08-30:** Anirudh covered Harshit's backend/infra so PR 5 can demo. Harshit still owns `apps/backend/`. Anirudh owns elderly UX polish. Reminder and memory APIs are not done. See `docs/05-project-management/NEXT_PLAN.md`.
+
 ## 2. MEMBERS
 - Harshit Divekar (Lead)
 - Anirudh P.S Yadav
@@ -106,7 +108,10 @@ START MY WORK
 ```
 
 ## 22. FINAL TEAM CHECKLIST
-- [ ] Database Schema deployed and Alembic migrations clean.
-- [ ] JWT Auth implemented and tested.
-- [ ] Elderly PWA Scaffold running.
-- [ ] 4 Core Games playable online.
+- [x] Database schema in Alembic on this branch (Harshit must review; not hosted Supabase).
+- [x] JWT auth implemented and tested locally (Harshit must review).
+- [x] Elderly PWA scaffold running on 5173.
+- [x] 4 core games playable and persisting (Sequencing/Naming still need visual craft).
+- [ ] Reminder CRUD API (Harshit T1-BE-007).
+- [ ] Memory upload API (Harshit T1-BE-008).
+- [ ] Hosted production database (T0-INF-002).

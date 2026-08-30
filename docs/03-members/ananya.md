@@ -61,12 +61,15 @@ You map the backend API contracts (provided by Harshit) into your local Dexie Sc
 `apps/caregiver-dashboard/`
 
 ## 11 TASK ROADMAP
+As of 2026-08-30. Anirudh started Dexie, outbox, and `vite-plugin-pwa` so offline play could persist. Do not rewrite that start. Extend it. See NEXT_PLAN Phase 1.
+
 | TASK ID | TASK NAME | DEPENDENCY | STATUS |
 |---------|-----------|------------|--------|
-| T3-OS-001 | Initialize Dexie & IndexedDB Schema | T0-INF-001 | NOT_STARTED |
-| T3-OS-002 | Dexie Schema & Optimistic Writes | T3-OS-001 | NOT_STARTED |
-| T3-OS-003 | Sync Batch API & Idempotency | T1-BE-004 | NOT_STARTED |
-| T3-OS-004 | Background Sync & Service Worker | T3-OS-003 | NOT_STARTED |
+| T3-OS-001 | Initialize Dexie & IndexedDB Schema | T0-INF-001 | PARTIAL (sessions, outbox, reminders cache, paired) |
+| T3-OS-002 | Optimistic writes & outbox | T3-OS-001 | PARTIAL (`game_session` only) |
+| T3-OS-003 | Workbox & service worker | T3-OS-001 | PARTIAL (`vite-plugin-pwa`; polish yours) |
+| T3-OS-004 | Background sync engine | T3-OS-003 | NOT_STARTED (`online` event flush only) |
+| T3-OS-005 | i18n pipeline ownership | T1-FE-001 | PARTIAL (`en.json` / `as.json` exist; pipeline still yours) |
 
 ## 12 BRANCH SETUP
 ```bash
@@ -120,4 +123,4 @@ Accidental commit to main? `git reset --hard HEAD~1`, checkout branch, cherry-pi
 App boots with no network. Games write to Dexie. Connection restore flushes Dexie to backend without generating duplicate rows.
 
 ## 22 FIRST TASK
-**T3-OS-001:** Initialize Dexie & IndexedDB Schema (Once Harshit merges T0-INF-001).
+**Now:** Extend `apps/elderly-app/src/db/`. Full schema for reminders and memories. Outbox kinds beyond games. Workbox polish. Reminder client scheduling. i18n missing-key tests. Schedule KT-DEXIE with Anirudh.

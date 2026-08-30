@@ -62,11 +62,16 @@ You require the `VITE_API_BASE_URL` from Harshit to connect to the FastAPI backe
 `apps/elderly-app/`
 
 ## 11 TASK ROADMAP
+As of 2026-08-30. Anirudh scaffolded `apps/caregiver-dashboard/` for the demo. The dashboard is yours. Take it over. Do not throw away the labeled live/demo split. See NEXT_PLAN Phase 1.
+
 | TASK ID | TASK NAME | DEPENDENCY | STATUS |
 |---------|-----------|------------|--------|
-| T2-FE-001 | Scaffold Caregiver Dashboard | T0-INF-001 | NOT_STARTED |
-| T2-FE-002 | Caregiver Dashboard Auth UI | T1-BE-003, T2-FE-001 | NOT_STARTED |
-| T2-FE-003 | Dashboard Analytics UI | T2-AI-003, T2-FE-001 | NOT_STARTED |
+| T2-FE-001 | Scaffold Caregiver Dashboard | T0-INF-001 | DONE (Anirudh covering; you take over 5174) |
+| T2-FE-002 | Caregiver Dashboard Auth UI | T1-BE-003, T2-FE-001 | PARTIAL (API login; labeled demo if API down; no register UI) |
+| T2-FE-003 | Patient overview | T2-AI-003, T2-FE-001 | PARTIAL (live + labeled demo; no patient switcher) |
+| T2-FE-004 | Analytics charts | T2-AI-003 | PARTIAL (Recharts vs personal baseline; polish yours) |
+| T2-FE-005 | Reminder & memory management | T1-BE-007, T1-BE-008 | NOT_STARTED (demo.ts only; blocked on APIs) |
+| T2-FE-006 | Alerts feed | T2-FE-005 | NOT_STARTED (demo missed-reminder copy) |
 
 ## 12 BRANCH SETUP
 ```bash
@@ -120,4 +125,4 @@ Accidental commit to main? `git reset --hard HEAD~1`, checkout branch, cherry-pi
 Vite builds without TS errors. Dashboard can log in, select a patient, view session history, view analytics charts, and set a reminder.
 
 ## 22 FIRST TASK
-**T2-FE-001:** Scaffold Caregiver Dashboard (Once Harshit merges T0-INF-001).
+**Now:** Own `apps/caregiver-dashboard/`. Chart polish and copy with no diagnostic claims. When Harshit lands T1-BE-007/008, replace Reminders/Memories/Alerts demo data with API calls. Schedule KT-DASH with Anirudh.

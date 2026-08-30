@@ -3,6 +3,7 @@
 ## START HERE
 - **AI Agent:** → `01-execution/AI_AGENT_BOOT_PROTOCOL.md` *(The definitive initialization protocol for AI assistants).*
 - **Project Master:** → `01-execution/MASTER_EXECUTION.md` *(The complete operational playbook that ties docs to teams).*
+- **Who does what next (2026-08-30):** → `05-project-management/NEXT_PLAN.md` and `05-project-management/TEAM_STATUS.md`.
 
 ## Source of Truth
 *These documents define what is being built.*
@@ -48,12 +49,13 @@
 - `04-github-and-workflow/CONTRIBUTING.md`: Contributor rules.
 
 ## Project Management
-*Living tracking documents.*
-- `01-execution/DEVELOPMENT_CHECKLIST.md`: Master checklist of all MVP tasks.
-- `05-project-management/TEAM_STATUS.md`: Real-time state machine of who is working on what.
+*Living tracking documents. Snapshot 2026-08-30: Anirudh covered other folders for the SIH demo. Owners did not change.*
+- `01-execution/DEVELOPMENT_CHECKLIST.md`: Master checklist of all MVP tasks (honest PARTIAL notes).
+- `05-project-management/NEXT_PLAN.md`: Phase 0 to 3 plan, KT checklist, STT/voice placement.
+- `05-project-management/TEAM_STATUS.md`: Who works on what next, plus what is actually landed.
 - `05-project-management/DECISION_LOG.md`: Living ADR tracking recent architectural decisions.
 - `05-project-management/INTEGRATION_CHECKLIST.md`: Cross-service testing list.
-- `05-project-management/CHANGE_IMPACT.md`: Change impact analysis records.
+- `05-project-management/CHANGE_IMPACT.md`: Covering-land impact and blockers.
 
 ## Reference
 *Supporting research (Do not treat as primary requirements).*

@@ -38,7 +38,7 @@ Tiering is mandatory reading before anyone builds anything. **Tier 1 = MVP (buil
 
 ## TIER 2 — Stretch (build if Tier 1 is done early)
 
-- [ ] Basic voice interaction demo using Web Speech API (English/Hindi) — "When is my medicine?" → spoken answer
+- [ ] Basic voice interaction demo (STT + TTS) using Web Speech API (English/Hindi) — "When is my medicine?" → spoken answer. Not Assamese. Not Bhashini. Flag: `VITE_ENABLE_VOICE_DEMO`.
 - [ ] Simple arithmetic game + path/maze (visuospatial) game — expand from 4 to 6 games
 - [ ] Caregiver push/email alerts (not just in-dashboard)
 - [ ] Trend graphs with simple anomaly highlighting (e.g., "reaction time +18% vs baseline" banner)
@@ -67,7 +67,7 @@ Tiering is mandatory reading before anyone builds anything. **Tier 1 = MVP (buil
 |---|---|
 | (a) games: memory/attention/routine/pattern | 4 core games |
 | (b) AI adapts difficulty | Rule-based staircase engine (v1), roadmap to RL (v2+) |
-| (c) multilingual + voice | Assamese/English toggle (MVP); voice demo (stretch); full NER voice (roadmap) |
+| (c) multilingual + voice | Assamese/English toggle (MVP); voice/STT demo via Web Speech API EN/HI (stretch Tier 2); full NER voice via Bhashini/AI4Bharat (roadmap Tier 3) |
 | (d) cultural themes/visuals/sounds/regional language | Reminiscence gallery + localized content packs |
 | (e) reminders | Reminder module (medicine/hydration/activities/appointments) |
 | (f) caregiver dashboards | Caregiver Dashboard + analytics |

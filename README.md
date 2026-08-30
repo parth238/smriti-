@@ -15,9 +15,11 @@ copy .env.example .env
 uvicorn app.main:app --reload --port 8000
 ```
 
-Elderly app (after T1-FE-001): `cd apps/elderly-app && npm ci && npm run dev` on port 5173.
+Elderly app (T1-FE-001+): `cd apps/elderly-app && npm ci && npm run dev` on port 5173.
 
-Caregiver dashboard (after T2-FE-001): `cd apps/caregiver-dashboard && npm ci && npm run dev` on port 5174.
+Caregiver dashboard (T2-FE-001): `cd apps/caregiver-dashboard && npm ci && npm run dev` on port 5174.
+
+Who does what next: `docs/05-project-management/NEXT_PLAN.md`. Status: `docs/05-project-management/TEAM_STATUS.md`.
 
 ## Repository Structure
 ```
