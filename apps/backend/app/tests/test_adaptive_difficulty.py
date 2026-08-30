@@ -3,6 +3,7 @@ from app.services.adaptive_difficulty import (
     MAX_DIFFICULTY,
     MIN_DIFFICULTY,
     next_difficulty,
+    get_difficulty_summary,
 )
 
 
@@ -70,19 +71,17 @@ def test_mid_range_breaks_streak() -> None:
     assert next_difficulty(3, [40, 60, 40]) == 3
 
 
-from app.services.adaptive_difficulty import get_difficulty_summary
-
 def test_get_difficulty_summary() -> None:
     game_accuracies = {
-        "game1": [80, 80, 80], # should level up from default (3) -> 4
-        "game2": [40, 40],     # should level down from current (4) -> 3
-        "game3": [60, 60],     # should stay at default (3) -> 3
+        "game1": [80, 80, 80],  # should level up from default (3) -> 4
+        "game2": [40, 40],  # should level down from current (4) -> 3
+        "game3": [60, 60],  # should stay at default (3) -> 3
     }
     current_diffs = {
         "game2": 4
         # game1 and game3 will use default
     }
-    
+
     summary = get_difficulty_summary(game_accuracies, current_diffs)
     assert summary["game1"] == 4
     assert summary["game2"] == 3
