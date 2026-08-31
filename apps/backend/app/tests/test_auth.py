@@ -30,7 +30,12 @@ def test_register_rejects_short_password() -> None:
 def test_register_validation_error_shape() -> None:
     response = client.post(
         "/api/v1/auth/caregiver/register",
-        json={"name": "Test", "phone": "9876543210", "email": "bad", "password": "short"},
+        json={
+            "name": "Test",
+            "phone": "9876543210",
+            "email": "bad",
+            "password": "short",
+        },
     )
     assert response.status_code == 422
     body = response.json()
