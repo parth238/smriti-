@@ -6,19 +6,11 @@ import { GAME_IDS } from "../api/games";
 import { db } from "../db/dexie";
 import { enqueueSession, saveLocalSession } from "../db/syncOutbox";
 import { notifyAdaptiveRefresh } from "../lib/adaptiveEvents";
+import { markActiveGameCompleted } from "../lib/gameSessionRegistry";
 import { rememberGame } from "../store/sessionPrefs";
+import type { GameSessionInput } from "../types/gameSession";
 
-export type GameSessionInput = {
-  gameType: string;
-  gamePath: string;
-  difficulty: number;
-  accuracy: number;
-  reactionTimeMs: number;
-  errors: number;
-  hintsUsed?: number;
-  sessionDurationSec: number;
-  completedOrQuit?: "completed" | "quit";
-};
+export type { GameSessionInput } from "../types/gameSession";
 
 export type SaveState = "idle" | "saving" | "saved" | "queued";
 
@@ -72,6 +64,10 @@ export function useGameSession() {
 
     await saveLocalSession(session);
     notifyAdaptiveRefresh(input.gameType);
+    markActiveGameCompleted();
+    window.sessionStorage.setItem("smriti.lastDifficulty", String(session.difficulty));
+    window.sessionStorage.setItem("smriti.lastGameType", session.gameType);
+    window.sessionStorage.setItem("smriti.lastAccuracy", String(session.accuracy));
     window.sessionStorage.setItem(
       "smriti.lastSave",
       navigator.onLine ? "saved" : "queued",

@@ -38,7 +38,17 @@ export default defineConfig({
         globPatterns: ["**/*.{js,css,html,svg,png,ico,json,woff2}"],
         runtimeCaching: [
           {
-            urlPattern: ({ request }) => request.destination === "document",
+            urlPattern: ({ url }) =>
+              url.pathname.startsWith("/uploads/") || url.pathname.startsWith("/media/"),
+            handler: "CacheFirst",
+            options: {
+              cacheName: "smriti-family-photos",
+              expiration: { maxEntries: 48, maxAgeSeconds: 60 * 60 * 24 * 30 },
+            },
+          },
+          {
+            urlPattern: ({ request }) =>
+              request.destination === "document",
             handler: "NetworkFirst",
             options: {
               cacheName: "smriti-pages",
