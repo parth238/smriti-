@@ -27,7 +27,10 @@ cd apps/elderly-app && npm ci && npm run dev          # :5173
 cd apps/caregiver-dashboard && npm ci && npm run dev  # :5174
 ```
 
-Set `VITE_API_URL=http://localhost:8000/api/v1` in elderly/caregiver `.env`.
+Set `VITE_API_URL=http://localhost:8000/api/v1` in elderly/caregiver `.env`.  
+Caregiver only: `VITE_ELDERLY_APP_URL=http://localhost:5173` (Story Mode CTA links).
+
+**Public story (no login):** caregiver app [`/story`](http://localhost:5174/story) — hook, problem, solution, two-app honesty, PDF checklist.
 
 ## Judge demo logins
 
@@ -60,6 +63,8 @@ PDF reference: [`docs/SIH-2026-problem-statement.pdf`](docs/SIH-2026-problem-sta
 | Local reminder notifications | Android PWA permission test |
 | Offline fonts + photo cache + Background Sync tag | Airplane-mode demo |
 | Adaptive level + hints + quit tracking | Hero journey rehearsal |
+| **Story Mode** at `/story` (public pitch page) | Set `VITE_ELDERLY_APP_URL` on Vercel |
+| Caregiver browser notifications (missed reminders) | Allow notification permission in demo |
 | `render.yaml` deploy blueprint | Supabase + Vercel URLs |
 
 Playtest template: [`docs/playtest/PLAYTEST.md`](docs/playtest/PLAYTEST.md)

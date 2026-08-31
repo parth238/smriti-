@@ -6,6 +6,7 @@ import { AppShell } from "./layout/AppShell";
 import { Alerts } from "./pages/Alerts";
 import { Analytics } from "./pages/Analytics";
 import { Login } from "./pages/Login";
+import { StoryMode } from "./pages/StoryMode";
 import { Memories } from "./pages/Memories";
 import { Overview } from "./pages/Overview";
 import { Reminders } from "./pages/Reminders";
@@ -22,6 +23,7 @@ function Gate({ children }: { children: ReactNode }) {
 export function App() {
   return (
     <Routes>
+      <Route path="/story" element={<StoryMode />} />
       <Route path="/login" element={<Login />} />
       <Route
         path="/"

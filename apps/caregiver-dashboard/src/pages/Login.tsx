@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import type { FormEvent } from "react";
 
 import { caregiverLogin } from "../api/auth";
@@ -30,7 +30,10 @@ export function Login() {
     <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6">
       <p className="text-3xl font-semibold">Smriti</p>
       <div className="gamosa-line my-4" />
-      <h1 className="text-xl font-semibold">Caregiver sign in</h1>
+      <Link to="/story" className="text-sm text-tea-garden hover:underline">
+        Read our story first →
+      </Link>
+      <h1 className="mt-6 text-xl font-semibold">Caregiver sign in</h1>
       <p className="mt-2 text-mist-blue">
         This desk is for family. The elderly companion stays on the phone app.
       </p>

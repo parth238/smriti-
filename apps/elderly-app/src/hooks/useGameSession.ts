@@ -8,18 +8,9 @@ import { enqueueSession, saveLocalSession } from "../db/syncOutbox";
 import { notifyAdaptiveRefresh } from "../lib/adaptiveEvents";
 import { markActiveGameCompleted } from "../lib/gameSessionRegistry";
 import { rememberGame } from "../store/sessionPrefs";
+import type { GameSessionInput } from "../types/gameSession";
 
-export type GameSessionInput = {
-  gameType: string;
-  gamePath: string;
-  difficulty: number;
-  accuracy: number;
-  reactionTimeMs: number;
-  errors: number;
-  hintsUsed?: number;
-  sessionDurationSec: number;
-  completedOrQuit?: "completed" | "quit";
-};
+export type { GameSessionInput } from "../types/gameSession";
 
 export type SaveState = "idle" | "saving" | "saved" | "queued";
 

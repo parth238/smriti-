@@ -357,7 +357,7 @@ Each game records: user_id, game_type, difficulty, accuracy, reaction_time, erro
 | 7 | Settings Assamese + voice note | “Honest about English STT limits.” |
 | 8 | Mark reminder done offline optional | “Dexie outbox, not localStorage.” |
 | 9 | Caregiver refresh charts | “Peace of mind in 30 seconds.” |
-| 10 | Show §1 scores | “6/10 overall; 7.5/10 local demo; hosted URL pending.” |
+| 10 | Show §1 scores + `/story` | “6/10 overall; public story at /story; hosted URL pending.” |
 
 ---
 
@@ -368,7 +368,11 @@ Each game records: user_id, game_type, difficulty, accuracy, reaction_time, erro
 | 1 | **Public judge URL** | `render.yaml`, `vercel.json`, `.env.example` | Harshit: Supabase + Render; Parth: Vercel `VITE_API_URL` |
 | 2 | **Bhashini Assamese TTS** | `POST /api/v1/voice/assamese-tts`, hybrid `CompanionVoice` | Rehan: add `BHASHINI_API_KEY` + service ID on Render |
 | 3 | **Reminder loop** | `reminderScheduler.ts`, live `Alerts.tsx` | Ananya: test notification permission on Android PWA |
-| 4 | **Hero journey** | Memory hint, adaptive level on result, face recall demo | Srujna: rehearse + Assamese copy QA |
+| 4 | **Hero journey** | Memory hint, adaptive level, face recall demo, **Story Mode `/story`** | Srujna: rehearse + Assamese copy QA |
+
+**Story Mode** (`apps/caregiver-dashboard/src/pages/StoryMode.tsx`) — public scroll narrative at **`/story`** (no login). Sections: hook → problem → solution → two-app split (elderly PWA vs caregiver web) → honest PDF matrix → CTA to elderly URL + caregiver login. Uses `StorySection` + IntersectionObserver fade-in; gamosa-themed CSS in `styles.css`. Set `VITE_ELDERLY_APP_URL` on Vercel so “Try elderly app” opens prod PWA.
+
+**Caregiver notifications** — `useCaregiverNotifications` polls live reminders every 60s when signed in; fires browser `Notification` for missed items (not medical alerts).
 | 5 | **Offline stunt** | No Google Fonts CDN; `/uploads` CacheFirst; Background Sync tag register | Ananya: airplane-mode rehearsal on phone |
 | 6 | **Playtest video** | [`docs/playtest/PLAYTEST.md`](playtest/PLAYTEST.md) template | Srujna: record 60s clip + quote in README |
 
@@ -379,7 +383,7 @@ Each game records: user_id, game_type, difficulty, accuracy, reaction_time, erro
 # 2. Render: connect repo, use render.yaml, set env vars
 # 3. alembic upgrade head && python scripts/seed_judge_demo.py on prod DB
 # 4. Vercel elderly: root apps/elderly-app, VITE_API_URL=https://YOUR-API/api/v1
-# 5. Vercel caregiver: root apps/caregiver-dashboard, same VITE_API_URL
+# 5. Vercel caregiver: root apps/caregiver-dashboard, VITE_API_URL + VITE_ELDERLY_APP_URL=https://elderly.vercel.app
 # 6. ALLOWED_ORIGINS=https://YOUR-ELDERLY.vercel.app,https://YOUR-CG.vercel.app
 # 7. Bhashini keys on API → Settings shows “Assamese voice (Bhashini) is active”
 ```

@@ -1,4 +1,4 @@
-import type { GameSessionInput } from "../hooks/useGameSession";
+import type { GameSessionInput } from "../types/gameSession";
 
 type ActiveGame = {
   gameType: string;

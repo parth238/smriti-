@@ -11,9 +11,7 @@ from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
-BHASHINI_PIPELINE_URL = (
-    "https://dhruva-api.bhashini.gov.in/services/inference/pipeline"
-)
+BHASHINI_PIPELINE_URL = "https://dhruva-api.bhashini.gov.in/services/inference/pipeline"
 
 
 def bhashini_configured() -> bool:
