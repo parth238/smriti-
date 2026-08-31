@@ -1,6 +1,16 @@
 from functools import lru_cache
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+WEAK_JWT_SECRETS = frozenset(
+    {
+        "replace-with-a-32-byte-random-string",
+        "changeme",
+        "secret",
+        "ci-test-secret-do-not-use-in-prod",
+    }
+)
 
 
 class Settings(BaseSettings):
@@ -30,6 +40,18 @@ class Settings(BaseSettings):
     login_lockout_minutes: int = 15
 
     upload_dir: str = "uploads"
+
+    @field_validator("jwt_secret_key")
+    @classmethod
+    def jwt_secret_must_be_strong(cls, value: str, info) -> str:
+        env = info.data.get("env", "development")
+        if env == "production" and (
+            value in WEAK_JWT_SECRETS or len(value.strip()) < 32
+        ):
+            raise ValueError(
+                "JWT_SECRET_KEY must be at least 32 characters and not a placeholder in production"
+            )
+        return value
 
     @property
     def allowed_origins_list(self) -> list[str]:

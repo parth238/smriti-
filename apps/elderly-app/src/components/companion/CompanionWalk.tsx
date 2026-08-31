@@ -2,13 +2,18 @@ import { GAME_ASSETS } from "../../data/gameAssets";
 
 type WalkProps = {
   moving?: boolean;
+  speaking?: boolean;
 };
 
-export function CompanionWalk({ moving = true }: WalkProps) {
+export function CompanionWalk({ moving = true, speaking = false }: WalkProps) {
   const walkClass = moving ? "companion-walk" : "";
+  const speakClass = speaking ? "companion-speaking" : "";
 
   return (
-    <div className={`${walkClass} relative w-32 companion-sway`} aria-hidden="true">
+    <div
+      className={`${walkClass} ${speakClass} relative w-32 companion-sway`}
+      aria-hidden="true"
+    >
       <img
         src={GAME_ASSETS.grandmother}
         alt=""

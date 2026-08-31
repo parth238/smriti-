@@ -5,6 +5,7 @@ import { registerSW } from "virtual:pwa-register";
 
 import { App } from "./App";
 import { LanguageProvider } from "./context/LanguageContext";
+import { CompanionVoiceProvider } from "./voice/CompanionVoice";
 import "./index.css";
 
 registerSW({ immediate: true });
@@ -17,9 +18,11 @@ if (!root) {
 createRoot(root).render(
   <StrictMode>
     <LanguageProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <CompanionVoiceProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </CompanionVoiceProvider>
     </LanguageProvider>
   </StrictMode>,
 );

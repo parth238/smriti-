@@ -67,7 +67,9 @@ def process_batch(
 def _process_game_session(db: Session, user_id: UUID, payload: dict[str, Any]) -> UUID:
     client_id = payload.get("client_generated_id")
     if not client_id:
-        raise ValidationError("client_generated_id is required", field="client_generated_id")
+        raise ValidationError(
+            "client_generated_id is required", field="client_generated_id"
+        )
     played_at_raw = payload.get("played_at")
     played_at = (
         datetime.fromisoformat(played_at_raw.replace("Z", "+00:00"))

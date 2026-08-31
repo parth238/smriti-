@@ -8,7 +8,7 @@ import { OfflineMark } from "../components/OfflineMark";
 import { useI18n } from "../context/LanguageContext";
 import { useHomeReminder } from "../hooks/useHomeReminder";
 import { useNow } from "../hooks/useNow";
-import { greetingKey } from "../store/demoStore";
+import { greetingKey } from "../store/sessionPrefs";
 
 export function Home() {
   const { tx, language } = useI18n();

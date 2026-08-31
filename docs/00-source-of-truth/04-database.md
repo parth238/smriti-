@@ -176,15 +176,27 @@ sync_events (audit/log of offline sync batches)
 
 ## 4. Client-Side (IndexedDB via Dexie) Mirror
 
+**Implementation:** `apps/elderly-app/src/db/dexie.ts` (database name `smriti_elderly`).  
+**Handoff FAQ for offline owner:** `docs/05-project-management/ANANYA_OFFLINE_FAQ.md`
+
+Doc table names below use `_local` suffix for clarity vs Postgres; code uses shorter names (`sessions` = `game_sessions_local`, etc.).
+
 ```js
-db.version(1).stores({
-  game_sessions_local: '++localId, client_generated_id, synced, played_at',
-  reminders_local: 'id, scheduled_time',
-  memory_items_local: 'id, category',
-  sync_outbox: '++id, table_name, payload, created_at'
+// dexie.ts — canonical as of 2026-08-31 (version 3)
+db.version(3).stores({
+  sessions:      '++id, clientGeneratedId, userId, gameType, playedAt, synced',
+  outbox:        '++id, kind, createdAt',
+  reminders:     'id, scheduledTime, updatedAt',
+  paired:        'id, phone',
+  memoryItems:   'id, userId, cachedAt',
 });
 ```
-Sync outbox pattern: every offline write appends a row here; background sync worker POSTs the outbox in order, marks entries synced/cleared on server ack.
+
+**Outbox kinds** (see `OutboxItem` in `dexie.ts`): `game_session`, `reminder_ack`. Maps to `/sync/batch` types in doc 05 §6.
+
+**Web storage (NOT for reminders):** JWT and pairing flags live in `sessionStorage` + `localStorage` via `src/lib/authStorage.ts`. Device id in `localStorage` (`smriti.deviceId`). UI prefs only elsewhere — never reminder payloads.
+
+Sync outbox pattern: every offline write appends a row to `outbox`; `flushOutbox()` POSTs to `/sync/batch` in order, clears on server ack. Triggered on `online` by `useOfflineSync`.
 
 ## 5. Data Retention & Privacy Notes
 - PII (name, phone, photos) encrypted at rest (managed by hosting provider, e.g. Supabase's encryption) + access controlled via RBAC.

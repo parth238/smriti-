@@ -24,7 +24,6 @@ def list_reminders(
 
 
 def next_reminder(db: Session, user_id: UUID) -> Reminder | None:
-    now = datetime.now(timezone.utc)
     return (
         db.query(Reminder)
         .filter(
@@ -106,7 +105,9 @@ def acknowledge_reminder(
     if reminder is None:
         raise NotFoundError("Reminder was not found")
     if reminder.user_id != user_id:
-        raise ValidationError("This reminder does not belong to you", field="reminder_id")
+        raise ValidationError(
+            "This reminder does not belong to you", field="reminder_id"
+        )
     reminder.last_acknowledged_at = datetime.now(timezone.utc)
     db.commit()
     db.refresh(reminder)

@@ -2,13 +2,15 @@ import { GAME_ASSETS } from "../../data/gameAssets";
 
 type CompanionSitProps = {
   variant?: "grandmother" | "grandfather";
+  speaking?: boolean;
 };
 
-export function CompanionSit({ variant = "grandmother" }: CompanionSitProps) {
+export function CompanionSit({ variant = "grandmother", speaking = false }: CompanionSitProps) {
   const src = variant === "grandfather" ? GAME_ASSETS.grandfather : GAME_ASSETS.grandmother;
+  const speakClass = speaking ? "companion-speaking" : "";
 
   return (
-    <div className="companion-enter w-36 companion-sit-breathe" aria-hidden="true">
+    <div className={`companion-enter w-36 companion-sit-breathe ${speakClass}`} aria-hidden="true">
       <img
         src={src}
         alt=""

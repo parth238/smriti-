@@ -1,18 +1,7 @@
 import { API_BASE } from "../api/auth";
 import { GAME_IDS } from "../api/games";
+import { deviceId } from "../lib/authStorage";
 import { db, type LocalGameSession, type OutboxItem, type ReminderAckPayload } from "./dexie";
-
-const DEVICE_KEY = "smriti.deviceId";
-
-function deviceId(): string {
-  const existing = window.localStorage.getItem(DEVICE_KEY);
-  if (existing) {
-    return existing;
-  }
-  const created = crypto.randomUUID();
-  window.localStorage.setItem(DEVICE_KEY, created);
-  return created;
-}
 
 export async function enqueueSession(session: LocalGameSession): Promise<void> {
   await db.outbox.add({

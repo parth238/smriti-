@@ -22,6 +22,22 @@ ALLOWED_MEDIA = {"image/jpeg", "image/png", "image/webp", "image/gif"}
 ALLOWED_CATEGORIES = {"family", "cultural", "personal"}
 MAX_UPLOAD_BYTES = 5 * 1024 * 1024
 
+IMAGE_SIGNATURES: dict[str, tuple[bytes, ...]] = {
+    "image/jpeg": (b"\xff\xd8\xff",),
+    "image/png": (b"\x89PNG\r\n\x1a\n",),
+    "image/gif": (b"GIF87a", b"GIF89a"),
+    "image/webp": (b"RIFF",),
+}
+
+
+def _content_matches_media(content: bytes, media_type: str) -> bool:
+    signatures = IMAGE_SIGNATURES.get(media_type)
+    if not signatures:
+        return False
+    if media_type == "image/webp":
+        return content.startswith(b"RIFF") and content[8:12] == b"WEBP"
+    return any(content.startswith(sig) for sig in signatures)
+
 PACK_LANGUAGE_MAP = {
     "as": "assamese",
     "assamese": "assamese",
@@ -134,9 +150,15 @@ async def save_upload(file: UploadFile, *, user_id: UUID) -> tuple[str, str]:
         raise ValidationError("Image must be 5 MB or smaller", field="file")
     if not content:
         raise ValidationError("Upload file is empty", field="file")
-    media_type = file.content_type or mimetypes.guess_type(file.filename or "")[0] or "image/jpeg"
+    media_type = (
+        file.content_type
+        or mimetypes.guess_type(file.filename or "")[0]
+        or "image/jpeg"
+    )
     if media_type not in ALLOWED_MEDIA:
         raise ValidationError("Only image uploads are supported", field="file")
+    if not _content_matches_media(content, media_type):
+        raise ValidationError("File content does not match image type", field="file")
     ext = Path(file.filename or "photo.jpg").suffix.lower()
     if ext not in {".jpg", ".jpeg", ".png", ".webp", ".gif"}:
         ext = ".jpg"

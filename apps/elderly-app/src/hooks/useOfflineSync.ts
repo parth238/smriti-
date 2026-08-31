@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 
 import { flushOutbox, pendingOutboxCount } from "../db/syncOutbox";
+import { readAccessToken } from "../lib/authStorage";
 
-const ACCESS_KEY = "smriti.access";
 const RETRY_MS = [5000, 15000, 45000, 120000];
 
-export function readAccessToken(): string | null {
-  return window.sessionStorage.getItem(ACCESS_KEY) ?? window.localStorage.getItem(ACCESS_KEY);
-}
+export { readAccessToken } from "../lib/authStorage";
 
 export function useOfflineSync() {
   const [online, setOnline] = useState(() =>

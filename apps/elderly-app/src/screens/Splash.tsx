@@ -5,6 +5,7 @@ import { CompanionWalk } from "../components/companion/CompanionWalk";
 import { HillScene } from "../components/HillScene";
 import { LargeButton } from "../components/LargeButton";
 import { useI18n } from "../context/LanguageContext";
+import { useCompanionVoice, useSpeakOnMount } from "../voice/CompanionVoice";
 
 function goNext(navigate: ReturnType<typeof useNavigate>) {
   window.sessionStorage.setItem("smriti.splash", "1");
@@ -15,6 +16,8 @@ function goNext(navigate: ReturnType<typeof useNavigate>) {
 export function Splash() {
   const navigate = useNavigate();
   const { tx } = useI18n();
+  const { isSpeaking } = useCompanionVoice();
+  useSpeakOnMount("splashWelcome", 900);
 
   useEffect(() => {
     const timer = window.setTimeout(() => goNext(navigate), 4200);
@@ -26,7 +29,7 @@ export function Splash() {
       <HillScene className="splash-sky hill-drift" sun />
       <div className="splash-mist" aria-hidden="true" />
       <div className="companion-track splash-path">
-        <CompanionWalk moving />
+        <CompanionWalk moving speaking={isSpeaking} />
       </div>
       <div className="relative z-10">
         <p className="text-body text-mist-blue">{tx("splashRegion")}</p>

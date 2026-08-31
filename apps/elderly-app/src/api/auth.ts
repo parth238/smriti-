@@ -1,3 +1,5 @@
+import { readAccessToken as readStoredToken, readPairedFlag, readUserId } from "../lib/authStorage";
+
 export const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:8000/api/v1";
 
 export type ElderlyLoginOk = {
@@ -14,7 +16,7 @@ export type ElderlyLoginFail = {
 
 export type ElderlyLoginResult = ElderlyLoginOk | ElderlyLoginFail;
 
-function readAccessToken(data: unknown): string | undefined {
+function parseAccessToken(data: unknown): string | undefined {
   if (typeof data !== "object" || data === null) {
     return undefined;
   }
@@ -57,7 +59,7 @@ export async function elderlyLogin(phone: string, pin: string): Promise<ElderlyL
       return { ok: false, reason: "rejected" };
     }
     const data: unknown = await response.json();
-    const accessToken = readAccessToken(data);
+    const accessToken = parseAccessToken(data);
     if (!accessToken) {
       return { ok: false, reason: "rejected" };
     }
@@ -65,10 +67,9 @@ export async function elderlyLogin(phone: string, pin: string): Promise<ElderlyL
     return { ok: true, accessToken, userId, offline: false };
   } catch {
     // Offline: only succeed if a previous online pairing exists for this device.
-    const pairedFlag = window.localStorage.getItem("smriti.paired");
-    const storedUser = window.localStorage.getItem("smriti.userId");
-    const storedToken = window.localStorage.getItem("smriti.access");
-    if (pairedFlag === "1" && storedUser && storedToken) {
+    const storedUser = readUserId();
+    const storedToken = readStoredToken();
+    if (readPairedFlag() && storedUser && storedToken) {
       return { ok: true, accessToken: storedToken, userId: storedUser, offline: true };
     }
     return { ok: false, reason: "offline_unpaired" };

@@ -1,4 +1,5 @@
 import { cacheFamilyMemories, readCachedFamilyMemories } from "../db/memoryCache";
+import { readAccessToken, readUserId } from "../lib/authStorage";
 import { API_BASE } from "./auth";
 
 export type ApiMemoryItem = {
@@ -16,14 +17,6 @@ export type ApiMemoryItem = {
   created_at: string;
 };
 
-function readToken(): string | null {
-  return window.sessionStorage.getItem("smriti.access") ?? window.localStorage.getItem("smriti.access");
-}
-
-function readUserId(): string | null {
-  return window.localStorage.getItem("smriti.userId");
-}
-
 export function apiFileOrigin(): string {
   return API_BASE.replace(/\/api\/v1\/?$/, "");
 }
@@ -37,7 +30,7 @@ export function resolveMediaUrl(mediaUrl: string): string {
 }
 
 export async function loadFamilyMemories(): Promise<ApiMemoryItem[]> {
-  const token = readToken();
+  const token = readAccessToken();
   const userId = readUserId();
   if (!userId) {
     return [];

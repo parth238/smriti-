@@ -22,10 +22,10 @@ export function useReminders() {
 
   const markDone = useCallback(
     async (id: string) => {
-      const rows = await acknowledgeReminder(id);
-      setItems(rows.length ? rows : await loadRemindersFromCache());
+      const rows = await acknowledgeReminder(id, language);
+      setItems(rows.length ? rows : await loadRemindersFromCache(language));
     },
-    [],
+    [language],
   );
 
   return { items, loading, markDone, refresh };

@@ -3,7 +3,7 @@ import { CompanionSit } from "../components/companion/CompanionSit";
 import { LargeButton } from "../components/LargeButton";
 import { useI18n } from "../context/LanguageContext";
 import { lastSaveNote } from "../hooks/useGameSession";
-import { lastGamePath } from "../store/demoStore";
+import { lastGamePath } from "../store/sessionPrefs";
 import { Link } from "react-router-dom";
 
 export function GameResult() {

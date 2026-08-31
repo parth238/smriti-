@@ -1,10 +1,14 @@
-from datetime import datetime
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
 from sqlalchemy.orm import Session
 
-from app.core.deps import get_current_principal, require_caregiver, verify_caregiver_linked, verify_user_access
+from app.core.deps import (
+    get_current_principal,
+    require_caregiver,
+    verify_caregiver_linked,
+    verify_user_access,
+)
 from app.core.errors import NotFoundError
 from app.db.session import get_db
 from app.schemas.memories import (
@@ -56,7 +60,9 @@ def get_memory_items(
 
 
 @router.get("/memory-items/cultural-pack", response_model=CulturalPackResponse)
-def cultural_pack(language: str = Query("as", min_length=2, max_length=12)) -> CulturalPackResponse:
+def cultural_pack(
+    language: str = Query("as", min_length=2, max_length=12)
+) -> CulturalPackResponse:
     data = load_cultural_pack(language)
     items = [
         CulturalPackItem(

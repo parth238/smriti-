@@ -122,7 +122,11 @@ Accidental commit to main? `git reset --hard HEAD~1`, checkout branch, cherry-pi
 ## 21 DEFINITION OF DONE
 App boots with no network. Games write to Dexie. Connection restore flushes Dexie to backend without generating duplicate rows.
 
-## 22 FIRST TASK
+## 22 OFFLINE FAQ (READ FIRST)
+**Canonical Dexie vs localStorage answers:** [`docs/05-project-management/ANANYA_OFFLINE_FAQ.md`](../05-project-management/ANANYA_OFFLINE_FAQ.md)  
+Reminders belong in Dexie only — not `localStorage`. Auth tokens in web storage are intentional.
+
+## 23 FIRST TASK
 
 **Foundation (2026-08-31):** Dexie schema, outbox, Workbox precache of game PNGs (Anirudh wired). See `CONTRIBUTION_LEDGER.md`.
 

@@ -21,6 +21,7 @@ See `CONTRIBUTION_LEDGER.md` for the full narrative.
 | Caregiver dashboard | PARTIAL — live API + labeled demo | Parth polish, alerts, deploy |
 | Offline-first PWA | PARTIAL — Workbox precaches games + content packs | Ananya Background Sync tag |
 | Multilingual (Assamese) | PARTIAL — en/as on elderly; Assamese strings corrected 2026-08-31 | Srujna community playtest |
+| Voice (Web Speech TTS/STT) | PARTIAL — Tier 2 MVP wired; splash/login/memory hint speak; Settings toggle | Rehan Bhashini Tier 3 scoping; STT in games stretch |
 | Holistic design (not bare grid) | PARTIAL — hill path splash, grandmother/grandfather companions, themed game hubs | Srujna design QA vs doc 15 |
 
 ## Each owner still owes
@@ -34,7 +35,7 @@ See `CONTRIBUTION_LEDGER.md` for the full narrative.
 ### Rehan — AI / analytics / copy / voice scoping
 - Dashboard copy audit (no diagnostic language, no scores)
 - KT-AI session for adaptive + analytics engines
-- Voice / Web Speech / Bhashini scoping doc (Tier 2 vs 3)
+- ~~Voice / Web Speech / Bhashini scoping doc (Tier 2 vs 3)~~ — Tier 2 MVP shipped; document Bhashini path for Assamese ASR/TTS
 - Review analytics chart labels with Parth
 
 ### Srujna — design, cultural assets, i18n QA, companion art direction
@@ -69,4 +70,4 @@ See `CONTRIBUTION_LEDGER.md` for the full narrative.
 
 ## Phase 2 (after playtest)
 
-PWA install prompt, Web Speech EN/HI demo, Manipuri pack proof, family photos as memory tiles.
+PWA install prompt, ~~Web Speech EN/HI demo~~ (Tier 2 MVP done), Manipuri pack proof, family photos as memory tiles, Bhashini Assamese voice.

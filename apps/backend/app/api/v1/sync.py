@@ -6,7 +6,12 @@ from sqlalchemy.orm import Session
 
 from app.core.deps import get_current_principal, require_elderly, verify_user_access
 from app.db.session import get_db
-from app.schemas.sync import SyncBatchRequest, SyncBatchResponse, SyncBatchResult, SyncStatusResponse
+from app.schemas.sync import (
+    SyncBatchRequest,
+    SyncBatchResponse,
+    SyncBatchResult,
+    SyncStatusResponse,
+)
 from app.services.memories import memories_changed_since
 from app.services.reminders import reminders_changed_since
 from app.services.sync_batch import process_batch

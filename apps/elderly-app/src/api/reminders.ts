@@ -1,6 +1,8 @@
-import { API_BASE } from "./auth";
+import { ensureSeedReminders, isDemoReminderId } from "../db/reminderSeed";
 import { db, type ReminderCacheRow } from "../db/dexie";
 import { enqueueReminderAck } from "../db/syncOutbox";
+import { readAccessToken, readUserId } from "../lib/authStorage";
+import { API_BASE } from "./auth";
 
 export type ApiReminder = {
   id: string;
@@ -10,14 +12,6 @@ export type ApiReminder = {
   last_acknowledged_at: string | null;
   is_active: boolean;
 };
-
-function readToken(): string | null {
-  return window.sessionStorage.getItem("smriti.access") ?? window.localStorage.getItem("smriti.access");
-}
-
-function readUserId(): string | null {
-  return window.localStorage.getItem("smriti.userId");
-}
 
 function formatTime(iso: string, locale: string): string {
   const date = new Date(iso);
@@ -44,56 +38,63 @@ function toCacheRow(row: ApiReminder, locale: string): ReminderCacheRow {
   };
 }
 
-export async function loadRemindersFromCache(): Promise<ReminderCacheRow[]> {
+export async function loadRemindersFromCache(locale = "en"): Promise<ReminderCacheRow[]> {
   const rows = await db.reminders.orderBy("scheduledTime").toArray();
-  return rows.filter((row) => row.done === 0 || row.done === 1);
+  if (rows.length) {
+    return rows;
+  }
+  return ensureSeedReminders(locale);
 }
 
 export async function syncReminders(locale: string): Promise<ReminderCacheRow[]> {
-  const token = readToken();
+  const token = readAccessToken();
   const userId = readUserId();
   if (!token || !userId || !navigator.onLine) {
-    return loadRemindersFromCache();
+    return loadRemindersFromCache(locale);
   }
   try {
     const response = await fetch(`${API_BASE}/users/${userId}/reminders`, {
       headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
     });
     if (!response.ok) {
-      return loadRemindersFromCache();
+      return loadRemindersFromCache(locale);
     }
     const rows = (await response.json()) as ApiReminder[];
     const cached = rows.map((row) => toCacheRow(row, locale));
     await db.reminders.clear();
     if (cached.length) {
       await db.reminders.bulkPut(cached);
+      return cached;
     }
-    return cached;
+    return ensureSeedReminders(locale);
   } catch {
-    return loadRemindersFromCache();
+    return loadRemindersFromCache(locale);
   }
 }
 
-export async function acknowledgeReminder(reminderId: string): Promise<ReminderCacheRow[]> {
-  const token = readToken();
+export async function acknowledgeReminder(reminderId: string, locale = "en"): Promise<ReminderCacheRow[]> {
+  const token = readAccessToken();
   const userId = readUserId();
   await db.reminders.update(reminderId, { done: 1, updatedAt: new Date().toISOString() });
-  if (!token || !userId || !navigator.onLine) {
+  const isDemo = isDemoReminderId(reminderId);
+  if (!isDemo && (!token || !userId || !navigator.onLine)) {
     await enqueueReminderAck(reminderId, userId ?? "unknown");
-    return loadRemindersFromCache();
+    return loadRemindersFromCache(locale);
   }
-  try {
-    const response = await fetch(`${API_BASE}/reminders/${reminderId}/acknowledge`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!response.ok) {
+  if (!isDemo && token && userId && navigator.onLine) {
+    try {
+      const response = await fetch(`${API_BASE}/reminders/${reminderId}/acknowledge`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) {
+        await enqueueReminderAck(reminderId, userId);
+      }
+    } catch {
       await enqueueReminderAck(reminderId, userId);
     }
-  } catch {
-    await enqueueReminderAck(reminderId, userId);
   }
-  return loadRemindersFromCache();
+  return loadRemindersFromCache(locale);
 }
 
 export async function nextReminderFromApi(locale: string): Promise<ReminderCacheRow | undefined> {

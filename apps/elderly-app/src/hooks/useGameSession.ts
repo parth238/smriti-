@@ -5,7 +5,7 @@ import { API_BASE } from "../api/auth";
 import { GAME_IDS } from "../api/games";
 import { db } from "../db/dexie";
 import { enqueueSession, saveLocalSession } from "../db/syncOutbox";
-import { rememberGame } from "../store/demoStore";
+import { rememberGame } from "../store/sessionPrefs";
 
 export type GameSessionInput = {
   gameType: string;

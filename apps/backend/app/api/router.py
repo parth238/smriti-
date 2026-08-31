@@ -1,6 +1,15 @@
 from fastapi import APIRouter
 
-from app.api.v1 import analytics, auth, games, me, memory_items, patients, reminders, sync
+from app.api.v1 import (
+    analytics,
+    auth,
+    games,
+    me,
+    memory_items,
+    patients,
+    reminders,
+    sync,
+)
 from app.core.config import settings
 
 api_router = APIRouter(prefix=settings.api_v1_prefix)

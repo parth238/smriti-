@@ -14,7 +14,7 @@
 
 | Integration | Purpose | Notes |
 |---|---|---|
-| **Web Speech API** (browser-native STT/TTS) | Voice input/output demo | No external API key needed, works in Chrome/Edge; English/Hindi only realistically. Assamese ASR is Bhashini/AI4Bharat in section 3. |
+| **Web Speech API** (browser-native STT/TTS) | Voice input/output demo | **Implemented MVP 2026-08-31** — see §10. No API key; Chrome/Edge best; Assamese TTS often falls back to English/Hindi voice. |
 | **Firebase Cloud Messaging / Web Push** | Caregiver push alerts | For missed-reminder or trend alerts beyond in-dashboard notices |
 
 ## 3. Roadmap Integrations (Tier 3 — documented, not built)
@@ -51,7 +51,7 @@ Not a third-party integration, but designed like one: the `packages/content-pack
 | Supabase Postgres | `apps/backend/app/db/session.py` + SQLAlchemy models | Isolates all DB access behind ORM; switching from Supabase to Neon requires changing only `DATABASE_URL`, not business logic |
 | Supabase Storage / R2 | `apps/backend/app/services/storage_service.py` | Single `upload_file()` / `get_signed_url()` interface; swap S3-compatible providers by changing the client config, not the callers |
 | Vercel / Render | CI/CD config files (`render.yaml`, Vercel project settings) | Application code has zero awareness of hosting provider; deploy config is isolated in config files |
-| Web Speech API (stretch) | `apps/elderly-app/src/hooks/useVoice.ts` | Browser API wrapped in a hook that returns `{ speak, listen, isAvailable }`; gracefully degrades to text-only if API unavailable |
+| Web Speech API (stretch) | `apps/elderly-app/src/voice/` (`useSpeech.ts`, `useListening.ts`, `CompanionVoice.tsx`) | Browser API wrapped; returns `{ speak, listen, isAvailable }`; Settings toggle; companion `speaking` CSS when TTS active; degrades to text-only |
 
 **For future integrations (Bhashini, AI4Bharat, SMS gateway):** Each gets its own `services/<integration>_client.py` file with a defined interface. Business logic calls the interface, never the raw API. This is what makes "swap a vendor" a 1-file change, not a codebase-wide refactor.
 
@@ -94,4 +94,26 @@ Not a third-party integration, but designed like one: the `packages/content-pack
 | **Vercel** | Frontend hosting down | Apps don't load for new visitors | Installed PWA unaffected (cached app shell) | Unaffected if already loaded; new sessions can't start | Redeploy to Netlify |
 | **Render** | Backend container down | `/health` fails; API returns 502/503 | Full offline functionality continues; sync queues | All API-dependent views show stale data | Render auto-restart; if prolonged, deploy to Railway |
 | **GitHub Actions** | CI/CD pipeline failure | PR checks fail or don't run | None (already deployed code unaffected) | None | Fix workflow config; manual deploy if urgent |
-| **Web Speech API** (stretch) | Browser API unavailable (offline, unsupported browser) | `useVoice.isAvailable` returns false | Graceful degradation to text-only; no voice features shown | N/A | No action needed — degradation is by design |
+| **Web Speech API** (stretch) | Browser API unavailable (offline, unsupported browser) | `useCompanionVoice().speechAvailable` returns false | Graceful degradation to text-only; Settings shows unavailable note | N/A | No action needed — degradation is by design |
+
+---
+
+## 10. Web Speech MVP (Tier 2 — implemented 2026-08-31)
+
+**Module:** `apps/elderly-app/src/voice/`
+
+| File | Role |
+|------|------|
+| `useSpeech.ts` | `SpeechSynthesis` wrapper — `speak(text)`, `cancel()`, `isSpeaking`, `isAvailable`. Language tags: en → en-IN; as → as-IN → bn-IN → hi-IN → en-IN fallback chain. |
+| `useListening.ts` | `SpeechRecognition` / `webkitSpeechRecognition` wrapper — `listen(language)`, `stop()`, `isListening`. STT uses hi-IN for Assamese UI (best-effort; full as-IN ASR is Tier 3 Bhashini). |
+| `CompanionVoice.tsx` | React context — `speakKey(i18n key)`, voice on/off toggle (localStorage `smriti.voice`), wires TTS to splash/login/game instructions. |
+
+**UI hooks:**
+
+- Splash → speaks `splashWelcome`
+- Login → speaks `loginCompanion` (grandfather sit pose)
+- Memory Match → speaks `memoryHint` when board ready
+- Settings → Voice on/off toggle; hidden gracefully when API unavailable
+- Companion gets CSS class `companion-speaking` (subtle mouth motion) while TTS active
+
+**Constraints:** No external API keys. Offline TTS may use cached system voices; STT requires network in most browsers. Assamese spoken output may sound English/Hindi — document in playtest, plan Bhashini for Tier 3.
