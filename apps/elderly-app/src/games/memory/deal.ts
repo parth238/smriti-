@@ -1,6 +1,6 @@
-export type MotifId = "tea" | "bird" | "lamp" | "cloth" | "river";
+export type MotifId = "pot" | "calendar" | "tree" | "elephant" | "hills" | "bowl";
 
-export const MOTIFS: MotifId[] = ["tea", "bird", "lamp", "cloth", "river"];
+export const MOTIFS: MotifId[] = ["pot", "calendar", "tree", "elephant", "hills", "bowl"];
 
 export type MemoryCard = {
   uid: string;

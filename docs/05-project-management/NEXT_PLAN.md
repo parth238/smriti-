@@ -1,109 +1,72 @@
 # NEXT PLAN: SIH 2026 (as of 2026-08-31)
 
-**Branch:** `feature/phase1-close-gaps` · **PR:** #10
+Branch `feature/phase1-close-gaps` · PR #10 · PDF: `docs/SIH-2026-problem-statement.pdf` (SIH26003)
 
-**Foundation:** Anirudh P.S Yadav built the repo from scratch (see `CONTRIBUTION_LEDGER.md`). Everyone below refines and owns their slice going forward.
+## Foundation (done by Anirudh P.S Yadav)
 
-**Honest state:** ~14% of full PDF vision. Scaffold exists; gamification, environments, and elder UX polish are not done.
+Anirudh built the **entire MVP foundation from scratch**: monorepo, FastAPI backend, elderly PWA, caregiver dashboard, content packs, offline Dexie/Workbox, four cognitive games scaffold, adaptive + analytics integration, CI, judge seed script, and reference game art wiring (2026-08-31).
 
-**PDF:** `docs/SIH-2026-problem-statement.pdf`
+**Honest completion:** ~18% of full PDF vision · ~48% of Tier 1 MVP scaffold (themed games + flows exist; not elder-playtest ready).
 
----
+See `CONTRIBUTION_LEDGER.md` for the full narrative.
 
-## Anirudh P.S Yadav (foundation complete)
+## PDF MVP cross-check (SIH26003)
 
-**Done:** Monorepo, backend APIs, 4 games, Dexie/Workbox, dashboard wiring, cultural packs, companion scaffold, seed script, CI.
+| Requirement | Status | Owner next |
+|-------------|--------|------------|
+| 4 MVP games + telemetry | PARTIAL — all four play, persist sessions, reference sprites wired | Srujna polish; Rehan copy audit |
+| Adaptive difficulty | DONE — rule-based 3-up/2-down | Rehan KT-AI |
+| Reminiscence (cultural + family) | PARTIAL — Bihu art, cultural JSON, family upload API | Srujna community QA; Ananya offline cache hardening |
+| Reminders | PARTIAL — API + elderly ack + dashboard CRUD | Ananya local notifications |
+| Caregiver dashboard | PARTIAL — live API + labeled demo | Parth polish, alerts, deploy |
+| Offline-first PWA | PARTIAL — Workbox precaches games + content packs | Ananya Background Sync tag |
+| Multilingual (Assamese) | PARTIAL — en/as on elderly; Assamese strings corrected 2026-08-31 | Srujna community playtest |
+| Holistic design (not bare grid) | PARTIAL — hill path splash, grandmother/grandfather companions, themed game hubs | Srujna design QA vs doc 15 |
 
-**Only if needed:** Merge PR #10, unblock teammates, critical bugfixes.
+## Each owner still owes
 
----
+### Ananya — offline / sync / notifications
+- Workbox Background Sync tag (or document online flush as MVP ceiling)
+- Local notification scheduling for reminders (elderly PWA)
+- Harden `reminder_ack` + memory item pull on reconnect
+- E2E offline play → online flush test script
 
-## Srujna — design, art, gamification environments
+### Rehan — AI / analytics / copy / voice scoping
+- Dashboard copy audit (no diagnostic language, no scores)
+- KT-AI session for adaptive + analytics engines
+- Voice / Web Speech / Bhashini scoping doc (Tier 2 vs 3)
+- Review analytics chart labels with Parth
 
-**Goal:** Make Smriti feel like a **cognitive gaming** product, not a bare form grid.
+### Srujna — design, cultural assets, i18n QA, companion art direction
+- Design QA vs `15-ui-ux-design.md` (56px targets, palette, no sidebar on elderly)
+- Community review of Assamese cultural JSON + `as.json` strings
+- Refine grandmother/grandfather companion poses if needed
+- Replace placeholder SVG nav icons on Home with final art if desired
+- Family photo tiles inside Memory Match (stretch)
 
-1. **Integrate reference game art** into `apps/elderly-app/public/assets/games/`:
-   - Memory match: NER cultural icon sheet (pot, elephant, hills, bowl, etc.)
-   - Attention: tap targets (star, bell, leaf, butterfly)
-   - Sequencing: daily routine strip (sun, pill, bowl, phone, moon)
-   - Naming: objects strip (mug, flower, cow, umbrella, fish, book)
-   - Splash/background: hill landscape with winding path
-2. **Grandmother companion** — match reference portrait (red/gold, bindi, grey bun, glasses); walking stick on splash walk animation
-3. **Grandfather variant** — gamosa companion for alternate screens if useful
-4. **Bihu / festival scene** for cultural reminiscence screens
-5. **Assamese i18n QA** — native speaker or ARDSI Guwahati review; fix wrong strings in `as.json`
-6. Design QA vs `docs/00-source-of-truth/15-ui-ux-rules.md` on both apps
-7. Figma/token handoff for any new game screen layouts
+### Parth — caregiver dashboard polish
+- Overview missed-reminder from live API (not demo)
+- Alerts UI feed
+- Chart polish + non-diagnostic copy with Rehan
+- Deploy dashboard to Vercel with hosted API URL
 
-**Definition of done:** Each game has a distinct themed screen; companion looks dignified on splash, home, and games; no hardcoded English in components.
+### Harshit — hosted Postgres, backend review
+- T0-INF-002 hosted Supabase / production `DATABASE_URL`
+- RBAC integration tests on reminders/memories/sync routes
+- Review Alembic revisions before prod
 
----
+### Anirudh — integration only when blocked
+- Merge PR #10 after team review
+- Stop covering unless a teammate is blocked
 
-## Ananya — offline, sync, notifications
+## Judge path (when Postgres up + accounts linked)
 
-1. **Workbox Background Sync** tag for outbox (or document why online flush is MVP path)
-2. **Local reminder notifications** when offline (scheduled triggers from Dexie cache)
-3. Harden **batch sync retry** (edge cases: partial failure, idempotency)
-4. **Precache game asset PNGs** once Srujna lands art in `public/assets/`
-5. Expand Dexie tests; verify full offline loop: play game → outbox → sync → dashboard chart
-6. KT-DEXIE: walk team through `dexie.ts`, `syncOutbox.ts`, `useOfflineSync.ts`
-
-**Definition of done:** Elderly app usable for 30 minutes with zero network; reminders still surface locally.
-
----
-
-## Rehan — AI, analytics, honest language
-
-1. **Dashboard copy audit** — zero diagnostic claims; personal baseline framing only
-2. **Elderly app copy audit** — same rules on game result and home screens
-3. Document **voice roadmap**: Tier 2 Web Speech EN demo, Tier 3 Bhashini/AI4Bharat for Assamese ASR/TTS
-4. Review telemetry schema vs PDF (accuracy, reaction time, errors, hints, duration) for future decline-detection
-5. KT-AI: adaptive staircase + analytics engine for Parth/Harshit
-
-**Definition of done:** Written sign-off that no UI string implies diagnosis; voice scope doc in `docs/06-reference/`.
-
----
-
-## Parth — caregiver dashboard
-
-1. **Polish Overview/Analytics** charts (loading states, empty states, live-only when signed in)
-2. **Alerts page** — wire to real missed reminders + session gaps (not static demo)
-3. **Reminder recurrence UI** (daily medicine vs once appointment)
-4. **Deploy dashboard** to Vercel with production `VITE_API_URL`
-5. **Sessions page** — filter by game type, link to PDF cognitive domains
-6. KT-DASH: own `apps/caregiver-dashboard/` fully
-
-**Definition of done:** Caregiver can run full demo loop without labeled demo fallback when API is up.
-
----
-
-## Harshit — backend infra
-
-1. **T0-INF-002** — provision hosted Postgres (Supabase/Neon), run `alembic upgrade head`
-2. Review reminders/memories/sync routes Anirudh added; own merges going forward
-3. **RBAC integration tests** — cross-user deny scenarios on API routes
-4. **Cloud media** — move `/uploads` to Supabase Storage or S3
-5. Production env: `JWT_SECRET`, `ALLOWED_ORIGINS`, rate limits
-
-**Definition of done:** Public API URL + seeded judge accounts for demo day.
-
----
-
-## Judge demo path (after seed + Postgres)
-
-```bash
-cd apps/backend && alembic upgrade head && python ../../scripts/seed_judge_demo.py
-```
-
-| App | Login |
-|---|---|
-| Caregiver 5174 | `9876543210` / `SmritiJudge2026` |
-| Elderly 5173 | phone `9123456789`, PIN `2468` |
-
-Loop: splash walk → PIN → memory game (see cultural prompt) → mark reminder → caregiver chart updates.
-
----
+1. Caregiver registers, creates elderly PIN on API.
+2. Caregiver adds reminder + uploads family photo on 5174.
+3. Elderly PIN on 5173 → splash hill path + grandmother walk → play Memory Match (NER icons + reminiscence prompt).
+4. Elderly marks reminder done (syncs when online).
+5. Caregiver Overview shows live session chart (labeled demo if API down).
 
 ## Phase 2 (after playtest)
 
-Web Speech voice demo, family photos in memory-match tiles, Manipuri UI strings, clinician export stub.
+PWA install prompt, Web Speech EN/HI demo, Manipuri pack proof, family photos as memory tiles.

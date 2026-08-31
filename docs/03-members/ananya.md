@@ -124,6 +124,6 @@ App boots with no network. Games write to Dexie. Connection restore flushes Dexi
 
 ## 22 FIRST TASK
 
-**Foundation (2026-08-31):** Anirudh built monorepo, backend, elderly PWA, dashboard, offline layer, and content packs from scratch on `feature/phase1-close-gaps`. See `docs/05-project-management/CONTRIBUTION_LEDGER.md`.
+**Foundation (2026-08-31):** Dexie schema, outbox, Workbox precache of game PNGs (Anirudh wired). See `CONTRIBUTION_LEDGER.md`.
 
-**Now:** Merge PR #10. Critical bugfixes only. Hand gamification art and game environment polish to Srujna; sync hardening to Ananya.
+**Now:** Background Sync tag or document online-flush MVP. Local reminder notifications on elderly PWA. Harden reconnect pull for reminders + memory items. E2E offline → online test.

@@ -1,21 +1,16 @@
 import type { CulturalSceneId } from "../data/culturalPack";
 
+import { GAME_ASSETS } from "../data/gameAssets";
+
 export function CulturalScene({ id }: { id: CulturalSceneId }) {
   if (id === "bihu") {
     return (
-      <svg viewBox="0 0 320 180" className="scene-art" aria-hidden="true">
-        <rect width="320" height="180" fill="#4B6E58" />
-        <circle cx="258" cy="38" r="22" fill="#E0A542" />
-        <path d="M0 110c40-24 80 8 120-10s80 18 120-6 56 4 80 16v70H0z" fill="#1E2A2F" opacity="0.35" />
-        <rect x="78" y="78" width="28" height="50" rx="8" fill="#A8342A" />
-        <circle cx="92" cy="64" r="14" fill="#E8C9A8" />
-        <path d="M80 58c6-10 18-8 22 2" fill="#F7F3EC" />
-        <ellipse cx="92" cy="108" rx="36" ry="8" fill="#FBF9F4" />
-        <path d="M56 108h72" stroke="#A8342A" strokeWidth="6" />
-        <circle cx="168" cy="118" r="22" fill="#E0A542" />
-        <circle cx="168" cy="118" r="12" fill="#A8342A" />
-        <circle cx="214" cy="126" r="16" fill="#E0A542" />
-      </svg>
+      <img
+        src={GAME_ASSETS.bihuFestival}
+        alt=""
+        className="scene-art w-full rounded-2xl object-cover"
+        style={{ minHeight: "12rem", maxHeight: "20rem" }}
+      />
     );
   }
   if (id === "tea") {

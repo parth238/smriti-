@@ -1,5 +1,5 @@
 # Last reconciled: 2026-08-31 against feature/phase1-close-gaps (Anirudh audit).
-# Honest overall MVP completion: ~14% (scaffold + partial flows; not demo-ready).
+# Honest overall MVP completion: ~18% (themed scaffold + partial flows; not demo-ready).
 # Status: DONE | PARTIAL | NOT_STARTED
 # covering: who landed the start. member: who owns next work.
 
@@ -215,7 +215,7 @@ tasks:
     checkpoints: ["CP-06"]
     tests: ["npm run test"]
     reviewer: "Srujna"
-    handoff: "All four use adaptive hooks. Cultural reminiscence prompts in memory match. Companion on game screens. Splash walk animation improved. Voice, full NER i18n, clinical polish still open."
+    handoff: "All four use adaptive hooks + reference sprite sheets (memory NER icons, attention tap targets, daily routine sequencing, naming objects). Hill splash, grandmother walk, grandfather on login, Bihu reminiscence art. Assamese i18n corrected. Srujna owns community QA and final art polish."
     status: "PARTIAL"
 
   - task_id: "T2-FE-001"
@@ -435,7 +435,7 @@ tasks:
     checkpoints: ["CP-06"]
     tests: ["Chrome Application tab"]
     reviewer: "Anirudh P.S Yadav"
-    handoff: "vite-plugin-pwa precaches cultural JSON in public/. App shell offline. Install prompt is Phase 2."
+    handoff: "vite-plugin-pwa precaches cultural JSON + assets/games/*.png. App shell offline. Install prompt is Phase 2."
     status: "PARTIAL"
 
   - task_id: "T3-OS-004"

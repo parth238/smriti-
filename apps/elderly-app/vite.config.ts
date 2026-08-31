@@ -11,6 +11,7 @@ export default defineConfig({
       includeAssets: [
         "manifest.json",
         "icons/icon.svg",
+        "assets/games/*.png",
         "content-packs/assamese/cultural-media.json",
         "content-packs/english/cultural-media.json",
         "content-packs/manipuri/cultural-media.json",

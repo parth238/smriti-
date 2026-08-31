@@ -4,9 +4,9 @@ import { evaluateFlip } from "./flip";
 import type { MemoryCard } from "./deal";
 
 const cards: MemoryCard[] = [
-  { uid: "a", motif: "tea" },
-  { uid: "b", motif: "tea" },
-  { uid: "c", motif: "bird" },
+  { uid: "a", motif: "pot" },
+  { uid: "b", motif: "pot" },
+  { uid: "c", motif: "tree" },
 ];
 
 describe("evaluateFlip", () => {
@@ -15,7 +15,7 @@ describe("evaluateFlip", () => {
   });
 
   it("matches a pair", () => {
-    expect(evaluateFlip(cards, ["a", "b"])).toEqual({ kind: "match", motif: "tea" });
+    expect(evaluateFlip(cards, ["a", "b"])).toEqual({ kind: "match", motif: "pot" });
   });
 
   it("treats different motifs as a gentle miss", () => {

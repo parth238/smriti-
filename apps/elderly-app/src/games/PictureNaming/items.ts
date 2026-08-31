@@ -1,16 +1,24 @@
-import type { MotifId } from "../memory";
+import type { NamingIconId } from "../../data/gameAssets";
 
-export type NameKey = "nameTea" | "nameRiver" | "nameBird" | "nameCloth";
+export type NameKey =
+  | "nameMug"
+  | "nameFlower"
+  | "nameCow"
+  | "nameUmbrella"
+  | "nameFish"
+  | "nameBook";
 
 export type NamingItem = {
-  show: MotifId | "flower" | "river";
+  show: NamingIconId;
   yes: NameKey;
   no: NameKey;
 };
 
 export const NAMING_ITEMS: NamingItem[] = [
-  { show: "tea", yes: "nameTea", no: "nameRiver" },
-  { show: "river", yes: "nameRiver", no: "nameCloth" },
-  { show: "bird", yes: "nameBird", no: "nameTea" },
-  { show: "cloth", yes: "nameCloth", no: "nameBird" },
+  { show: "mug", yes: "nameMug", no: "nameBook" },
+  { show: "flower", yes: "nameFlower", no: "nameFish" },
+  { show: "cow", yes: "nameCow", no: "nameUmbrella" },
+  { show: "umbrella", yes: "nameUmbrella", no: "nameMug" },
+  { show: "fish", yes: "nameFish", no: "nameCow" },
+  { show: "book", yes: "nameBook", no: "nameFlower" },
 ];

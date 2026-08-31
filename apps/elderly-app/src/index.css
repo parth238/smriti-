@@ -118,10 +118,21 @@ input {
 
 .hill-window {
   position: relative;
-  height: 7.25rem;
+  height: 11rem;
   overflow: hidden;
+  border-radius: 0 0 1.5rem 1.5rem;
 }
 
+.game-scene-memory,
+.game-scene-attention,
+.game-scene-sequencing,
+.game-scene-naming {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(224, 165, 66, 0.08), transparent 55%),
+    #fbf9f4;
+}
+
+.hill-window img,
 .hill-window svg {
   position: absolute;
   inset: 0;

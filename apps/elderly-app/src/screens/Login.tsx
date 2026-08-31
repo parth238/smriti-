@@ -11,7 +11,7 @@ export function Login() {
   return (
     <main className="page-enter">
       <div className="flex justify-center">
-        <CompanionSit />
+        <CompanionSit variant="grandfather" />
       </div>
       <p className="mt-2 text-center text-body-lg text-mist-blue">{tx("loginCompanion")}</p>
       <p className="mt-6 font-display text-display">{tx("appName")}</p>
