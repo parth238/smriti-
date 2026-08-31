@@ -114,3 +114,16 @@ export function useSpeakOnMount(key: MessageKey, delayMs = 600) {
     return () => window.clearTimeout(timer);
   }, [delayMs, key, speakKey, voiceEnabled]);
 }
+
+/** Speaks when visible instruction/nudge text changes (pair found, gentle retry, etc.). */
+export function useSpeakText(text: string, enabled = true, delayMs = 350) {
+  const { voiceEnabled, speakText } = useCompanionVoice();
+
+  useEffect(() => {
+    if (!voiceEnabled || !enabled || !text.trim()) {
+      return undefined;
+    }
+    const timer = window.setTimeout(() => speakText(text), delayMs);
+    return () => window.clearTimeout(timer);
+  }, [delayMs, enabled, speakText, text, voiceEnabled]);
+}

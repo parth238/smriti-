@@ -119,6 +119,7 @@
   "voiceCompanion": "Companion voice",
   "voiceOn": "Voice on",
   "voiceOff": "Voice off",
-  "voiceUnavailable": "Voice is not available on this device. You can still read everything on screen."
+  "voiceUnavailable": "Voice is not available on this device. You can still read everything on screen.",
+  "namingSpeak": "Say the word aloud"
 }
 

@@ -63,9 +63,9 @@ Demo loop: splash walk → PIN → one game → caregiver chart updates.
 
 ### Project status and team handoff
 
-Honest completion (~18% full PDF / ~48% Tier 1 scaffold): `docs/05-project-management/CONTRIBUTION_LEDGER.md` and `TEAM_STATUS.md`.
+Honest completion (~20% full PDF / ~52% Tier 1 scaffold): **`docs/05-project-management/DEVELOPER_ROADMAP.md`** (master guide).
 
-Per-owner next tasks (gamification polish, offline, dashboard, backend): `docs/05-project-management/NEXT_PLAN.md`.
+Also see `CONTRIBUTION_LEDGER.md`, `NEXT_PLAN.md`, and `TEAM_STATUS.md`.
 
 Game reference art lives in `apps/elderly-app/public/assets/games/` (memory, attention, sequencing, naming sprites, hill background, grandmother/grandfather companions, Bihu scene). Workbox precaches these for offline play.
 

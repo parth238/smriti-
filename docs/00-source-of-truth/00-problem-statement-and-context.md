@@ -91,7 +91,7 @@ V5  Only if evidence supports it — clinical decision-support research
 
 | User | Interface | Core needs |
 |---|---|---|
-| Elderly patient | Mobile-first web app (PWA) | Simple games, reminders, familiar faces/places, reassurance, zero learning curve |
+| Elderly patient | Mobile-first web app (**PWA**, not React Native — see doc 01 §6) | Simple games, reminders, familiar faces/places, reassurance, zero learning curve |
 | Caregiver (family/community health worker) | Web dashboard | Remote visibility, control over reminders/content, trend alerts, low effort |
 | Clinician (post-MVP) | Extended dashboard view | Longitudinal charts, exportable reports — **not in MVP** |
 

@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 import { Chrome } from "../../components/Chrome";
 import { GameCompanion } from "../../components/companion/GameCompanion";
 import { GameSprite } from "../../components/GameSprite";
@@ -13,20 +11,13 @@ import {
   type MemoryIconId,
 } from "../../data/gameAssets";
 import { useMemoryMatch } from "../../hooks/useMemoryMatch";
-import { useCompanionVoice } from "../../voice/CompanionVoice";
+import { useSpeakOnMount, useSpeakText } from "../../voice/CompanionVoice";
 
 export function MemoryMatch() {
   const { tx } = useI18n();
   const { ready, cards, open, matched, pairCount, nudge, bloomMotif, onTap } = useMemoryMatch();
-  const { voiceEnabled, speakKey } = useCompanionVoice();
-
-  useEffect(() => {
-    if (!ready || !voiceEnabled) {
-      return undefined;
-    }
-    const timer = window.setTimeout(() => speakKey("memoryHint"), 500);
-    return () => window.clearTimeout(timer);
-  }, [ready, speakKey, voiceEnabled]);
+  useSpeakOnMount("memoryHint", 500);
+  useSpeakText(nudge, ready);
 
   if (!ready) {
     return (

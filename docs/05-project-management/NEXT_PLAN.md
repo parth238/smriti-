@@ -2,11 +2,13 @@
 
 Branch `feature/phase1-close-gaps` · PR #10 · PDF: `docs/SIH-2026-problem-statement.pdf` (SIH26003)
 
+**Master guide (read this first):** [`DEVELOPER_ROADMAP.md`](./DEVELOPER_ROADMAP.md) — honest ratings, PDF matrix, Dexie schema, voice roadmap, judge script, per-teammate steps.
+
 ## Foundation (done by Anirudh P.S Yadav)
 
-Anirudh built the **entire MVP foundation from scratch**: monorepo, FastAPI backend, elderly PWA, caregiver dashboard, content packs, offline Dexie/Workbox, four cognitive games scaffold, adaptive + analytics integration, CI, judge seed script, and reference game art wiring (2026-08-31).
+Anirudh built the **entire MVP foundation from scratch**: monorepo, FastAPI backend, elderly PWA, caregiver dashboard, content packs, offline Dexie/Workbox, four cognitive games, adaptive + analytics integration, CI, judge seed script, reference game art, and in-game Web Speech voice (2026-08-31).
 
-**Honest completion:** ~18% of full PDF vision · ~48% of Tier 1 MVP scaffold (themed games + flows exist; not elder-playtest ready).
+**Honest completion:** ~20% of full PDF vision · ~52% of Tier 1 MVP scaffold.
 
 See `CONTRIBUTION_LEDGER.md` for the full narrative.
 
@@ -14,60 +16,31 @@ See `CONTRIBUTION_LEDGER.md` for the full narrative.
 
 | Requirement | Status | Owner next |
 |-------------|--------|------------|
-| 4 MVP games + telemetry | PARTIAL — all four play, persist sessions, reference sprites wired | Srujna polish; Rehan copy audit |
+| 4 MVP games + telemetry | PARTIAL — all four play, persist sessions, reference sprites + voice cues | Srujna polish; Rehan copy audit |
 | Adaptive difficulty | DONE — rule-based 3-up/2-down | Rehan KT-AI |
 | Reminiscence (cultural + family) | PARTIAL — Bihu art, cultural JSON, family upload API | Srujna community QA; Ananya offline cache hardening |
 | Reminders | PARTIAL — API + elderly ack + dashboard CRUD | Ananya local notifications |
 | Caregiver dashboard | PARTIAL — live API + labeled demo | Parth polish, alerts, deploy |
 | Offline-first PWA | PARTIAL — Workbox precaches games + content packs | Ananya Background Sync tag |
-| Multilingual (Assamese) | PARTIAL — en/as on elderly; Assamese strings corrected 2026-08-31 | Srujna community playtest |
-| Voice (Web Speech TTS/STT) | PARTIAL — Tier 2 MVP wired; splash/login/memory hint speak; Settings toggle | Rehan Bhashini Tier 3 scoping; STT in games stretch |
+| Multilingual (Assamese) | PARTIAL — en/as on elderly; strings corrected 2026-08-31 | Srujna community playtest |
+| Voice (Web Speech TTS/STT) | PARTIAL — all screens + games wired; Assamese TTS fallback | Rehan Bhashini Tier 3 scoping |
 | Holistic design (not bare grid) | PARTIAL — hill path splash, grandmother/grandfather companions, themed game hubs | Srujna design QA vs doc 15 |
 
 ## Each owner still owes
 
-### Ananya — offline / sync / notifications
-- Workbox Background Sync tag (or document online flush as MVP ceiling)
-- Local notification scheduling for reminders (elderly PWA)
-- Harden `reminder_ack` + memory item pull on reconnect
-- E2E offline play → online flush test script
+See **`DEVELOPER_ROADMAP.md` §7** for step-by-step instructions. Summary:
 
-### Rehan — AI / analytics / copy / voice scoping
-- Dashboard copy audit (no diagnostic language, no scores)
-- KT-AI session for adaptive + analytics engines
-- ~~Voice / Web Speech / Bhashini scoping doc (Tier 2 vs 3)~~ — Tier 2 MVP shipped; document Bhashini path for Assamese ASR/TTS
-- Review analytics chart labels with Parth
+- **Ananya** — Background Sync, local notifications, pull-on-reconnect, E2E offline test
+- **Rehan** — copy audit, KT-AI, Bhashini spec
+- **Srujna** — design QA, Assamese community review, PNG asset audit
+- **Parth** — live alerts, Vercel deploy, chart polish
+- **Harshit** — hosted Postgres, RBAC tests, prod deploy
+- **Anirudh** — merge PR #10 after review; integration only when blocked
 
-### Srujna — design, cultural assets, i18n QA, companion art direction
-- Design QA vs `15-ui-ux-design.md` (56px targets, palette, no sidebar on elderly)
-- Community review of Assamese cultural JSON + `as.json` strings
-- Refine grandmother/grandfather companion poses if needed
-- Replace placeholder SVG nav icons on Home with final art if desired
-- Family photo tiles inside Memory Match (stretch)
+## Judge path
 
-### Parth — caregiver dashboard polish
-- Overview missed-reminder from live API (not demo)
-- Alerts UI feed
-- Chart polish + non-diagnostic copy with Rehan
-- Deploy dashboard to Vercel with hosted API URL
-
-### Harshit — hosted Postgres, backend review
-- T0-INF-002 hosted Supabase / production `DATABASE_URL`
-- RBAC integration tests on reminders/memories/sync routes
-- Review Alembic revisions before prod
-
-### Anirudh — integration only when blocked
-- Merge PR #10 after team review
-- Stop covering unless a teammate is blocked
-
-## Judge path (when Postgres up + accounts linked)
-
-1. Caregiver registers, creates elderly PIN on API.
-2. Caregiver adds reminder + uploads family photo on 5174.
-3. Elderly PIN on 5173 → splash hill path + grandmother walk → play Memory Match (NER icons + reminiscence prompt).
-4. Elderly marks reminder done (syncs when online).
-5. Caregiver Overview shows live session chart (labeled demo if API down).
+Full script in **`DEVELOPER_ROADMAP.md` §8**.
 
 ## Phase 2 (after playtest)
 
-PWA install prompt, ~~Web Speech EN/HI demo~~ (Tier 2 MVP done), Manipuri pack proof, family photos as memory tiles, Bhashini Assamese voice.
+PWA install prompt, Bhashini Assamese voice, Manipuri pack proof, family photos as memory tiles, arithmetic + maze games.
