@@ -1,8 +1,8 @@
-import type { MemoryCard, MotifId } from "./deal";
+import type { MemoryCard } from "./deal";
 
 export type FlipResult =
   | { kind: "wait" }
-  | { kind: "match"; motif: MotifId }
+  | { kind: "match"; matchKey: string }
   | { kind: "mismatch" };
 
 export function evaluateFlip(cards: MemoryCard[], open: string[]): FlipResult {
@@ -14,8 +14,8 @@ export function evaluateFlip(cards: MemoryCard[], open: string[]): FlipResult {
   if (!first || !second) {
     return { kind: "mismatch" };
   }
-  if (first.motif === second.motif) {
-    return { kind: "match", motif: first.motif };
+  if (first.matchKey === second.matchKey) {
+    return { kind: "match", matchKey: first.matchKey };
   }
   return { kind: "mismatch" };
 }
