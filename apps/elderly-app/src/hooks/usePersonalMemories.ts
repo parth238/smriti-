@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { loadFamilyMemories, type ApiMemoryItem } from "../api/memories";
+import { type ApiMemoryItem } from "../api/memories";
+import { readCachedFamilyMemories } from "../db/memoryCache";
 import { useI18n } from "../context/LanguageContext";
+import { readUserId } from "../lib/authStorage";
+import { onServerPullComplete } from "../lib/syncEvents";
+import { shouldRefreshForPullEvent } from "./useReminders";
 
 export function usePersonalMemories() {
   const { language } = useI18n();
@@ -9,20 +13,32 @@ export function usePersonalMemories() {
   const [loading, setLoading] = useState(true);
   const [offline, setOffline] = useState(!navigator.onLine);
 
-  const refresh = useCallback(async () => {
+  const loadCache = useCallback(async () => {
     setOffline(!navigator.onLine);
     setLoading(true);
-    const items = await loadFamilyMemories();
+    const userId = readUserId();
+    if (!userId) {
+      setRows([]);
+      setLoading(false);
+      return;
+    }
+    const items = await readCachedFamilyMemories(userId);
     setRows(items);
     setLoading(false);
   }, []);
 
   useEffect(() => {
-    refresh();
-    const onOnline = () => refresh();
-    window.addEventListener("online", onOnline);
-    return () => window.removeEventListener("online", onOnline);
-  }, [refresh]);
+    void loadCache();
+  }, [loadCache]);
+
+  useEffect(() => {
+    return onServerPullComplete((detail) => {
+      if (!shouldRefreshForPullEvent(detail.userId, readUserId())) {
+        return;
+      }
+      void loadCache();
+    });
+  }, [loadCache]);
 
   const pickTitle = (item: ApiMemoryItem): string => {
     return item.title[language] ?? item.title.en ?? item.title.as ?? "Memory";
@@ -35,5 +51,5 @@ export function usePersonalMemories() {
     return item.prompt_text[language] ?? item.prompt_text.en ?? item.prompt_text.as;
   };
 
-  return { rows, loading, offline, refresh, pickTitle, pickPrompt };
+  return { rows, loading, offline, refresh: loadCache, pickTitle, pickPrompt };
 }

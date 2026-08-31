@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 
-import { flushOutbox, failedOutboxCount, pendingOutboxCount } from "../db/syncOutbox";
+import { failedOutboxCount, pendingOutboxCount } from "../db/syncOutbox";
 import { readAccessToken } from "../lib/authStorage";
+import { AUTH_SESSION_CHANGED_EVENT, runSyncCycle } from "../lib/syncCycle";
 
 const RETRY_MS = [5000, 15000, 45000, 120000];
 
@@ -24,22 +25,22 @@ export function useOfflineSync() {
       setFailed(await failedOutboxCount());
     }
 
-    async function runFlush() {
-      const count = await flushOutbox(readAccessToken());
+    async function runCycle() {
+      const { flushed } = await runSyncCycle();
       await refreshCounts();
-      if (count > 0) {
+      if (flushed > 0) {
         setLastFlush(Date.now());
         attempt = 0;
       }
-      return count;
+      return flushed;
     }
 
     function scheduleRetry() {
       const delay = RETRY_MS[Math.min(attempt, RETRY_MS.length - 1)];
       retryTimer = window.setTimeout(async () => {
         attempt += 1;
-        const count = await runFlush();
-        if (count === 0 && navigator.onLine && (await pendingOutboxCount()) > 0) {
+        const flushed = await runCycle();
+        if (flushed === 0 && navigator.onLine && (await pendingOutboxCount()) > 0) {
           scheduleRetry();
         }
       }, delay);
@@ -47,8 +48,8 @@ export function useOfflineSync() {
 
     function onOnline() {
       setOnline(true);
-      void runFlush().then(async (count) => {
-        if (count === 0 && (await pendingOutboxCount()) > 0) {
+      void runCycle().then(async (flushed) => {
+        if (flushed === 0 && (await pendingOutboxCount()) > 0) {
           scheduleRetry();
         }
       });
@@ -61,23 +62,31 @@ export function useOfflineSync() {
       }
     }
 
+    function onAuthSessionChanged() {
+      if (navigator.onLine && readAccessToken()) {
+        void runCycle();
+      }
+    }
+
     window.addEventListener("online", onOnline);
     window.addEventListener("offline", onOffline);
-    void runFlush().then(async (count) => {
-      if (count === 0 && navigator.onLine && (await pendingOutboxCount()) > 0) {
+    window.addEventListener(AUTH_SESSION_CHANGED_EVENT, onAuthSessionChanged);
+    void runCycle().then(async (flushed) => {
+      if (flushed === 0 && navigator.onLine && (await pendingOutboxCount()) > 0) {
         scheduleRetry();
       }
     });
 
     const interval = window.setInterval(() => {
       if (navigator.onLine) {
-        void runFlush();
+        void runCycle();
       }
     }, 60000);
 
     return () => {
       window.removeEventListener("online", onOnline);
       window.removeEventListener("offline", onOffline);
+      window.removeEventListener(AUTH_SESSION_CHANGED_EVENT, onAuthSessionChanged);
       if (retryTimer) {
         window.clearTimeout(retryTimer);
       }

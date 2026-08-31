@@ -1,6 +1,7 @@
 import { ensureSeedReminders, isDemoReminderId } from "../db/reminderSeed";
 import { db, type ReminderCacheRow } from "../db/dexie";
 import { enqueueReminderAck } from "../db/syncOutbox";
+import { mapReminderToCacheRow } from "../lib/reminderMapping";
 import { readAccessToken, readUserId } from "../lib/authStorage";
 import { API_BASE } from "./auth";
 
@@ -11,31 +12,19 @@ export type ApiReminder = {
   scheduled_time: string;
   last_acknowledged_at: string | null;
   is_active: boolean;
+  updated_at?: string;
 };
 
-function formatTime(iso: string, locale: string): string {
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) {
-    return iso;
-  }
-  return date.toLocaleTimeString(locale === "as" ? "as-IN" : "en-IN", {
-    hour: "numeric",
-    minute: "2-digit",
-  });
-}
-
 function toCacheRow(row: ApiReminder, locale: string): ReminderCacheRow {
-  const title = row.title[locale] ?? row.title.en ?? row.type;
-  const done = row.last_acknowledged_at ? 1 : 0;
-  return {
+  return mapReminderToCacheRow({
     id: row.id,
     type: row.type,
-    title,
+    title: row.title,
     scheduledTime: row.scheduled_time,
-    timeLabel: formatTime(row.scheduled_time, locale),
-    done,
-    updatedAt: new Date().toISOString(),
-  };
+    lastAcknowledgedAt: row.last_acknowledged_at,
+    updatedAt: row.updated_at ?? new Date().toISOString(),
+    locale,
+  });
 }
 
 export async function loadRemindersFromCache(locale = "en"): Promise<ReminderCacheRow[]> {
@@ -60,7 +49,7 @@ export async function syncReminders(locale: string): Promise<ReminderCacheRow[]>
       return loadRemindersFromCache(locale);
     }
     const rows = (await response.json()) as ApiReminder[];
-    const cached = rows.map((row) => toCacheRow(row, locale));
+    const cached = rows.filter((row) => row.is_active).map((row) => toCacheRow(row, locale));
     await db.reminders.clear();
     if (cached.length) {
       await db.reminders.bulkPut(cached);

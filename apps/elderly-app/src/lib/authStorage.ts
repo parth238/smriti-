@@ -1,5 +1,7 @@
 /** Auth/session keys — localStorage survives offline re-login; sessionStorage is tab-scoped. */
 
+export const AUTH_SESSION_CHANGED_EVENT = "smriti:auth-session-changed";
+
 const ACCESS_KEY = "smriti.access";
 const USER_KEY = "smriti.userId";
 const PAIRED_KEY = "smriti.paired";
@@ -30,6 +32,7 @@ export function persistAuthSession(accessToken: string, userId?: string): void {
     window.sessionStorage.setItem(USER_KEY, userId);
     window.localStorage.setItem(USER_KEY, userId);
   }
+  window.dispatchEvent(new CustomEvent(AUTH_SESSION_CHANGED_EVENT));
 }
 
 export function clearAuthSession(): void {
@@ -37,6 +40,7 @@ export function clearAuthSession(): void {
     window.sessionStorage.removeItem(key);
     window.localStorage.removeItem(key);
   }
+  window.dispatchEvent(new CustomEvent(AUTH_SESSION_CHANGED_EVENT));
 }
 
 export function deviceId(): string {
