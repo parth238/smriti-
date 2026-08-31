@@ -28,7 +28,27 @@ class SyncBatchResponse(BaseModel):
     results: list[SyncBatchResult]
 
 
+class SyncStatusReminderItem(BaseModel):
+    id: str
+    type: str
+    title: dict[str, Any]
+    scheduled_time: str
+    recurrence_rule: str | None
+    is_active: bool
+    updated_at: str
+    last_acknowledged_at: str | None
+
+
+class SyncStatusMemoryItem(BaseModel):
+    id: str
+    media_url: str
+    title: dict[str, Any]
+    category: str
+    created_at: str
+
+
 class SyncStatusResponse(BaseModel):
-    reminders: list[dict[str, Any]]
-    memories: list[dict[str, Any]]
+    reminders: list[SyncStatusReminderItem]
+    memories: list[SyncStatusMemoryItem]
     since: datetime | None
+    next_since: datetime

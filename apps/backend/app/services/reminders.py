@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime
 from uuid import UUID
 
 from sqlalchemy.orm import Session
 
 from app.core.errors import NotFoundError, ValidationError
 from app.models.reminder import Reminder
+from app.services.sync_window import database_utc_now
 
 
 def list_reminders(
@@ -108,7 +109,9 @@ def acknowledge_reminder(
         raise ValidationError(
             "This reminder does not belong to you", field="reminder_id"
         )
-    reminder.last_acknowledged_at = datetime.now(timezone.utc)
+    now = database_utc_now(db)
+    reminder.last_acknowledged_at = now
+    reminder.updated_at = now
     db.commit()
     db.refresh(reminder)
     return reminder
@@ -118,13 +121,13 @@ def reminders_changed_since(
     db: Session,
     user_id: UUID,
     since: datetime,
+    *,
+    until: datetime | None = None,
 ) -> list[Reminder]:
-    return (
-        db.query(Reminder)
-        .filter(
-            Reminder.user_id == user_id,
-            Reminder.updated_at >= since,
-        )
-        .order_by(Reminder.updated_at.asc())
-        .all()
+    query = db.query(Reminder).filter(
+        Reminder.user_id == user_id,
+        Reminder.updated_at >= since,
     )
+    if until is not None:
+        query = query.filter(Reminder.updated_at <= until)
+    return query.order_by(Reminder.updated_at.asc()).all()

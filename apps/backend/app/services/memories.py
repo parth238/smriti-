@@ -183,13 +183,13 @@ def memories_changed_since(
     db: Session,
     user_id: UUID,
     since: datetime,
+    *,
+    until: datetime | None = None,
 ) -> list[MemoryItem]:
-    return (
-        db.query(MemoryItem)
-        .filter(
-            MemoryItem.user_id == user_id,
-            MemoryItem.created_at >= since,
-        )
-        .order_by(MemoryItem.created_at.asc())
-        .all()
+    query = db.query(MemoryItem).filter(
+        MemoryItem.user_id == user_id,
+        MemoryItem.created_at >= since,
     )
+    if until is not None:
+        query = query.filter(MemoryItem.created_at <= until)
+    return query.order_by(MemoryItem.created_at.asc()).all()
