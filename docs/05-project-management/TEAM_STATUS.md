@@ -13,7 +13,9 @@
 - **Backend (Harshit slice, Anirudh covering):** Reminders CRUD + acknowledge, memory multipart upload + cultural-pack JSON, `POST /sync/batch` + `GET /sync/status`, RBAC helpers on new routes. 37 pytest pass.
 - **Elderly (Anirudh):** Sequencing + Naming use adaptive hooks, 200-300ms transitions, reduced-motion safe. Reminders screen hits API with Dexie cache + offline ack outbox. Home next-reminder from API.
 - **Dashboard (Parth slice, Anirudh covering):** Reminders/Memories pages wired to live API with labeled demo fallback, create reminder + upload photo forms.
-- **Offline (Ananya slice, Anirudh covering):** Outbox supports `reminder_ack`, batch sync consumer, 30s retry poll.
+- **Offline (Ananya slice, Anirudh covering):** Outbox supports `reminder_ack`, batch sync consumer, retry poll.
+- **Judge demo:** `scripts/seed_judge_demo.py` seeds linked accounts + sessions + family photo.
+- **Elderly memories:** Family photos gallery reads live API on `/memories/personal`.
 
 ## Current board
 
@@ -29,9 +31,7 @@
 
 ## Still not full product
 
-- Hosted Supabase / demo seed script
-- Multi-patient switcher UI
+- Hosted Supabase / multi-patient switcher UI
 - Assamese playtest with a real elder
-- Elderly personal memories gallery from uploaded photos
 - Workbox Background Sync API (optional; online flush works)
 - Voice / Bhashini (Tier 3, not MVP)

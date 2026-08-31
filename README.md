@@ -42,6 +42,25 @@ docker compose up -d
 
 Copy `apps/backend/.env.example` to `.env` before first run.
 
+### Judge demo seed
+
+After Postgres is running and migrations are applied:
+
+```bash
+cd apps/backend
+alembic upgrade head
+python ../../scripts/seed_judge_demo.py
+```
+
+This creates linked demo accounts with reminders, 14 days of game sessions, and one family photo placeholder.
+
+| App | Login |
+|---|---|
+| Caregiver (5174) | phone `9876543210` or email `demo@smriti.local`, password `SmritiJudge2026` |
+| Elderly (5173) | phone `9123456789`, PIN `2468` |
+
+Demo loop: splash walk → PIN → one game → caregiver chart updates.
+
 ### Hosted Postgres (Supabase / Neon)
 
 1. Create a project and copy the connection string into `DATABASE_URL`.
