@@ -2,7 +2,7 @@
 
 **Snapshot:** 2026-08-31. Sprint on `feature/sih-2026`. PDF not found on disk; used `docs/00-source-of-truth/00-problem-statement-and-context.md`.
 
-**Honest MVP completion:** ~72% of Tier 1 tasks (18 DONE, 11 PARTIAL, 1 NOT_STARTED out of 30 tracked tasks).
+**Honest MVP completion:** ~75% of Tier 1 tasks (seed script + patient switcher + reminder edit landed).
 
 **Ports:** elderly PWA `5173`, caregiver desk `5174`, API `8000`.
 
@@ -22,9 +22,9 @@
 | Member | Task | Status | Notes |
 |--------|------|--------|-------|
 | Harshit | T1-BE-007/008/006 | DONE | Review + prod Postgres (T0-INF-002) still his |
-| Harshit | T1-BE-004 | PARTIAL | Route-level RBAC deny tests missing |
+| Harshit | T1-BE-004 | PARTIAL | RBAC deny unit tests added; integration tests his |
 | Anirudh | T1-FE-003 | PARTIAL | Games deeper; splash/companion polish remains |
-| Parth | T2-FE-005 | PARTIAL | Live CRUD wired; patient switcher + edit UI his |
+| Parth | T2-FE-003/005 | PARTIAL | Patient switcher + reminder PATCH edit wired |
 | Rehan | T2-AI-001/2/3 | DONE | KT-AI + dashboard copy review |
 | Ananya | T3-OS-004 | PARTIAL | No Workbox Background Sync tag yet |
 | Srujna | T3-DS-001/003 | PARTIAL | Community asset verification open |

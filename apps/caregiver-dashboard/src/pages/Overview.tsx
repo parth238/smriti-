@@ -1,23 +1,46 @@
 import { useEffect, useState } from "react";
 
 import { loadCaregiverAnalytics, type AnalyticsBundle } from "../api/analytics";
+import { PATIENT_CHANGE_EVENT } from "../api/patients";
+import { loadReminders } from "../api/reminders";
 import { Notice } from "../components/Notice";
 import { PageHeader } from "../components/PageHeader";
 import { StatTile } from "../components/StatTile";
-import { REMINDERS } from "../data/demo";
 
 export function Overview() {
   const [bundle, setBundle] = useState<AnalyticsBundle | null>(null);
+  const [missedNote, setMissedNote] = useState<string | null>(null);
+
+  async function refresh() {
+    const analytics = await loadCaregiverAnalytics();
+    setBundle(analytics);
+    const reminders = await loadReminders();
+    if (reminders.source === "live") {
+      const missed = reminders.rows.filter((row) => row.missed);
+      if (missed.length > 0) {
+        setMissedNote(
+          missed.map((row) => `${row.title} at ${row.time}`).join(". ") +
+            ". This is a reminder note, not a medical warning.",
+        );
+      } else {
+        setMissedNote(null);
+      }
+    } else {
+      setMissedNote(null);
+    }
+  }
 
   useEffect(() => {
-    void loadCaregiverAnalytics().then(setBundle);
+    void refresh();
+    const onPatientChange = () => void refresh();
+    window.addEventListener(PATIENT_CHANGE_EVENT, onPatientChange);
+    return () => window.removeEventListener(PATIENT_CHANGE_EVENT, onPatientChange);
   }, []);
 
   if (!bundle) {
     return <p className="text-mist-blue">Loading overview…</p>;
   }
 
-  const missed = REMINDERS.filter((row) => row.missed).length;
   return (
     <>
       <PageHeader
@@ -33,12 +56,9 @@ export function Overview() {
           </Notice>
         </div>
       ) : null}
-      {missed ? (
+      {missedNote ? (
         <div className="mb-5">
-          <Notice>
-            Evening medicine at 8 PM was not marked done. This is a reminder note, not a medical
-            warning.
-          </Notice>
+          <Notice>{missedNote}</Notice>
         </div>
       ) : null}
       <div className="grid gap-4 sm:grid-cols-3">

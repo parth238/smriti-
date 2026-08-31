@@ -11,6 +11,7 @@ export type RemindersBundle = {
 
 type ApiReminder = {
   id: string;
+  type: string;
   title: { en?: string; as?: string };
   scheduled_time: string;
   last_acknowledged_at: string | null;
@@ -91,6 +92,9 @@ export async function loadReminders(): Promise<RemindersBundle> {
         title: row.title.en || row.title.as || "Reminder",
         time: formatTime(row.scheduled_time),
         missed: row.is_active && !row.last_acknowledged_at,
+        type: row.type,
+        scheduledTime: row.scheduled_time,
+        active: row.is_active,
       })),
     };
   } catch {
@@ -123,6 +127,34 @@ export async function createReminder(input: {
       scheduled_time: input.scheduledTime,
       recurrence_rule: "once",
     }),
+  });
+  return response.ok;
+}
+
+export async function updateReminder(input: {
+  reminderId: string;
+  titleEn?: string;
+  scheduledTime?: string;
+  type?: string;
+}): Promise<boolean> {
+  const token = getCaregiverToken();
+  if (!token) {
+    return false;
+  }
+  const body: Record<string, unknown> = {};
+  if (input.titleEn) {
+    body.title = { en: input.titleEn };
+  }
+  if (input.scheduledTime) {
+    body.scheduled_time = input.scheduledTime;
+  }
+  if (input.type) {
+    body.type = input.type;
+  }
+  const response = await fetch(`${API_BASE}/reminders/${input.reminderId}`, {
+    method: "PATCH",
+    headers: { ...authHeaders(), "Content-Type": "application/json" },
+    body: JSON.stringify(body),
   });
   return response.ok;
 }

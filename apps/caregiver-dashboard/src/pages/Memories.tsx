@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 
+import { loadMemories, uploadMemory } from "../api/memories";
+import { PATIENT_CHANGE_EVENT } from "../api/patients";
 import { Notice } from "../components/Notice";
 import { PageHeader } from "../components/PageHeader";
-import { loadMemories, uploadMemory } from "../api/memories";
 
 export function Memories() {
   const [bundle, setBundle] = useState<Awaited<ReturnType<typeof loadMemories>> | null>(null);
@@ -11,7 +12,10 @@ export function Memories() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    void loadMemories().then(setBundle);
+    void refresh();
+    const onPatientChange = () => void refresh();
+    window.addEventListener(PATIENT_CHANGE_EVENT, onPatientChange);
+    return () => window.removeEventListener(PATIENT_CHANGE_EVENT, onPatientChange);
   }, []);
 
   async function refresh() {
