@@ -9,6 +9,7 @@ from app.api.v1 import (
     patients,
     reminders,
     sync,
+    voice,
 )
 from app.core.config import settings
 
@@ -21,3 +22,4 @@ api_router.include_router(analytics.router, tags=["analytics"])
 api_router.include_router(reminders.router, tags=["reminders"])
 api_router.include_router(memory_items.router, tags=["memories"])
 api_router.include_router(sync.router, tags=["sync"])
+api_router.include_router(voice.router, tags=["voice"])

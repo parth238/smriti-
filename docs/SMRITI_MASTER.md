@@ -1,6 +1,6 @@
 # Smriti — Master Document (SIH26003)
 
-**Last updated:** 2026-08-31 · Branch `feature/phase1-close-gaps` · Problem statement: [`docs/SIH-2026-problem-statement.pdf`](SIH-2026-problem-statement.pdf)
+**Last updated:** 2026-08-31 · Branch `main` · Problem statement: [`docs/SIH-2026-problem-statement.pdf`](SIH-2026-problem-statement.pdf)
 
 **This is the only living human-readable project document.** Quick commands: [`README.md`](../README.md). Machine-readable tasks: [`docs/task-registry.yaml`](task-registry.yaml).
 
@@ -10,11 +10,11 @@
 
 | Dimension | Score | Meaning |
 |-----------|-------|---------|
-| **Overall product today** | **5.0 / 10** | Working hackathon vertical slice — not the full PDF clinical platform |
-| **Judge demo (English, local seed)** | **7.0 / 10** | 7 games, dashboard, seed script, CI green |
-| **Tier 1 MVP vs PDF** | **5.5 / 10** | Core scaffold exists; offline, voice, deploy half-done |
-| **Elderly Assamese experience** | **4.5 / 10** | UI is Assamese; browser voice is not native Assamese |
-| **Production readiness** | **3.5 / 10** | No hosted Postgres, no Vercel prod, no elder playtest |
+| **Overall product today** | **6.0 / 10** | Winning-path code landed; hosted URL + playtest video still on teammates |
+| **Judge demo (local seed)** | **7.5 / 10** | Hero loop + notifications + live Alerts + Bhashini hook |
+| **Judge demo (public URL)** | **4 / 10** | `render.yaml` + Vercel ready — Harshit/Parth must deploy |
+| **Elderly Assamese experience** | **5.5 / 10** | Bhashini TTS when keys set; else honest Web Speech + system fonts offline |
+| **Production readiness** | **4.5 / 10** | Deploy configs exist; no prod DB yet |
 | **Code maintainability** | **6.5 / 10** | Monorepo coherent; this single doc replaces 60+ fragmented files |
 
 **One-line pitch for judges:** Smriti is an offline-first cognitive companion PWA for elderly Assamese users — six PDF cognitive domains plus face recall, rule-based adaptive difficulty, caregiver dashboard — built as a working MVP with honest voice limits and a Bhashini roadmap.
@@ -350,14 +350,39 @@ Each game records: user_id, game_type, difficulty, accuracy, reaction_time, erro
 |------|--------|-----|
 | 1 | Caregiver login :5174 | “Remote family monitors from Guwahati.” |
 | 2 | Add reminder + upload family photo | “Content syncs to her device.” |
-| 3 | Elderly splash + voice | “Web Speech today; Bhashini Assamese on roadmap.” |
+| 3 | Elderly splash + voice | “Bhashini Assamese when configured; honest fallback otherwise.” |
 | 4 | PIN login → Home | “Date, time, you are at home.” |
 | 5 | Memory Match + Arithmetic | “Six PDF cognitive domains, telemetry logged.” |
 | 6 | Face recall | “Personal reminiscence — who is this?” |
 | 7 | Settings Assamese + voice note | “Honest about English STT limits.” |
 | 8 | Mark reminder done offline optional | “Dexie outbox, not localStorage.” |
 | 9 | Caregiver refresh charts | “Peace of mind in 30 seconds.” |
-| 10 | Show §1 scores | “5/10 overall today; 7/10 judge demo; path to 10 documented.” |
+| 10 | Show §1 scores | “6/10 overall; 7.5/10 local demo; hosted URL pending.” |
+
+---
+
+## 15. Winning path — what shipped vs teammate P0
+
+| # | Item | Code status | Owner to finish |
+|---|------|-------------|-----------------|
+| 1 | **Public judge URL** | `render.yaml`, `vercel.json`, `.env.example` | Harshit: Supabase + Render; Parth: Vercel `VITE_API_URL` |
+| 2 | **Bhashini Assamese TTS** | `POST /api/v1/voice/assamese-tts`, hybrid `CompanionVoice` | Rehan: add `BHASHINI_API_KEY` + service ID on Render |
+| 3 | **Reminder loop** | `reminderScheduler.ts`, live `Alerts.tsx` | Ananya: test notification permission on Android PWA |
+| 4 | **Hero journey** | Memory hint, adaptive level on result, face recall demo | Srujna: rehearse + Assamese copy QA |
+| 5 | **Offline stunt** | No Google Fonts CDN; `/uploads` CacheFirst; Background Sync tag register | Ananya: airplane-mode rehearsal on phone |
+| 6 | **Playtest video** | [`docs/playtest/PLAYTEST.md`](playtest/PLAYTEST.md) template | Srujna: record 60s clip + quote in README |
+
+### Deploy checklist (copy-paste for Harshit/Parth)
+
+```bash
+# 1. Supabase → DATABASE_URL
+# 2. Render: connect repo, use render.yaml, set env vars
+# 3. alembic upgrade head && python scripts/seed_judge_demo.py on prod DB
+# 4. Vercel elderly: root apps/elderly-app, VITE_API_URL=https://YOUR-API/api/v1
+# 5. Vercel caregiver: root apps/caregiver-dashboard, same VITE_API_URL
+# 6. ALLOWED_ORIGINS=https://YOUR-ELDERLY.vercel.app,https://YOUR-CG.vercel.app
+# 7. Bhashini keys on API → Settings shows “Assamese voice (Bhashini) is active”
+```
 
 ---
 
@@ -365,10 +390,10 @@ Each game records: user_id, game_type, difficulty, accuracy, reaction_time, erro
 
 | Phase | Exit criteria | Owner | Target |
 |-------|---------------|-------|--------|
-| **A — Demo solid** | P0 bugs fixed, master doc, CI green, PR merged | Anirudh | Now |
+| **A — Demo solid** | P0 bugs fixed, master doc, CI green, PR merged | Anirudh | Done |
 | **B — Hosted** | API + Postgres + Vercel URLs work without local Docker | Harshit + Parth | Week 1 |
-| **C — Assamese voice honest** | Bhashini MVP OR clear UX + community-reviewed copy | Rehan + Srujna | Week 2 |
-| **D — Offline real** | Background Sync, notifications, no silent data loss | Ananya | Week 2 |
+| **C — Assamese voice honest** | Bhashini keys on prod OR clear UX + community-reviewed copy | Rehan + Srujna | Week 2 |
+| **D — Offline real** | Background Sync, notifications, airplane demo on phone | Ananya | Week 2 |
 | **E — Elder test** | 3+ Assamese-speaking elders; issues fixed | All | Week 3 |
 | **F — Production** | DPDP, RBAC tests, monitoring | Harshit | Post-SIH |
 
@@ -376,16 +401,11 @@ Each game records: user_id, game_type, difficulty, accuracy, reaction_time, erro
 
 ## 14. Git / branch policy
 
-- **Main branch:** `main` — production-ready merges only
+- **Main branch:** `main`
 - **Feature branches:** short-lived `feature/*` from `main`
-- **Current PR:** [#10](https://github.com/Rehan-2024/smriti-/pull/10) `feature/phase1-close-gaps` → `main`
+- **Latest winning-path PR:** `feature/sih-winning-path` → `main`
 
-**Branches safe to delete after merge:**
-- `feature/T0-INF-001-scaffold`, `feature/T1-BE-002-schema`, `feature/T1-BE-003-auth`, `feature/T1-FE-001-scaffold`
-- `feature/T2-AI-001-adaptive-difficulty`, `feature/T2-AI-002-analytics-engine`, `feature/T2-AI-003-analytics-api`, `feature/T2-FE-001-dashboard-scaffold`
-- `feature/sih-2026` (superseded)
-
-**Workflow:** PR → CI green → one reviewer → merge → delete feature branch.
+**Workflow:** PR → CI green → merge.
 
 ---
 

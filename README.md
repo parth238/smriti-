@@ -51,6 +51,19 @@ Set `VITE_API_URL=http://localhost:8000/api/v1` in elderly/caregiver `.env`.
 
 PDF reference: [`docs/SIH-2026-problem-statement.pdf`](docs/SIH-2026-problem-statement.pdf)
 
+## Winning path (2026-08-31)
+
+| Done in code | Teammate P0 |
+|--------------|-------------|
+| Bhashini TTS proxy + hybrid voice | Add API keys on Render |
+| Live caregiver Alerts | Deploy + test |
+| Local reminder notifications | Android PWA permission test |
+| Offline fonts + photo cache + Background Sync tag | Airplane-mode demo |
+| Adaptive level + hints + quit tracking | Hero journey rehearsal |
+| `render.yaml` deploy blueprint | Supabase + Vercel URLs |
+
+Playtest template: [`docs/playtest/PLAYTEST.md`](docs/playtest/PLAYTEST.md)
+
 ## Repo layout
 
 ```

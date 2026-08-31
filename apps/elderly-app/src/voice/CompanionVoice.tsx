@@ -12,6 +12,7 @@ import {
 import { useI18n } from "../context/LanguageContext";
 import type { MessageKey } from "../i18n";
 import { useListening } from "./useListening";
+import { checkBhashiniTts, speakAssameseViaBhashini } from "./bhashiniTts";
 import { useSpeech } from "./useSpeech";
 
 const voiceKey = "smriti.voice";
@@ -23,6 +24,7 @@ type CompanionVoiceValue = {
   isListening: boolean;
   speechAvailable: boolean;
   listenAvailable: boolean;
+  bhashiniAvailable: boolean;
   speakKey: (key: MessageKey) => void;
   speakText: (text: string) => void;
   listenOnce: () => Promise<string | null>;
@@ -38,8 +40,29 @@ function readVoiceEnabled(): boolean {
 export function CompanionVoiceProvider({ children }: { children: ReactNode }) {
   const { language, tx } = useI18n();
   const [voiceEnabled, setVoiceEnabledState] = useState(readVoiceEnabled);
+  const [bhashiniAvailable, setBhashiniAvailable] = useState(false);
   const { speak, cancel, isSpeaking, isAvailable: speechAvailable } = useSpeech(voiceEnabled);
   const { listen, isListening, isAvailable: listenAvailable } = useListening(voiceEnabled);
+
+  useEffect(() => {
+    void checkBhashiniTts().then(setBhashiniAvailable);
+  }, []);
+
+  const speakHybrid = useCallback(
+    async (text: string) => {
+      if (!voiceEnabled || !text.trim()) {
+        return;
+      }
+      if (language === "as" && bhashiniAvailable) {
+        const ok = await speakAssameseViaBhashini(text);
+        if (ok) {
+          return;
+        }
+      }
+      await speak(text, { language });
+    },
+    [bhashiniAvailable, language, speak, voiceEnabled],
+  );
 
   const setVoiceEnabled = useCallback(
     (on: boolean) => {
@@ -57,9 +80,9 @@ export function CompanionVoiceProvider({ children }: { children: ReactNode }) {
       if (!voiceEnabled) {
         return;
       }
-      void speak(text, { language });
+      void speakHybrid(text);
     },
-    [language, speak, voiceEnabled],
+    [speakHybrid, voiceEnabled],
   );
 
   const speakKey = useCallback(
@@ -85,6 +108,7 @@ export function CompanionVoiceProvider({ children }: { children: ReactNode }) {
       isListening,
       speechAvailable,
       listenAvailable,
+      bhashiniAvailable,
       speakKey,
       speakText,
       listenOnce,
@@ -96,6 +120,7 @@ export function CompanionVoiceProvider({ children }: { children: ReactNode }) {
       isListening,
       speechAvailable,
       listenAvailable,
+      bhashiniAvailable,
       speakKey,
       speakText,
       listenOnce,

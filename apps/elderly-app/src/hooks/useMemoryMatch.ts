@@ -8,6 +8,7 @@ import { dealMemoryCardsMixed, evaluateFlip, MOTIFS, type MemoryCard } from "../
 import type { MotifId } from "../games/memory/deal";
 import { useAdaptiveDifficulty } from "./useAdaptiveDifficulty";
 import { useGameSession } from "./useGameSession";
+import { useRegisterGameQuit } from "./useRegisterGameQuit";
 
 function motifsForPairs(pairCount: number): MotifId[] {
   return MOTIFS.slice(0, Math.min(MOTIFS.length, Math.max(3, pairCount)));
@@ -26,7 +27,16 @@ export function useMemoryMatch() {
   const [bloomKey, setBloomKey] = useState<string | null>(null);
   const errors = useRef(0);
   const flips = useRef(0);
+  const hintsUsed = useRef(0);
   const finished = useRef(false);
+
+  useRegisterGameQuit({
+    gameType: "memory_match",
+    gamePath: "/games/memory-match",
+    difficulty: adaptive.difficulty,
+    recordResult,
+    elapsedSec,
+  });
 
   useEffect(() => {
     markStarted("/games/memory-match");
@@ -84,6 +94,7 @@ export function useMemoryMatch() {
         accuracy,
         reactionTimeMs: Math.round((elapsedSec() * 1000) / Math.max(1, totalPairs)),
         errors: errors.current,
+        hintsUsed: hintsUsed.current,
         sessionDurationSec: elapsedSec(),
       }).then(() => {
         navigate("/games/memory-match/result", { replace: true });
@@ -140,14 +151,31 @@ export function useMemoryMatch() {
     [adaptive.mismatchMs, cards, locked, matched, open, tx],
   );
 
+  const requestHint = useCallback(() => {
+    if (!cards.length || matched.length >= adaptive.pairCount) {
+      return;
+    }
+    hintsUsed.current += 1;
+    const unmatched = cards.find(
+      (card) => !matched.includes(card.matchKey) && !open.includes(card.uid),
+    );
+    if (unmatched) {
+      setNudge(tx("needHint"));
+      setOpen([unmatched.uid]);
+      window.setTimeout(() => setOpen([]), 1200);
+    }
+  }, [adaptive.pairCount, cards, matched, open, tx]);
+
   return {
     ready: adaptive.ready && cards.length > 0,
     cards,
     open,
     matched,
     pairCount: adaptive.pairCount,
+    difficulty: adaptive.difficulty,
     nudge: nudge || tx("memoryHint"),
     bloomKey,
     onTap,
+    requestHint,
   };
 }
