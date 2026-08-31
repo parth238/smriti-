@@ -38,6 +38,7 @@ def _content_matches_media(content: bytes, media_type: str) -> bool:
         return content.startswith(b"RIFF") and content[8:12] == b"WEBP"
     return any(content.startswith(sig) for sig in signatures)
 
+
 PACK_LANGUAGE_MAP = {
     "as": "assamese",
     "assamese": "assamese",
