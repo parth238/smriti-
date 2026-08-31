@@ -49,14 +49,13 @@
 - `04-github-and-workflow/CONTRIBUTING.md`: Contributor rules.
 
 ## Project Management
-*Living tracking documents. Snapshot 2026-08-31: Anirudh built MVP foundation from scratch; teammates own refinement per master plan.*
-- `05-project-management/PROJECT_STATUS_AND_PLAN.md`: **Master doc** — honest ratings, stack, contributions, PDF checklist, teammate steps, judge script, Dexie schema, voice reality.
-- `05-project-management/task-registry.yaml`: Machine-readable task board aligned to master doc.
-- `05-project-management/NEXT_PLAN.md`: Redirect stub → master doc.
-- `01-execution/DEVELOPMENT_CHECKLIST.md`: Master checklist of all MVP tasks (honest PARTIAL notes).
-- `05-project-management/DECISION_LOG.md`: Living ADR tracking recent architectural decisions.
+*Living tracking — single master doc only.*
+- `05-project-management/PROJECT_STATUS_AND_PLAN.md`: **Master doc** — ratings, stack, games, Dexie, voice, teammate steps, judge script.
+- `05-project-management/task-registry.yaml`: Machine-readable task board.
+- `05-project-management/NEXT_PLAN.md`: Redirect → master doc.
+- `05-project-management/DEVELOPMENT_CHECKLIST.md`: Redirect → master doc.
+- `05-project-management/DECISION_LOG.md`: Living ADR tracking.
 - `05-project-management/INTEGRATION_CHECKLIST.md`: Cross-service testing list.
-- `05-project-management/CHANGE_IMPACT.md`: Covering-land impact and blockers.
 
 ## Reference
 *Supporting research (Do not treat as primary requirements).*

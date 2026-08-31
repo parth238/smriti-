@@ -141,6 +141,6 @@ CI passes, Alembic head is clean, endpoints return 200/401 correctly.
 
 ## 22 FIRST TASK
 
-**Foundation exists (Anirudh, 2026-08-31):** Reminders, memories, sync batch, RBAC helpers, 43 pytest. See `CONTRIBUTION_LEDGER.md`.
+**Foundation exists (Anirudh, 2026-08-31):** Reminders, memories, sync batch, RBAC helpers, pytest. See `PROJECT_STATUS_AND_PLAN.md` §2.
 
-**Now:** T0-INF-002 hosted Postgres. Review and own backend merges. RBAC integration tests. Cloud media storage. Production secrets.
+**Now:** T0-INF-002 hosted Postgres. RBAC integration tests. Production deploy. See master doc §9.

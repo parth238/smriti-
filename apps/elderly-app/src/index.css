@@ -126,10 +126,19 @@ input {
 .game-scene-memory,
 .game-scene-attention,
 .game-scene-sequencing,
-.game-scene-naming {
+.game-scene-naming,
+.game-scene-arithmetic,
+.game-scene-path-maze,
+.game-scene-face-recall {
   background:
     radial-gradient(ellipse at 50% 0%, rgba(224, 165, 66, 0.08), transparent 55%),
     #fbf9f4;
+}
+
+.maze-cell {
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(45, 74, 62, 0.12);
 }
 
 .hill-window img,

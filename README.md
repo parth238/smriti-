@@ -63,9 +63,9 @@ Demo loop: splash walk → PIN → one game → caregiver chart updates.
 
 ### Project status and team handoff
 
-Honest completion (~20% full PDF / ~55% Tier 1 scaffold): **`docs/05-project-management/PROJECT_STATUS_AND_PLAN.md`** — the only status/plan doc.
+Honest completion (~28% full PDF / ~72% Tier 1 scaffold): **`docs/05-project-management/PROJECT_STATUS_AND_PLAN.md`** — the only status/plan doc.
 
-Game reference art lives in `apps/elderly-app/public/assets/games/` (memory, attention, sequencing, naming sprites, hill background, grandmother/grandfather companions, Bihu scene). Workbox precaches these for offline play.
+Game reference art lives in `apps/elderly-app/public/assets/games/`. Seven activities: memory match, attention, sequencing, picture naming, simple arithmetic, hill path maze, and face recall.
 
 ### Hosted Postgres (Supabase / Neon)
 

@@ -120,6 +120,27 @@
   "voiceOn": "Voice on",
   "voiceOff": "Voice off",
   "voiceUnavailable": "Voice is not available on this device. You can still read everything on screen.",
-  "namingSpeak": "Say the word aloud"
+  "namingSpeak": "Say the word aloud",
+  "simpleArithmetic": "Simple Arithmetic",
+  "arithmeticHint": "Pick the right number.",
+  "arithmeticHintAnswer": "The answer is",
+  "pathMaze": "Hill Path",
+  "pathMazeHint": "Walk from start to the hill top, one step at a time.",
+  "pathStart": "Start",
+  "pathGoal": "Top",
+  "pathYouAreHere": "You are here",
+  "pathStep": "Step",
+  "pathHint": "Try the glowing step next.",
+  "pathWrongTurn": "That is not on the path.",
+  "faceRecall": "Who Is This?",
+  "faceRecallHint": "Look at the face. Tap the name.",
+  "whoIsThis": "Who is this?",
+  "faceDemoName": "Grandmother",
+  "faceDemoAlt1": "Grandfather",
+  "faceDemoAlt2": "Aunt",
+  "faceDemoAlt3": "Uncle",
+  "moreActivities": "More activities",
+  "needHint": "Need a hint?",
+  "pathComplete": "You reached the top. Well done."
 }
-
+

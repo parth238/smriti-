@@ -126,6 +126,6 @@ Vite builds without TS errors. Dashboard can log in, select a patient, view sess
 
 ## 22 FIRST TASK
 
-**Foundation exists (Anirudh, 2026-08-31):** Dashboard scaffold, live reminders/memories API, patient switcher, reminder edit. See `CONTRIBUTION_LEDGER.md`.
+**Foundation exists (Anirudh, 2026-08-31):** Dashboard scaffold, live reminders/memories API, patient switcher. See `PROJECT_STATUS_AND_PLAN.md` §2.
 
-**Now:** Polish Overview/Analytics charts. Wire Alerts to live missed reminders. Deploy Vercel. Filter Sessions by cognitive domain. KT-DASH with team.
+**Now:** Deploy Vercel. Wire live missed-reminder alerts. Chart polish. See master doc §9.

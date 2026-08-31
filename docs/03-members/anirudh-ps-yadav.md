@@ -126,6 +126,6 @@ Vite builds without TS errors. All touch targets are >= 48px. App shell renders 
 
 ## 22 FIRST TASK
 
-**Foundation delivered (2026-08-31):** Built monorepo, FastAPI backend, elderly PWA (4 games, Dexie, Workbox, i18n), caregiver dashboard, content packs, CI, judge seed from scratch on `feature/phase1-close-gaps`. Documented in `docs/05-project-management/CONTRIBUTION_LEDGER.md`.
+**Foundation delivered (2026-08-31):** Built monorepo, FastAPI backend, elderly PWA (7 games, Dexie, Workbox, i18n), caregiver dashboard, content packs, CI, judge seed from scratch on `feature/phase1-close-gaps`. See `docs/05-project-management/PROJECT_STATUS_AND_PLAN.md` §2.
 
-**Now:** Merge PR #10. Bugfixes only when teammates are blocked. Gamification polish → Srujna. Offline notifications → Ananya.
+**Now:** Merge after team review. Bugfixes only when teammates are blocked.

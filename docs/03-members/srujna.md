@@ -123,6 +123,6 @@ Tailwind config includes `gamosa-red` and `tea-garden`. Buttons are 48px minimum
 
 ## 22 FIRST TASK
 
-**Foundation exists (Anirudh, 2026-08-31):** Tailwind tokens, cultural JSON packs, companion scaffold. See `CONTRIBUTION_LEDGER.md`.
+**Foundation exists (Anirudh, 2026-08-31):** Tailwind tokens, cultural JSON packs, companion scaffold, 7 game PNG sprites. See `PROJECT_STATUS_AND_PLAN.md` §2.
 
-**Now:** Reference game art is wired in `public/assets/games/` (2026-08-31). Community Assamese review (`as.json` + cultural JSON). Design QA vs doc 15. Refine companion poses if playtest feedback. Optional: family photo tiles in Memory Match.
+**Now:** Community Assamese review. Design QA vs doc 15. See master doc §9.

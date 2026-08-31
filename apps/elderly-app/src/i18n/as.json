@@ -120,6 +120,27 @@
   "voiceOn": "কণ্ঠ অন",
   "voiceOff": "কণ্ঠ অফ",
   "voiceUnavailable": "এই ডিভাইচত কণ্ঠ উপলব্ধ নহয়। আপুনি স্ক্ৰীনত সকলো পঢ়িব পাৰে।",
-  "namingSpeak": "শব্দটো মাতি কওক"
+  "namingSpeak": "শব্দটো মাতি কওক",
+  "simpleArithmetic": "সৰল গণিত",
+  "arithmeticHint": "শুদ্ধ সংখ্যা বাছক।",
+  "arithmeticHintAnswer": "উত্তৰ হ'ল",
+  "pathMaze": "পাহাৰৰ পথ",
+  "pathMazeHint": "আৰম্ভৰ পৰা শিৰত, এটা এটা খোজকৈ যাওক।",
+  "pathStart": "আৰম্ভ",
+  "pathGoal": "শিৰ",
+  "pathYouAreHere": "আপুনি ইয়াত",
+  "pathStep": "খোজ",
+  "pathHint": "পৰৱৰ্তী উজ্জ্বল খোজটো চেষ্টা কৰক।",
+  "pathWrongTurn": "এইটো পথত নহয়।",
+  "faceRecall": "এইজন কোন?",
+  "faceRecallHint": "মুখখন চাওক। নামটো টিপক।",
+  "whoIsThis": "এইজন কোন?",
+  "faceDemoName": "আইতা",
+  "faceDemoAlt1": "দেউতা",
+  "faceDemoAlt2": "মাহী",
+  "faceDemoAlt3": "মামা",
+  "moreActivities": "আৰু কাৰ্য",
+  "needHint": "সহায় লাগে?",
+  "pathComplete": "আপুনি শিৰত পাইছে। ভাল কৰিলে।"
 }
-
+
