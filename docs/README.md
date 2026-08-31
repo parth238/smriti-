@@ -3,7 +3,7 @@
 ## START HERE
 - **AI Agent:** → `01-execution/AI_AGENT_BOOT_PROTOCOL.md` *(The definitive initialization protocol for AI assistants).*
 - **Project Master:** → `01-execution/MASTER_EXECUTION.md` *(The complete operational playbook that ties docs to teams).*
-- **Who does what next (2026-08-30):** → `05-project-management/NEXT_PLAN.md` and `05-project-management/TEAM_STATUS.md`.
+- **Who does what next (2026-08-31):** → `05-project-management/NEXT_PLAN.md`, `TEAM_STATUS.md`, and `CONTRIBUTION_LEDGER.md`.
 
 ## Source of Truth
 *These documents define what is being built.*
@@ -49,9 +49,10 @@
 - `04-github-and-workflow/CONTRIBUTING.md`: Contributor rules.
 
 ## Project Management
-*Living tracking documents. Snapshot 2026-08-30: Anirudh covered other folders for the SIH demo. Owners did not change.*
+*Living tracking documents. Snapshot 2026-08-31: Anirudh built MVP foundation from scratch; teammates own refinement per `NEXT_PLAN.md`.*
+- `05-project-management/CONTRIBUTION_LEDGER.md`: Who built what from scratch (Anirudh foundation) and honest completion %.
 - `01-execution/DEVELOPMENT_CHECKLIST.md`: Master checklist of all MVP tasks (honest PARTIAL notes).
-- `05-project-management/NEXT_PLAN.md`: Phase 0 to 3 plan, KT checklist, STT/voice placement.
+- `05-project-management/NEXT_PLAN.md`: Per-owner gamification and polish tasks (Srujna art, Ananya offline, Rehan copy, Parth dashboard).
 - `05-project-management/TEAM_STATUS.md`: Who works on what next, plus what is actually landed.
 - `05-project-management/DECISION_LOG.md`: Living ADR tracking recent architectural decisions.
 - `05-project-management/INTEGRATION_CHECKLIST.md`: Cross-service testing list.

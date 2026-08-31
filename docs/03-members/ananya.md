@@ -123,4 +123,7 @@ Accidental commit to main? `git reset --hard HEAD~1`, checkout branch, cherry-pi
 App boots with no network. Games write to Dexie. Connection restore flushes Dexie to backend without generating duplicate rows.
 
 ## 22 FIRST TASK
-**Now:** Extend `apps/elderly-app/src/db/`. Full schema for reminders and memories. Outbox kinds beyond games. Workbox polish. Reminder client scheduling. i18n missing-key tests. Schedule KT-DEXIE with Anirudh.
+
+**Foundation (2026-08-31):** Anirudh built monorepo, backend, elderly PWA, dashboard, offline layer, and content packs from scratch on `feature/phase1-close-gaps`. See `docs/05-project-management/CONTRIBUTION_LEDGER.md`.
+
+**Now:** Merge PR #10. Critical bugfixes only. Hand gamification art and game environment polish to Srujna; sync hardening to Ananya.

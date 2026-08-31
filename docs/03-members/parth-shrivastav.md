@@ -125,4 +125,7 @@ Accidental commit to main? `git reset --hard HEAD~1`, checkout branch, cherry-pi
 Vite builds without TS errors. Dashboard can log in, select a patient, view session history, view analytics charts, and set a reminder.
 
 ## 22 FIRST TASK
-**Now:** Own `apps/caregiver-dashboard/`. Chart polish and copy with no diagnostic claims. When Harshit lands T1-BE-007/008, replace Reminders/Memories/Alerts demo data with API calls. Schedule KT-DASH with Anirudh.
+
+**Foundation exists (Anirudh, 2026-08-31):** Dashboard scaffold, live reminders/memories API, patient switcher, reminder edit. See `CONTRIBUTION_LEDGER.md`.
+
+**Now:** Polish Overview/Analytics charts. Wire Alerts to live missed reminders. Deploy Vercel. Filter Sessions by cognitive domain. KT-DASH with team.

@@ -124,4 +124,7 @@ Accidental commit to main? `git reset --hard HEAD~1`, checkout branch, cherry-pi
 Adaptive difficulty increments by 1 on 3 successes, drops by 1 on 2 failures. Baseline accurately averages the first 14 days. No ML libraries imported.
 
 ## 22 FIRST TASK
-**Now:** T2-AI-001/002/003 are merged (PRs 6-8). Review Parth's dashboard copy so nothing reads as a diagnosis. Schedule KT-AI with Anirudh. Do not add RL or ML libraries.
+
+**Merged (PRs 6-8):** T2-AI-001/002/003 adaptive + analytics.
+
+**Now:** Audit all dashboard and elderly UI copy for diagnostic language. Document voice roadmap (Web Speech Tier 2, Bhashini Tier 3). Review telemetry schema for future decline-detection. KT-AI with team.

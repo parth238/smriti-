@@ -125,4 +125,7 @@ Accidental commit to main? `git reset --hard HEAD~1`, checkout branch, cherry-pi
 Vite builds without TS errors. All touch targets are >= 48px. App shell renders successfully.
 
 ## 22 FIRST TASK
-**Now:** Phase 1 elderly polish. Sequencing and Naming visual craft. Keep i18n complete. Protect the judge path (splash → PIN → one game → caregiver chart). PWA install prompt is Phase 2. Voice/STT is Phase 2 (Web Speech) / Phase 3 (Bhashini). Run KT sessions so owners can take their folders.
+
+**Foundation delivered (2026-08-31):** Built monorepo, FastAPI backend, elderly PWA (4 games, Dexie, Workbox, i18n), caregiver dashboard, content packs, CI, judge seed from scratch on `feature/phase1-close-gaps`. Documented in `docs/05-project-management/CONTRIBUTION_LEDGER.md`.
+
+**Now:** Merge PR #10. Bugfixes only. Gamification art and environments → Srujna. Offline notifications → Ananya.

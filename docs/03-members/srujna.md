@@ -122,4 +122,7 @@ Accidental commit to main? `git reset --hard HEAD~1`, checkout branch, cherry-pi
 Tailwind config includes `gamosa-red` and `tea-garden`. Buttons are 48px minimum. No hardcoded English text in components.
 
 ## 22 FIRST TASK
-**Now:** Design QA vs doc 15 on both apps. Figma/token handoff. Verify cultural pack names and art. Motion/accessibility pass (gamosa line as loading signature). Help Anirudh on Sequencing/Naming craft. Schedule KT-UX.
+
+**Foundation exists (Anirudh, 2026-08-31):** Tailwind tokens, cultural JSON packs, companion scaffold. See `CONTRIBUTION_LEDGER.md`.
+
+**Now:** Integrate reference game art into `public/assets/games/` (memory icons, attention targets, sequencing routine, naming objects, hill splash, grandmother portrait). Make each game screen feel themed and gamified. Assamese community review with ARDSI. Design QA vs doc 15.

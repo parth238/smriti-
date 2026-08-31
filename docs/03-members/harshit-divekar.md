@@ -140,4 +140,7 @@ Accidental commit to main? `git reset --hard HEAD~1`, checkout branch, cherry-pi
 CI passes, Alembic head is clean, endpoints return 200/401 correctly.
 
 ## 22 FIRST TASK
-**Now:** Review Anirudh's auth, schema, and game-session code. Then **T1-BE-007** Reminders API (table exists, no routes). Then T1-BE-008 memories and T0-INF-002 hosted DB. Schedule KT-BE with Anirudh (NEXT_PLAN Phase 2 process).
+
+**Foundation exists (Anirudh, 2026-08-31):** Reminders, memories, sync batch, RBAC helpers, 43 pytest. See `CONTRIBUTION_LEDGER.md`.
+
+**Now:** T0-INF-002 hosted Postgres. Review and own backend merges. RBAC integration tests. Cloud media storage. Production secrets.
