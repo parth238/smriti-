@@ -61,6 +61,14 @@ This creates linked demo accounts with reminders, 14 days of game sessions, and 
 
 Demo loop: splash walk → PIN → one game → caregiver chart updates.
 
+### Project status and team handoff
+
+Honest completion (~18% full PDF / ~48% Tier 1 scaffold): `docs/05-project-management/CONTRIBUTION_LEDGER.md` and `TEAM_STATUS.md`.
+
+Per-owner next tasks (gamification polish, offline, dashboard, backend): `docs/05-project-management/NEXT_PLAN.md`.
+
+Game reference art lives in `apps/elderly-app/public/assets/games/` (memory, attention, sequencing, naming sprites, hill background, grandmother/grandfather companions, Bihu scene). Workbox precaches these for offline play.
+
 ### Hosted Postgres (Supabase / Neon)
 
 1. Create a project and copy the connection string into `DATABASE_URL`.
