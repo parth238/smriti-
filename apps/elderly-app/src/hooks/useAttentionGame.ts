@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { ATTENTION_ICONS, type AttentionIconId } from "../data/gameAssets";
 import { ATTENTION_SLOTS, pickGardenSlot } from "../games/attention/logic";
 import { useI18n } from "../context/LanguageContext";
 import { useAdaptiveDifficulty } from "./useAdaptiveDifficulty";
@@ -12,6 +13,7 @@ export function useAttentionGame() {
   const adaptive = useAdaptiveDifficulty("attention_reaction");
   const { markStarted, recordResult, elapsedSec } = useGameSession();
   const [slot, setSlot] = useState<number | null>(null);
+  const [icon, setIcon] = useState<AttentionIconId | null>(null);
   const [round, setRound] = useState(0);
   const [phase, setPhase] = useState<"wait" | "tap" | "retry">("wait");
   const errors = useRef(0);
@@ -61,11 +63,14 @@ export function useAttentionGame() {
 
     let cancelled = false;
     setSlot(null);
+    setIcon(null);
     setPhase("wait");
     const appear = window.setTimeout(() => {
       if (cancelled) {
         return;
       }
+      const nextIcon = ATTENTION_ICONS[Math.floor(Math.random() * ATTENTION_ICONS.length)] ?? "star";
+      setIcon(nextIcon);
       setSlot(pickGardenSlot(ATTENTION_SLOTS));
       setPhase("tap");
       shownAt.current = Date.now();
@@ -89,23 +94,28 @@ export function useAttentionGame() {
 
   const tap = useCallback(
     (index: number) => {
-      if (slot === null || index !== slot) {
+      if (phase === "wait" || slot === null) {
+        return;
+      }
+      if (index !== slot) {
         setPhase("retry");
         errors.current += 1;
+        window.setTimeout(() => setPhase("tap"), 600);
         return;
       }
       reactions.current.push(Date.now() - shownAt.current);
       setRound((current) => current + 1);
     },
-    [slot],
+    [phase, slot],
   );
 
   const hint =
-    phase === "wait" ? tx("waitFlower") : phase === "retry" ? tx("tryAgainGentle") : tx("tapFlower");
+    phase === "wait" ? tx("waitTarget") : phase === "retry" ? tx("tryAgainGentle") : tx("tapTarget");
 
   return {
     ready: adaptive.ready,
     slot,
+    icon,
     round,
     rounds: adaptive.rounds,
     hint,

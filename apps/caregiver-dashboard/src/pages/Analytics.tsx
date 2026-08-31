@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { loadCaregiverAnalytics, type AnalyticsBundle } from "../api/analytics";
+import { PATIENT_CHANGE_EVENT } from "../api/patients";
 import { TrendChart } from "../components/charts/TrendChart";
 import { Notice } from "../components/Notice";
 import { PageHeader } from "../components/PageHeader";
@@ -10,6 +11,9 @@ export function Analytics() {
 
   useEffect(() => {
     void loadCaregiverAnalytics().then(setBundle);
+    const onPatientChange = () => void loadCaregiverAnalytics().then(setBundle);
+    window.addEventListener(PATIENT_CHANGE_EVENT, onPatientChange);
+    return () => window.removeEventListener(PATIENT_CHANGE_EVENT, onPatientChange);
   }, []);
 
   if (!bundle) {

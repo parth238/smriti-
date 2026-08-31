@@ -20,6 +20,24 @@ def get_current_principal(
     return parse_subject(credentials.credentials)
 
 
+def require_caregiver(
+    principal: tuple[UUID, str] = Depends(get_current_principal),
+) -> UUID:
+    subject_id, role = principal
+    if role != "caregiver":
+        raise AuthorizationError("Caregiver access is required")
+    return subject_id
+
+
+def require_elderly(
+    principal: tuple[UUID, str] = Depends(get_current_principal),
+) -> UUID:
+    subject_id, role = principal
+    if role != "elderly_user":
+        raise AuthorizationError("Elderly user access is required")
+    return subject_id
+
+
 def verify_user_access(
     user_id: UUID,
     principal: tuple[UUID, str] = Depends(get_current_principal),
@@ -43,3 +61,21 @@ def verify_user_access(
             raise AuthorizationError("This person is not linked to you")
         return principal
     raise AuthorizationError("This action is not allowed")
+
+
+def verify_caregiver_linked(
+    user_id: UUID,
+    caregiver_id: UUID = Depends(require_caregiver),
+    db: Session = Depends(get_db),
+) -> UUID:
+    link = (
+        db.query(CaregiverUserLink)
+        .filter(
+            CaregiverUserLink.caregiver_id == caregiver_id,
+            CaregiverUserLink.user_id == user_id,
+        )
+        .first()
+    )
+    if link is None:
+        raise AuthorizationError("This person is not linked to you")
+    return caregiver_id

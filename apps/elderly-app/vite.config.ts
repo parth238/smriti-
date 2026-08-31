@@ -8,7 +8,14 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["manifest.json", "icons/icon.svg"],
+      includeAssets: [
+        "manifest.json",
+        "icons/icon.svg",
+        "assets/games/*.png",
+        "content-packs/assamese/cultural-media.json",
+        "content-packs/english/cultural-media.json",
+        "content-packs/manipuri/cultural-media.json",
+      ],
       manifest: {
         name: "Smriti",
         short_name: "Smriti",

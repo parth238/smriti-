@@ -76,3 +76,47 @@ export function attentionDelayMs(difficulty: number): number {
 export function attentionRounds(difficulty: number): number {
   return 4 + Math.min(2, Math.max(0, clampDifficulty(difficulty) - 2));
 }
+
+/** Sequencing: fewer steps at lower difficulty (daily routine). */
+export function sequencingStepCount(difficulty: number): number {
+  const level = clampDifficulty(difficulty);
+  if (level <= 2) {
+    return 3;
+  }
+  if (level <= 4) {
+    return 4;
+  }
+  return 5;
+}
+
+/** Picture naming: more rounds as difficulty rises. */
+export function namingItemCount(difficulty: number): number {
+  return Math.min(4, 2 + Math.max(0, clampDifficulty(difficulty) - 1));
+}
+
+export function arithmeticMaxOperand(difficulty: number): number {
+  const level = clampDifficulty(difficulty);
+  if (level <= 1) return 5;
+  if (level === 2) return 9;
+  if (level === 3) return 12;
+  if (level === 4) return 15;
+  return 20;
+}
+
+export function arithmeticRounds(difficulty: number): number {
+  return 3 + Math.min(3, clampDifficulty(difficulty) - 1);
+}
+
+export function mazeGridSize(difficulty: number): number {
+  const level = clampDifficulty(difficulty);
+  if (level <= 2) return 3;
+  if (level <= 4) return 4;
+  return 5;
+}
+
+export function faceRecallRoundCount(difficulty: number): number {
+  const level = clampDifficulty(difficulty);
+  if (level <= 2) return 2;
+  if (level <= 4) return 3;
+  return 4;
+}

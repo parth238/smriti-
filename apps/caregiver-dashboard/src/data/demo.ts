@@ -18,6 +18,9 @@ export type ReminderRow = {
   title: string;
   time: string;
   missed: boolean;
+  type?: string;
+  scheduledTime?: string;
+  active?: boolean;
 };
 
 export type MemoryRow = {
@@ -25,6 +28,7 @@ export type MemoryRow = {
   title: string;
   region: string;
   kind: "cultural" | "family";
+  mediaUrl?: string;
 };
 
 export const PATIENT = {

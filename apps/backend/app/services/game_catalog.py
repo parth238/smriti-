@@ -13,6 +13,9 @@ MEMORY_MATCH_ID = UUID("11111111-1111-4111-8111-111111111101")
 ATTENTION_ID = UUID("11111111-1111-4111-8111-111111111102")
 SEQUENCING_ID = UUID("11111111-1111-4111-8111-111111111103")
 PICTURE_NAMING_ID = UUID("11111111-1111-4111-8111-111111111104")
+SIMPLE_ARITHMETIC_ID = UUID("11111111-1111-4111-8111-111111111105")
+PATH_MAZE_ID = UUID("11111111-1111-4111-8111-111111111106")
+FACE_RECALL_ID = UUID("11111111-1111-4111-8111-111111111107")
 
 GAME_SEEDS: list[dict] = [
     {
@@ -38,6 +41,24 @@ GAME_SEEDS: list[dict] = [
         "game_type": "picture_naming",
         "display_name": {"en": "Picture Naming", "as": "ছবিৰ নাম"},
         "cognitive_domain": "language",
+    },
+    {
+        "id": SIMPLE_ARITHMETIC_ID,
+        "game_type": "simple_arithmetic",
+        "display_name": {"en": "Simple Arithmetic", "as": "সৰল গণিত"},
+        "cognitive_domain": "calculation",
+    },
+    {
+        "id": PATH_MAZE_ID,
+        "game_type": "path_maze",
+        "display_name": {"en": "Hill Path", "as": "পাহাৰৰ পথ"},
+        "cognitive_domain": "visuospatial",
+    },
+    {
+        "id": FACE_RECALL_ID,
+        "game_type": "face_recall",
+        "display_name": {"en": "Who Is This?", "as": "এইজন কোন?"},
+        "cognitive_domain": "memory",
     },
 ]
 

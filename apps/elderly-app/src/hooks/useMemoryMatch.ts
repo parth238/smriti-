@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { loadFamilyMemories, resolveMediaUrl } from "../api/memories";
 import { useI18n } from "../context/LanguageContext";
-import { dealMemoryCards, type MemoryCard } from "../games/memory";
-import { evaluateFlip } from "../games/memory/flip";
-import { MOTIFS, type MotifId } from "../games/memory/deal";
+import { MOTIF_MEMORY_PROMPTS } from "../data/motifPrompts";
+import { dealMemoryCardsMixed, evaluateFlip, MOTIFS, type MemoryCard } from "../games/memory";
+import type { MotifId } from "../games/memory/deal";
 import { useAdaptiveDifficulty } from "./useAdaptiveDifficulty";
 import { useGameSession } from "./useGameSession";
 
@@ -13,7 +14,7 @@ function motifsForPairs(pairCount: number): MotifId[] {
 }
 
 export function useMemoryMatch() {
-  const { tx } = useI18n();
+  const { tx, language } = useI18n();
   const navigate = useNavigate();
   const adaptive = useAdaptiveDifficulty("memory_match");
   const { markStarted, recordResult, elapsedSec } = useGameSession();
@@ -22,7 +23,7 @@ export function useMemoryMatch() {
   const [matched, setMatched] = useState<string[]>([]);
   const [locked, setLocked] = useState(false);
   const [nudge, setNudge] = useState("");
-  const [bloomMotif, setBloomMotif] = useState<string | null>(null);
+  const [bloomKey, setBloomKey] = useState<string | null>(null);
   const errors = useRef(0);
   const flips = useRef(0);
   const finished = useRef(false);
@@ -35,14 +36,31 @@ export function useMemoryMatch() {
     if (!adaptive.ready) {
       return;
     }
-    setCards(dealMemoryCards(motifsForPairs(adaptive.pairCount)));
-    setOpen([]);
-    setMatched([]);
-    setNudge("");
-    errors.current = 0;
-    flips.current = 0;
-    finished.current = false;
-  }, [adaptive.ready, adaptive.pairCount]);
+    let cancelled = false;
+    void (async () => {
+      const family = await loadFamilyMemories();
+      if (cancelled) {
+        return;
+      }
+      const photos = family.slice(0, 3).map((item) => ({
+        id: item.id,
+        url: resolveMediaUrl(item.media_url),
+        label: item.title[language] ?? item.title.en ?? item.title.as ?? "Family",
+      }));
+      setCards(
+        dealMemoryCardsMixed(adaptive.pairCount, motifsForPairs(adaptive.pairCount), photos),
+      );
+      setOpen([]);
+      setMatched([]);
+      setNudge("");
+      errors.current = 0;
+      flips.current = 0;
+      finished.current = false;
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [adaptive.pairCount, adaptive.ready, language]);
 
   useEffect(() => {
     if (!adaptive.ready || matched.length === 0 || matched.length < adaptive.pairCount) {
@@ -85,7 +103,7 @@ export function useMemoryMatch() {
 
   const onTap = useCallback(
     (card: MemoryCard) => {
-      if (locked || open.includes(card.uid) || matched.includes(card.motif) || !cards.length) {
+      if (locked || open.includes(card.uid) || matched.includes(card.matchKey) || !cards.length) {
         return;
       }
       const next = [...open, card.uid];
@@ -97,11 +115,18 @@ export function useMemoryMatch() {
       }
       flips.current += 1;
       if (result.kind === "match") {
-        setMatched((current) => [...current, result.motif]);
+        setMatched((current) => [...current, result.matchKey]);
         setOpen([]);
-        setBloomMotif(result.motif);
-        setNudge(tx("pairFound"));
-        window.setTimeout(() => setBloomMotif(null), 480);
+        setBloomKey(result.matchKey);
+        if (card.photoLabel) {
+          setNudge(`${tx("pairFound")} ${card.photoLabel}`);
+        } else if (card.motif) {
+          const promptKey = MOTIF_MEMORY_PROMPTS[card.motif];
+          setNudge(`${tx("pairFound")} ${tx(promptKey)}`);
+        } else {
+          setNudge(tx("pairFound"));
+        }
+        window.setTimeout(() => setBloomKey(null), 480);
         return;
       }
       errors.current += 1;
@@ -122,7 +147,7 @@ export function useMemoryMatch() {
     matched,
     pairCount: adaptive.pairCount,
     nudge: nudge || tx("memoryHint"),
-    bloomMotif,
+    bloomKey,
     onTap,
   };
 }

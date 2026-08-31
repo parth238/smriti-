@@ -1,0 +1,456 @@
+# Last reconciled: 2026-08-31 against feature/phase1-close-gaps (Anirudh audit).
+# Honest overall MVP completion: ~55% Tier 1 scaffold, ~20% full PDF vision.
+# Master doc: docs/SMRITI_MASTER.md
+# Status: DONE | PARTIAL | NOT_STARTED
+# covering: who landed the start. member: who owns next work.
+
+tasks:
+  - task_id: "T0-INF-001"
+    team: "TEAM 1"
+    member: "Harshit Divekar"
+    covering: "Anirudh P.S Yadav"
+    title: "Scaffold Monorepo Structure"
+    priority: "CRITICAL"
+    scope: "MVP"
+    dependencies: []
+    source_docs: ["06-folder-structure.md"]
+    files: ["apps/", "packages/", "docker-compose.yml"]
+    branch: "feature/sih-2026"
+    checkpoints: ["CP-01", "CP-02", "CP-03", "CP-04", "CP-05", "CP-06", "CP-07", "CP-12", "CP-13", "CP-14", "CP-15", "CP-16", "CP-17", "CP-18"]
+    tests: ["NOT_APPLICABLE"]
+    reviewer: "Harshit Divekar"
+    handoff: "Folders, Docker Postgres, Node 20 / Python 3.11 pin are in the branch. Harshit still owns infra."
+    status: "DONE"
+
+  - task_id: "T0-INF-002"
+    team: "TEAM 1"
+    member: "Harshit Divekar"
+    title: "Hosted Supabase / production Postgres"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T0-INF-001"]
+    source_docs: ["11-deployment.md", "12-config.md"]
+    files: ["apps/backend/.env.example"]
+    branch: "feature/T0-INF-002-supabase"
+    checkpoints: ["CP-01", "CP-02", "CP-03", "CP-04", "CP-05", "CP-06", "CP-12", "CP-13", "CP-14", "CP-15"]
+    tests: ["alembic upgrade head against hosted DB"]
+    reviewer: "Anirudh P.S Yadav"
+    handoff: "Provide DATABASE_URL to the team. Do not commit secrets."
+    status: "NOT_STARTED"
+
+  - task_id: "T0-INF-003"
+    team: "TEAM 1"
+    member: "Harshit Divekar"
+    covering: "Anirudh P.S Yadav"
+    title: "CI linting and tests"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T0-INF-001"]
+    source_docs: ["18-testing-strategy.md"]
+    files: [".github/workflows/ci.yml"]
+    branch: "feature/sih-2026"
+    checkpoints: ["CP-15"]
+    tests: ["GitHub Actions backend + frontend jobs"]
+    reviewer: "Harshit Divekar"
+    handoff: "CI runs on pull_request to main."
+    status: "DONE"
+
+  - task_id: "T1-BE-002"
+    team: "TEAM 1"
+    member: "Harshit Divekar"
+    covering: "Anirudh P.S Yadav"
+    title: "Database Schema and Alembic"
+    priority: "CRITICAL"
+    scope: "MVP"
+    dependencies: ["T0-INF-001"]
+    source_docs: ["04-database.md"]
+    files: ["apps/backend/app/models/", "apps/backend/app/db/migrations/"]
+    branch: "feature/sih-2026"
+    checkpoints: ["CP-01", "CP-06", "CP-07", "CP-08"]
+    tests: ["pytest apps/backend/app/tests/test_models.py"]
+    reviewer: "Harshit Divekar"
+    handoff: "Review 0001/0002. Do not rewrite without a new revision."
+    status: "DONE"
+
+  - task_id: "T1-BE-003"
+    team: "TEAM 1"
+    member: "Harshit Divekar"
+    covering: "Anirudh P.S Yadav"
+    title: "JWT Auth APIs"
+    priority: "CRITICAL"
+    scope: "MVP"
+    dependencies: ["T1-BE-002"]
+    source_docs: ["08-auth-security.md"]
+    files: ["apps/backend/app/api/v1/auth.py", "apps/backend/app/core/security.py"]
+    branch: "feature/sih-2026"
+    checkpoints: ["CP-01", "CP-06", "CP-07", "CP-08"]
+    tests: ["pytest apps/backend/app/tests/test_auth.py"]
+    reviewer: "Harshit Divekar"
+    handoff: "Caregiver + elderly PIN, refresh, rate limit. Review before prod secrets."
+    status: "DONE"
+
+  - task_id: "T1-BE-004"
+    team: "TEAM 1"
+    member: "Harshit Divekar"
+    covering: "Anirudh P.S Yadav"
+    title: "Role-Based Access Control"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T1-BE-003"]
+    source_docs: ["08-auth-security.md"]
+    files: ["apps/backend/app/core/deps.py"]
+    branch: "feature/sih-2026"
+    checkpoints: ["CP-01", "CP-06"]
+    tests: ["pytest apps/backend/app/tests/test_security.py"]
+    reviewer: "Harshit Divekar"
+    handoff: "require_caregiver, require_elderly, verify_caregiver_linked on new routes. No route-level deny integration tests yet."
+    status: "PARTIAL"
+
+  - task_id: "T1-BE-005"
+    team: "TEAM 1"
+    member: "Harshit Divekar"
+    covering: "Anirudh P.S Yadav"
+    title: "Game Session API"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T1-BE-002", "T1-BE-003"]
+    source_docs: ["05-api.md"]
+    files: ["apps/backend/app/api/v1/games.py", "apps/backend/app/services/game_sessions.py"]
+    branch: "feature/sih-2026"
+    checkpoints: ["CP-06", "CP-07", "CP-08"]
+    tests: ["pytest apps/backend/app/tests/test_game_sessions.py"]
+    reviewer: "Harshit Divekar"
+    handoff: "Idempotent POST via client_generated_id. List + next-difficulty."
+    status: "DONE"
+
+  - task_id: "T1-BE-006"
+    team: "TEAM 1"
+    member: "Harshit Divekar"
+    title: "Sync Batch API"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T1-BE-005"]
+    source_docs: ["05-api.md"]
+    files: ["apps/backend/app/api/v1/"]
+    branch: "feature/T1-BE-006-sync-batch"
+    checkpoints: ["CP-01", "CP-06", "CP-07", "CP-08"]
+    tests: ["pytest"]
+    reviewer: "Ananya"
+    handoff: "POST /sync/batch + GET /sync/status. Client uses batch with per-item fallback."
+    status: "DONE"
+
+  - task_id: "T1-BE-007"
+    team: "TEAM 1"
+    member: "Harshit Divekar"
+    title: "Reminders API"
+    priority: "CRITICAL"
+    scope: "MVP"
+    dependencies: ["T1-BE-002", "T1-BE-003"]
+    source_docs: ["05-api.md", "03-features.md"]
+    files: ["apps/backend/app/models/reminder.py"]
+    branch: "feature/T1-BE-007-reminders"
+    checkpoints: ["CP-01", "CP-06", "CP-07", "CP-08"]
+    tests: ["pytest"]
+    reviewer: "Parth Shrivastav"
+    handoff: "Full CRUD + elderly acknowledge. Dashboard wired."
+    status: "DONE"
+
+  - task_id: "T1-BE-008"
+    team: "TEAM 1"
+    member: "Harshit Divekar"
+    title: "Memory / reminiscence upload API"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T1-BE-002", "T1-BE-003"]
+    source_docs: ["05-api.md", "03-features.md"]
+    files: ["apps/backend/app/models/memory_item.py"]
+    branch: "feature/T1-BE-008-memories"
+    checkpoints: ["CP-01", "CP-06", "CP-07", "CP-08"]
+    tests: ["pytest"]
+    reviewer: "Parth Shrivastav"
+    handoff: "Multipart upload to /uploads, cultural-pack JSON, dashboard upload form."
+    status: "DONE"
+
+  - task_id: "T1-FE-001"
+    team: "TEAM 1"
+    member: "Anirudh P.S Yadav"
+    title: "Scaffold Vite PWA App"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T0-INF-001"]
+    source_docs: ["01-architecture.md", "15-ui-ux-design.md"]
+    files: ["apps/elderly-app/"]
+    branch: "feature/sih-2026"
+    checkpoints: ["CP-01", "CP-06", "CP-15"]
+    tests: ["npm run test", "npm run build"]
+    reviewer: "Harshit Divekar"
+    handoff: "5173 PWA with splash, routes, Workbox plugin."
+    status: "DONE"
+
+  - task_id: "T1-FE-002"
+    team: "TEAM 1"
+    member: "Anirudh P.S Yadav"
+    title: "Elderly PIN login and home"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T1-BE-003", "T1-FE-001"]
+    source_docs: ["08-auth-security.md", "14-sitemap-navigation.md"]
+    files: ["apps/elderly-app/src/screens/Login.tsx", "apps/elderly-app/src/screens/Home.tsx"]
+    branch: "feature/sih-2026"
+    checkpoints: ["CP-06", "CP-08"]
+    tests: ["npm run test"]
+    reviewer: "Harshit Divekar"
+    handoff: "Honest offline PIN. Unpaired devices do not fake success."
+    status: "DONE"
+
+  - task_id: "T1-FE-003"
+    team: "TEAM 1"
+    member: "Anirudh P.S Yadav"
+    title: "Four core games UI"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T1-FE-001"]
+    source_docs: ["03-features.md"]
+    files: ["apps/elderly-app/src/games/"]
+    branch: "feature/sih-2026"
+    checkpoints: ["CP-06"]
+    tests: ["npm run test"]
+    reviewer: "Srujna"
+    handoff: "All four games use adaptive hooks + sprite sheets / family photos. Voice wired. Srujna owns community QA and final art polish."
+    status: "PARTIAL"
+
+  - task_id: "T2-FE-001"
+    team: "TEAM 2"
+    member: "Parth Shrivastav"
+    covering: "Anirudh P.S Yadav"
+    title: "Scaffold Caregiver Dashboard"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T0-INF-001"]
+    source_docs: ["01-architecture.md"]
+    files: ["apps/caregiver-dashboard/"]
+    branch: "feature/sih-2026"
+    checkpoints: ["CP-01", "CP-06"]
+    tests: ["npm run build"]
+    reviewer: "Mohd Rehan"
+    handoff: "5174 sidebar app. Parth takes over. Do not rewrite the live/demo split."
+    status: "DONE"
+
+  - task_id: "T2-FE-002"
+    team: "TEAM 2"
+    member: "Parth Shrivastav"
+    covering: "Anirudh P.S Yadav"
+    title: "Caregiver login"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T1-BE-003", "T2-FE-001"]
+    source_docs: ["08-auth-security.md"]
+    files: ["apps/caregiver-dashboard/src/pages/Login.tsx"]
+    branch: "feature/sih-2026"
+    checkpoints: ["CP-06"]
+    tests: ["manual API login"]
+    reviewer: "Mohd Rehan"
+    handoff: "API login works. Unreachable API opens labeled demo. No register UI."
+    status: "PARTIAL"
+
+  - task_id: "T2-FE-003"
+    team: "TEAM 2"
+    member: "Parth Shrivastav"
+    covering: "Anirudh P.S Yadav"
+    title: "Patient overview"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T2-FE-001", "T2-AI-003"]
+    source_docs: ["14-sitemap-navigation.md"]
+    files: ["apps/caregiver-dashboard/src/pages/Overview.tsx"]
+    branch: "feature/sih-2026"
+    checkpoints: ["CP-06"]
+    tests: ["manual live vs demo banner"]
+    reviewer: "Mohd Rehan"
+    handoff: "Live + labeled demo. No multi-patient switcher."
+    status: "PARTIAL"
+
+  - task_id: "T2-FE-004"
+    team: "TEAM 2"
+    member: "Parth Shrivastav"
+    covering: "Anirudh P.S Yadav"
+    title: "Analytics charts"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T2-AI-003"]
+    source_docs: ["03-features.md"]
+    files: ["apps/caregiver-dashboard/src/pages/Analytics.tsx"]
+    branch: "feature/sih-2026"
+    checkpoints: ["CP-06"]
+    tests: ["manual Recharts"]
+    reviewer: "Mohd Rehan"
+    handoff: "Personal baseline only. Chart polish is Parth's."
+    status: "PARTIAL"
+
+  - task_id: "T2-FE-005"
+    team: "TEAM 2"
+    member: "Parth Shrivastav"
+    title: "Reminder and memory management UI"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T1-BE-007", "T1-BE-008", "T2-FE-001"]
+    source_docs: ["03-features.md"]
+    files: ["apps/caregiver-dashboard/src/pages/Reminders.tsx", "apps/caregiver-dashboard/src/pages/Memories.tsx"]
+    branch: "feature/T2-FE-005-care-mgmt"
+    checkpoints: ["CP-01", "CP-06"]
+    tests: ["manual create/edit against API"]
+    reviewer: "Mohd Rehan"
+    handoff: "Reminders + Memories pages hit live API with labeled demo fallback."
+    status: "PARTIAL"
+
+  - task_id: "T2-AI-001"
+    team: "TEAM 2"
+    member: "Mohd Rehan"
+    covering: "Anirudh P.S Yadav"
+    title: "Build Adaptive Difficulty Engine"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: []
+    source_docs: ["03-features.md", "12-config.md"]
+    files: ["apps/backend/app/services/adaptive_difficulty.py"]
+    branch: "feature/T2-AI-001-adaptive-difficulty"
+    checkpoints: ["CP-01", "CP-06", "CP-07", "CP-15", "CP-18"]
+    tests: ["pytest apps/backend/app/tests/test_adaptive_difficulty.py"]
+    reviewer: "Parth Shrivastav"
+    handoff: "Merged PR 7. Rule-based 3-up/2-down plus get_difficulty_summary. Not ML. KT-AI still open."
+    status: "DONE"
+
+  - task_id: "T2-AI-002"
+    team: "TEAM 2"
+    member: "Mohd Rehan"
+    covering: "Anirudh P.S Yadav"
+    title: "Analytics Engine (personal baseline)"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T1-BE-002"]
+    source_docs: ["03-features.md"]
+    files: ["apps/backend/app/services/analytics_engine.py"]
+    branch: "feature/T2-AI-002-analytics-engine"
+    checkpoints: ["CP-01", "CP-06", "CP-07", "CP-15", "CP-18"]
+    tests: ["pytest apps/backend/app/tests/test_analytics_engine.py"]
+    reviewer: "Parth Shrivastav"
+    handoff: "Merged PR 8. Accuracy, reaction, errors, hints, duration, completion vs 14-day personal baseline. No population norms."
+    status: "DONE"
+
+  - task_id: "T2-AI-003"
+    team: "TEAM 2"
+    member: "Mohd Rehan"
+    covering: "Anirudh P.S Yadav"
+    title: "Analytics API Endpoints"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T2-AI-002"]
+    source_docs: ["05-api.md"]
+    files: ["apps/backend/app/api/v1/analytics.py"]
+    branch: "feature/T2-AI-003-analytics-api"
+    checkpoints: ["CP-06", "CP-15", "CP-18"]
+    tests: ["pytest"]
+    reviewer: "Parth Shrivastav"
+    handoff: "Merged PR 6. Period, baseline, trend JSON with optional game_type. Dashboard copy review still Rehan+Parth."
+    status: "DONE"
+
+  - task_id: "T3-DS-001"
+    team: "TEAM 3"
+    member: "Srujna"
+    covering: "Anirudh P.S Yadav"
+    title: "Configure Tailwind Design Tokens"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T1-FE-001", "T2-FE-001"]
+    source_docs: ["15-ui-ux-design.md"]
+    files: ["apps/elderly-app/tailwind.config.ts", "apps/caregiver-dashboard/tailwind.config.ts"]
+    branch: "feature/sih-2026"
+    checkpoints: ["CP-01", "CP-06"]
+    tests: ["visual 56px targets"]
+    reviewer: "Ananya"
+    handoff: "Palette copied into both apps. packages/ui does not exist. Srujna owns the handoff."
+    status: "PARTIAL"
+
+  - task_id: "T3-DS-003"
+    team: "TEAM 3"
+    member: "Srujna"
+    covering: "Anirudh P.S Yadav"
+    title: "Assamese cultural content pack"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T1-FE-001"]
+    source_docs: ["03-features.md"]
+    files: ["packages/content-packs/"]
+    branch: "feature/sih-2026"
+    checkpoints: ["CP-01"]
+    tests: ["JSON review with community names"]
+    reviewer: "Ananya"
+    handoff: "Assam + Hornbill + Manipuri POC JSON. Bundled offline in PWA public/. Community review still required."
+    status: "PARTIAL"
+
+  - task_id: "T3-OS-001"
+    team: "TEAM 3"
+    member: "Ananya"
+    covering: "Anirudh P.S Yadav"
+    title: "Initialize Dexie and IndexedDB Schema"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T0-INF-001"]
+    source_docs: ["04-database.md"]
+    files: ["apps/elderly-app/src/db/dexie.ts"]
+    branch: "feature/sih-2026"
+    checkpoints: ["CP-01", "CP-06"]
+    tests: ["Chrome DevTools IndexedDB"]
+    reviewer: "Srujna"
+    handoff: "sessions, outbox, reminders cache, paired, memoryItems v3. Family photos cache offline."
+    status: "PARTIAL"
+
+  - task_id: "T3-OS-002"
+    team: "TEAM 3"
+    member: "Ananya"
+    covering: "Anirudh P.S Yadav"
+    title: "Outbox and optimistic writes"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T3-OS-001"]
+    source_docs: ["04-database.md"]
+    files: ["apps/elderly-app/src/db/syncOutbox.ts"]
+    branch: "feature/sih-2026"
+    checkpoints: ["CP-06"]
+    tests: ["offline play then reconnect"]
+    reviewer: "Harshit Divekar"
+    handoff: "game_session + reminder_ack outbox. Batch POST with per-item fallback."
+    status: "PARTIAL"
+
+  - task_id: "T3-OS-003"
+    team: "TEAM 3"
+    member: "Ananya"
+    covering: "Anirudh P.S Yadav"
+    title: "Workbox and service worker"
+    priority: "HIGH"
+    scope: "MVP"
+    dependencies: ["T3-OS-001"]
+    source_docs: ["02-system-design.md"]
+    files: ["apps/elderly-app/vite.config.ts"]
+    branch: "feature/sih-2026"
+    checkpoints: ["CP-06"]
+    tests: ["Chrome Application tab"]
+    reviewer: "Anirudh P.S Yadav"
+    handoff: "vite-plugin-pwa precaches cultural JSON + assets/games/*.png. App shell offline. Install prompt is Phase 2."
+    status: "PARTIAL"
+
+  - task_id: "T3-OS-004"
+    team: "TEAM 3"
+    member: "Ananya"
+    title: "Background sync engine"
+    priority: "MEDIUM"
+    scope: "MVP"
+    dependencies: ["T3-OS-002", "T3-OS-003"]
+    source_docs: ["02-system-design.md"]
+    files: ["apps/elderly-app/src/hooks/useOfflineSync.ts"]
+    branch: "feature/T3-OS-004-bg-sync"
+    checkpoints: ["CP-01", "CP-06"]
+    tests: ["offline then online flush"]
+    reviewer: "Harshit Divekar"
+    handoff: "Batch flush on online + 30s retry poll. Pull via GET /sync/status. Not Workbox Background Sync API."
+    status: "PARTIAL"

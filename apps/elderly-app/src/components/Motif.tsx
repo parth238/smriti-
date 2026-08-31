@@ -1,6 +1,9 @@
+import { GameSprite } from "./GameSprite";
 import type { MotifId } from "../games/memory";
+import { GAME_ASSETS, MEMORY_ICONS, spriteIndex } from "../data/gameAssets";
 
-export type MotifKind = MotifId | "flower";
+export type LegacyMotifId = "tea" | "bird" | "lamp" | "cloth" | "river";
+export type MotifKind = MotifId | LegacyMotifId | "flower";
 
 type MotifProps = {
   id: MotifKind;
@@ -8,6 +11,16 @@ type MotifProps = {
 };
 
 export function Motif({ id, className = "h-16 w-16" }: MotifProps) {
+  if ((MEMORY_ICONS as readonly string[]).includes(id)) {
+    return (
+      <GameSprite
+        src={GAME_ASSETS.memorySheet}
+        index={spriteIndex(MEMORY_ICONS, id as MotifId)}
+        count={MEMORY_ICONS.length}
+        className={className}
+      />
+    );
+  }
   if (id === "tea") {
     return (
       <svg viewBox="0 0 80 80" className={className} aria-hidden="true">
@@ -104,41 +117,16 @@ export function Motif({ id, className = "h-16 w-16" }: MotifProps) {
   );
 }
 
-type StepId = "stepBoil" | "stepLeaves" | "stepPour" | "stepSip";
+type StepId = "stepWake" | "stepMedicine" | "stepMeal" | "stepCall" | "stepBed";
 
 export function TeaStep({ id, className = "h-12 w-12" }: { id: StepId; className?: string }) {
-  if (id === "stepBoil") {
-    return (
-      <svg viewBox="0 0 64 64" className={className} aria-hidden="true">
-        <path d="M16 28h28v20a12 12 0 0 1-28 0z" fill="#7C93A3" />
-        <path d="M44 34h10a7 7 0 0 1 0 14h-8" fill="none" stroke="#1E2A2F" strokeWidth="3" />
-        <path d="M24 16c2 6 8 6 8 12M34 14c2 7 8 6 7 13" fill="none" stroke="#E0A542" strokeWidth="2.4" />
-      </svg>
-    );
-  }
-  if (id === "stepLeaves") {
-    return (
-      <svg viewBox="0 0 64 64" className={className} aria-hidden="true">
-        <ellipse cx="32" cy="38" rx="18" ry="14" fill="#4B6E58" />
-        <path d="M32 24c8 6 12 14 8 22" fill="none" stroke="#1E2A2F" strokeWidth="2" />
-        <ellipse cx="22" cy="22" rx="8" ry="12" fill="#4B6E58" />
-      </svg>
-    );
-  }
-  if (id === "stepPour") {
-    return (
-      <svg viewBox="0 0 64 64" className={className} aria-hidden="true">
-        <path d="M10 18h28l-6 16H16z" fill="#A8342A" />
-        <path d="M36 28c6 10 8 18 4 28" stroke="#7C93A3" strokeWidth="4" fill="none" />
-        <path d="M18 46h22v8a10 10 0 0 1-22 0z" fill="#FBF9F4" stroke="#1E2A2F" strokeWidth="3" />
-      </svg>
-    );
-  }
+  const index = ["stepWake", "stepMedicine", "stepMeal", "stepCall", "stepBed"].indexOf(id);
   return (
-    <svg viewBox="0 0 64 64" className={className} aria-hidden="true">
-      <path d="M18 28h24v16a12 12 0 0 1-24 0z" fill="#A8342A" />
-      <path d="M42 32h8a6 6 0 0 1 0 12h-6" fill="none" stroke="#1E2A2F" strokeWidth="3" />
-      <circle cx="30" cy="16" r="6" fill="#E8C9A8" />
-    </svg>
+    <GameSprite
+      src={GAME_ASSETS.sequencingSheet}
+      index={Math.max(0, index)}
+      count={5}
+      className={className}
+    />
   );
 }

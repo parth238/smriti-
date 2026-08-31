@@ -1,0 +1,31 @@
+{
+  "region": "Manipur",
+  "language": "mni",
+  "source": "Manipuri NER cultural pack. Public festival and place names. Community review pending.",
+  "items": [
+    {
+      "id": "yaoshang",
+      "scene": "bihu",
+      "titleKey": "culturalYaoshang",
+      "promptKey": "promptYaoshang",
+      "state": "Manipur",
+      "source": "Yaoshang, spring festival of Manipur"
+    },
+    {
+      "id": "loktak",
+      "scene": "river",
+      "titleKey": "culturalLoktak",
+      "promptKey": "promptLoktak",
+      "state": "Manipur",
+      "source": "Loktak Lake, floating phumdis"
+    },
+    {
+      "id": "sangai",
+      "scene": "kaziranga",
+      "titleKey": "culturalSangai",
+      "promptKey": "promptSangai",
+      "state": "Manipur",
+      "source": "Sangai deer, state symbol of Manipur"
+    }
+  ]
+}

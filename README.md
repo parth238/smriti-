@@ -1,9 +1,14 @@
 # Smriti
 
-## Quick Start
-To begin development on the Smriti project (SIH26003), follow the AI-Agent Boot Protocol.
+Cognitive gaming and memory assistance for elderly dementia/MCI patients in Assam (SIH26003).
 
-Pinned toolchain (do not drift): Node 20, Python 3.11. See `docs/05-project-management/TOOLING_VERSIONS.md`.
+**Built by Anirudh P.S Yadav** — teammates polish per [`docs/SMRITI_MASTER.md`](docs/SMRITI_MASTER.md) §11.
+
+[![CI](https://github.com/Rehan-2024/smriti-/actions/workflows/ci.yml/badge.svg)](https://github.com/Rehan-2024/smriti-/actions/workflows/ci.yml)
+
+## Quick start
+
+Toolchain: **Node 20**, **Python 3.11**.
 
 ```bash
 docker compose up -d postgres
@@ -12,53 +17,51 @@ python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
 copy .env.example .env
+alembic upgrade head
+python ../../scripts/seed_judge_demo.py
 uvicorn app.main:app --reload --port 8000
 ```
 
-Elderly app (T1-FE-001+): `cd apps/elderly-app && npm ci && npm run dev` on port 5173.
-
-Caregiver dashboard (T2-FE-001): `cd apps/caregiver-dashboard && npm ci && npm run dev` on port 5174.
-
-Who does what next: `docs/05-project-management/NEXT_PLAN.md`. Status: `docs/05-project-management/TEAM_STATUS.md`.
-
-## Repository Structure
+```bash
+cd apps/elderly-app && npm ci && npm run dev          # :5173
+cd apps/caregiver-dashboard && npm ci && npm run dev  # :5174
 ```
-/
-├── apps/               # Source code for Backend, Dashboard, Elderly App
-├── packages/           # Shared packages, DB schemas, UI components, Content
-├── docs/               # Official Engineering and Process Documentation
-├── .github/            # GitHub actions and templates
-├── tests/              # E2E and cross-service testing
-└── scripts/            # Build and utility scripts
-```
+
+Set `VITE_API_URL=http://localhost:8000/api/v1` in elderly/caregiver `.env`.
+
+## Judge demo logins
+
+| App | Login |
+|-----|-------|
+| Caregiver (:5174) | `9876543210` / `SmritiJudge2026` |
+| Elderly (:5173) | `9123456789` / PIN `2468` |
 
 ## Documentation
-The official documentation is rigorously structured to separate architecture specifications from execution workflow.
-- **01. Source of Truth** → `docs/00-source-of-truth/`
-- **02. Execution** → `docs/01-execution/`
-- **03. Teams** → `docs/02-teams/`
-- **04. Members** → `docs/03-members/`
-- **05. GitHub** → `docs/04-github-and-workflow/`
-- **06. Project Management** → `docs/05-project-management/`
-- **07. Reference** → `docs/06-reference/`
 
-## AI Agent Workflow
-**START HERE FOR AI-ASSISTED DEVELOPMENT:**
-Read `docs/01-execution/AI_AGENT_BOOT_PROTOCOL.md` to understand the standard initialization process for Antigravity or Cursor.
+**Everything lives in one place:** [`docs/SMRITI_MASTER.md`](docs/SMRITI_MASTER.md)
 
-The workflow is deterministic:
-1. Clone the repository.
-2. Open Antigravity.
-3. Supply your `NAME` and `TEAM` to trigger the Boot Protocol.
-4. The AI will cross-reference the Master Execution matrix and your specific Member file to identify your next actionable checkpoint.
+- Honest /10 product scores
+- PDF requirement checklist
+- Architecture flowcharts
+- Full setup + deploy guide
+- All 7 games + known bugs
+- Assamese voice reality
+- Teammate assignments
+- Path to production 10/10
 
-## Team Structure
-- **Team 1 (Core Platform):** Harshit & Anirudh
-- **Team 2 (Intelligence & Dashboard):** Parth & Mohd Rehan
-- **Team 3 (Offline, Content & Design System):** Ananya & Srujna
+PDF reference: [`docs/SIH-2026-problem-statement.pdf`](docs/SIH-2026-problem-statement.pdf)
 
-## Development Workflow
-All changes must be mapped to a documented MVP task and tracked in `docs/01-execution/DEVELOPMENT_CHECKLIST.md`. Work happens on `feature/` branches and is merged via PR after review.
+## Repo layout
 
-## Where To Start
-Jump to [docs/README.md](docs/README.md) for the complete index of all architectural and process documents.
+```
+apps/backend/              FastAPI API :8000
+apps/elderly-app/          Elderly PWA :5173
+apps/caregiver-dashboard/  Caregiver UI :5174
+packages/content-packs/    Assamese/English cultural JSON
+docs/SMRITI_MASTER.md      Single master doc
+scripts/seed_judge_demo.py Judge demo data
+```
+
+## CI
+
+GitHub Actions runs backend pytest + frontend vitest/tsc/build on PRs to `main`.

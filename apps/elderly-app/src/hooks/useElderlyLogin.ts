@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { elderlyLogin } from "../api/auth";
 import { useI18n } from "../context/LanguageContext";
 import { db } from "../db/dexie";
+import { persistAuthSession } from "../lib/authStorage";
 
 export function useElderlyLogin() {
   const { tx } = useI18n();
@@ -24,13 +25,8 @@ export function useElderlyLogin() {
       setMessage(tx("pinRetry"));
       return;
     }
-    window.sessionStorage.setItem("smriti.access", result.accessToken);
-    window.localStorage.setItem("smriti.access", result.accessToken);
-    window.localStorage.setItem("smriti.paired", "1");
-    window.sessionStorage.setItem("smriti.paired", "1");
+    persistAuthSession(result.accessToken, result.userId);
     if (result.userId) {
-      window.sessionStorage.setItem("smriti.userId", result.userId);
-      window.localStorage.setItem("smriti.userId", result.userId);
       await db.paired.put({
         id: result.userId,
         phone: phone.trim(),

@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 
+import { PatientSwitcher } from "../components/PatientSwitcher";
 import { NAV } from "./nav";
 
 export function Sidebar() {
@@ -7,6 +8,7 @@ export function Sidebar() {
     <aside className="flex min-h-screen w-60 shrink-0 flex-col bg-deep-hill px-4 py-6 text-rice-white">
       <p className="text-xl font-semibold tracking-tight">Smriti</p>
       <p className="mt-1 text-sm text-mist-blue">Caregiver</p>
+      <PatientSwitcher />
       <div className="gamosa-line my-5 opacity-80" />
       <nav className="flex flex-col gap-1">
         {NAV.map((item) => (

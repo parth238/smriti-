@@ -1,0 +1,39 @@
+{
+  "region": "North East India",
+  "language": "hi",
+  "source": "Hindi labels for shared NER cultural references. Bridge language for caregivers.",
+  "items": [
+    {
+      "id": "bihu",
+      "scene": "bihu",
+      "titleKey": "culturalBihu",
+      "promptKey": "promptBihu",
+      "state": "Assam",
+      "source": "Rongali Bihu"
+    },
+    {
+      "id": "tea",
+      "scene": "tea",
+      "titleKey": "culturalTea",
+      "promptKey": "promptTea",
+      "state": "Assam",
+      "source": "Assam tea gardens"
+    },
+    {
+      "id": "hornbill",
+      "scene": "hornbill",
+      "titleKey": "culturalHornbill",
+      "promptKey": "promptHornbill",
+      "state": "Nagaland",
+      "source": "Hornbill Festival"
+    },
+    {
+      "id": "gamosa",
+      "scene": "gamosa",
+      "titleKey": "culturalGamosa",
+      "promptKey": "promptGamosa",
+      "state": "Assam",
+      "source": "Assamese gamosa"
+    }
+  ]
+}

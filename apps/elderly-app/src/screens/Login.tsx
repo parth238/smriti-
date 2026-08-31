@@ -3,15 +3,18 @@ import { LargeButton } from "../components/LargeButton";
 import { PinPad } from "../components/PinPad";
 import { useI18n } from "../context/LanguageContext";
 import { useElderlyLogin } from "../hooks/useElderlyLogin";
+import { useCompanionVoice, useSpeakOnMount } from "../voice/CompanionVoice";
 
 export function Login() {
   const { tx, language, setLanguage } = useI18n();
   const { phone, setPhone, pin, setPin, message, offline, busy, onSubmit } = useElderlyLogin();
+  const { isSpeaking } = useCompanionVoice();
+  useSpeakOnMount("loginCompanion", 700);
 
   return (
     <main className="page-enter">
       <div className="flex justify-center">
-        <CompanionSit />
+        <CompanionSit variant="grandfather" speaking={isSpeaking} />
       </div>
       <p className="mt-2 text-center text-body-lg text-mist-blue">{tx("loginCompanion")}</p>
       <p className="mt-6 font-display text-display">{tx("appName")}</p>

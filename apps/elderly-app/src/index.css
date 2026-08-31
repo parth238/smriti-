@@ -76,12 +76,72 @@ input {
   pointer-events: none;
 }
 
-.hill-window {
-  position: relative;
-  height: 7.25rem;
-  overflow: hidden;
+.splash-path {
+  bottom: 22%;
 }
 
+.splash-mist {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(124, 147, 163, 0.12) 0%,
+    rgba(251, 249, 244, 0) 38%,
+    rgba(124, 147, 163, 0.18) 100%
+  );
+  animation: mist-breathe 6s ease-in-out infinite;
+}
+
+.hill-drift {
+  animation: hill-drift 14s ease-in-out infinite alternate;
+}
+
+@keyframes mist-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+@keyframes hill-drift {
+  from {
+    transform: scale(1.02) translateY(0);
+  }
+  to {
+    transform: scale(1.05) translateY(-6px);
+  }
+}
+
+.hill-window {
+  position: relative;
+  height: 11rem;
+  overflow: hidden;
+  border-radius: 0 0 1.5rem 1.5rem;
+}
+
+.game-scene-memory,
+.game-scene-attention,
+.game-scene-sequencing,
+.game-scene-naming,
+.game-scene-arithmetic,
+.game-scene-path-maze,
+.game-scene-face-recall {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(224, 165, 66, 0.08), transparent 55%),
+    #fbf9f4;
+}
+
+.maze-cell {
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(45, 74, 62, 0.12);
+}
+
+.hill-window img,
 .hill-window svg {
   position: absolute;
   inset: 0;
@@ -151,19 +211,115 @@ input {
 }
 
 .companion-walk {
-  animation: companion-step 2.8s ease-in-out forwards;
+  animation: companion-step 3.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .companion-bob {
-  animation: companion-bob 900ms ease-in-out infinite;
+  animation: companion-bob 760ms ease-in-out infinite;
+}
+
+.companion-sway {
+  animation: companion-sway 3.6s ease-in-out infinite;
 }
 
 @keyframes companion-step {
   from {
-    transform: translateX(0.75rem);
+    transform: translateX(-0.5rem);
   }
   to {
-    transform: translateX(13.5rem);
+    transform: translateX(calc(100vw - 9rem));
+  }
+}
+
+.companion-legs .companion-leg-l {
+  transform-origin: 58px 128px;
+  animation: leg-swing-l 760ms ease-in-out infinite;
+}
+
+.companion-legs .companion-leg-r {
+  transform-origin: 98px 130px;
+  animation: leg-swing-r 760ms ease-in-out infinite;
+}
+
+@keyframes leg-swing-l {
+  0%,
+  100% {
+    transform: rotate(8deg);
+  }
+  50% {
+    transform: rotate(-10deg);
+  }
+}
+
+@keyframes leg-swing-r {
+  0%,
+  100% {
+    transform: rotate(-8deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+}
+
+.companion-sit-breathe {
+  animation: companion-sit-breathe 4.2s ease-in-out infinite;
+}
+
+@keyframes companion-sit-breathe {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+.companion-speaking img {
+  animation: companion-mouth 480ms ease-in-out infinite;
+}
+
+@keyframes companion-mouth {
+  0%,
+  100% {
+    transform: scale(1) translateY(0);
+  }
+  40% {
+    transform: scale(1.015, 0.985) translateY(-1px);
+  }
+  60% {
+    transform: scale(0.995, 1.01) translateY(0);
+  }
+}
+
+.game-companion {
+  position: fixed;
+  right: 0.25rem;
+  bottom: 0.75rem;
+  width: 5.5rem;
+  opacity: 0.88;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.game-companion svg {
+  height: 5.25rem;
+  width: auto;
+}
+
+@media (min-width: 28rem) {
+  .game-companion {
+    right: calc(50% - 13.5rem);
+  }
+}
+
+@keyframes companion-sway {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-1.2deg);
   }
 }
 
