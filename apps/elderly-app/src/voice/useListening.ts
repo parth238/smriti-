@@ -4,9 +4,10 @@ import type { Language } from "../i18n";
 
 type SpeechRecognitionCtor = new () => SpeechRecognition;
 
+/** Web Speech has no Assamese ASR — both UI languages use English India STT for MVP. */
 const LISTEN_LANG: Record<Language, string> = {
   en: "en-IN",
-  as: "hi-IN",
+  as: "en-IN",
 };
 
 function recognitionCtor(): SpeechRecognitionCtor | null {
@@ -29,6 +30,11 @@ export function useListening(enabled: boolean) {
   const [isListening, setIsListening] = useState(false);
   const [isAvailable] = useState(() => recognitionCtor() !== null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const enabledRef = useRef(enabled);
+
+  useEffect(() => {
+    enabledRef.current = enabled;
+  }, [enabled]);
 
   useEffect(() => {
     return () => {
@@ -42,9 +48,15 @@ export function useListening(enabled: boolean) {
     setIsListening(false);
   }, []);
 
+  useEffect(() => {
+    if (!enabled) {
+      stop();
+    }
+  }, [enabled, stop]);
+
   const listen = useCallback(
     (language: Language = "en", timeoutMs = 8000): Promise<ListenResult | null> => {
-      if (!enabled || !isAvailable) {
+      if (!enabledRef.current || !isAvailable) {
         return Promise.resolve(null);
       }
 
@@ -103,7 +115,7 @@ export function useListening(enabled: boolean) {
         }
       });
     },
-    [enabled, isAvailable],
+    [isAvailable],
   );
 
   return { listen, stop, isListening, isAvailable };

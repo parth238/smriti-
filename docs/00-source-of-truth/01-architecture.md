@@ -4,6 +4,8 @@
 
 1. **Offline-first, not offline-tolerant.** The elderly app must be 100% usable with zero connectivity for games, reminders, and reminiscence viewing. Sync is a background concern, never a blocker.
 2. **Web-first, app-ready.** Built as a **PWA (Progressive Web App)** so it installs like a native app on Android tablets/phones (the realistic hardware in rural NER), while staying deployable as a normal website for the hackathon demo. A React Native wrapper is a *trivial* later step because business logic lives in a shared API layer, not in native code.
+
+> **PDF note:** The SIH problem statement suggests React Native + SQLite on device. We ship a **React PWA + Dexie (IndexedDB)** for faster SIH demo and the same offline-first goals. See `docs/05-project-management/PROJECT_STATUS_AND_PLAN.md` §3.
 3. **Elderly-friendly by construction.** Every screen: large touch targets, high contrast, minimal simultaneous choices, no deep navigation.
 4. **Honest AI.** No component pretends to have intelligence it doesn't have. Rule-based logic is rule-based; ML is only invoked where we have data to justify it.
 5. **Separation of concerns.** Elderly app, caregiver dashboard, and backend are independently deployable services talking over a REST API.

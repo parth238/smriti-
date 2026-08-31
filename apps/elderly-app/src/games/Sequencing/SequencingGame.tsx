@@ -11,12 +11,11 @@ import {
   type DailyStepId,
 } from "../../data/gameAssets";
 import { useSequencingGame } from "../../hooks/useSequencingGame";
-import { useSpeakOnMount, useSpeakText } from "../../voice/CompanionVoice";
+import { useSpeakText } from "../../voice/CompanionVoice";
 
 export function SequencingGame() {
   const { tx } = useI18n();
   const { ready, order, steps, progress, stepCount, nudge, celebrate, tap } = useSequencingGame();
-  useSpeakOnMount("sequenceHint", 500);
   useSpeakText(nudge, ready);
 
   if (!ready) {

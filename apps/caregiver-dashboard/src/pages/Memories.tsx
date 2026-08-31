@@ -9,6 +9,7 @@ export function Memories() {
   const [bundle, setBundle] = useState<Awaited<ReturnType<typeof loadMemories>> | null>(null);
   const [title, setTitle] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [consent, setConsent] = useState(false);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -24,7 +25,7 @@ export function Memories() {
 
   async function onUpload(event: React.FormEvent) {
     event.preventDefault();
-    if (!file || !title.trim()) {
+    if (!file || !title.trim() || !consent) {
       return;
     }
     setBusy(true);
@@ -65,9 +66,21 @@ export function Memories() {
             onChange={(event) => setFile(event.target.files?.[0] ?? null)}
           />
         </label>
+        <label className="flex items-start gap-2 text-sm text-mist-blue">
+          <input
+            type="checkbox"
+            className="mt-1"
+            checked={consent}
+            onChange={(event) => setConsent(event.target.checked)}
+          />
+          <span>
+            I confirm proxy consent under DPDP Act 2023 to store this family photo for cognitive
+            reminiscence on the linked elderly account.
+          </span>
+        </label>
         <button
           type="submit"
-          disabled={busy}
+          disabled={busy || !consent}
           className="rounded-xl bg-gamosa-red px-4 py-2 font-semibold text-rice-white disabled:opacity-60"
         >
           {busy ? "Uploading..." : "Upload family photo"}

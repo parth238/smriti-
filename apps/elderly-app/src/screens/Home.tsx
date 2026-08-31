@@ -9,7 +9,7 @@ import { useI18n } from "../context/LanguageContext";
 import { useHomeReminder } from "../hooks/useHomeReminder";
 import { useNow } from "../hooks/useNow";
 import { greetingKey } from "../store/sessionPrefs";
-import { useCompanionVoice, useSpeakOnMount, useSpeakText } from "../voice/CompanionVoice";
+import { useCompanionVoice, useSpeakText } from "../voice/CompanionVoice";
 
 export function Home() {
   const { tx, language } = useI18n();
@@ -17,8 +17,7 @@ export function Home() {
   const reminder = useHomeReminder();
   const greet = greetingKey(clock.now.getHours());
   const { isSpeaking } = useCompanionVoice();
-  useSpeakOnMount(greet, 800);
-  useSpeakText(tx("homeGreeting"), true, 1400);
+  useSpeakText(`${tx(greet)} ${tx("homeGreeting")}`, true, 800);
 
   return (
     <main>

@@ -63,9 +63,7 @@ Demo loop: splash walk → PIN → one game → caregiver chart updates.
 
 ### Project status and team handoff
 
-Honest completion (~20% full PDF / ~52% Tier 1 scaffold): **`docs/05-project-management/DEVELOPER_ROADMAP.md`** (master guide).
-
-Also see `CONTRIBUTION_LEDGER.md`, `NEXT_PLAN.md`, and `TEAM_STATUS.md`.
+Honest completion (~20% full PDF / ~55% Tier 1 scaffold): **`docs/05-project-management/PROJECT_STATUS_AND_PLAN.md`** — the only status/plan doc.
 
 Game reference art lives in `apps/elderly-app/public/assets/games/` (memory, attention, sequencing, naming sprites, hill background, grandmother/grandfather companions, Bihu scene). Workbox precaches these for offline play.
 
@@ -86,7 +84,7 @@ Game reference art lives in `apps/elderly-app/public/assets/games/` (memory, att
 
 GitHub Actions (`.github/workflows/ci.yml`) runs backend pytest + frontend `tsc` + build on PRs to `main`.
 
-Who does what next: `docs/05-project-management/NEXT_PLAN.md`. Status: `docs/05-project-management/TEAM_STATUS.md`.
+Status and plan: **`docs/05-project-management/PROJECT_STATUS_AND_PLAN.md`**
 
 ## Repository Structure
 ```

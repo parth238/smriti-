@@ -40,6 +40,11 @@ export function useSpeech(enabled: boolean) {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isAvailable] = useState(() => synthAvailable());
   const utterRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const enabledRef = useRef(enabled);
+
+  useEffect(() => {
+    enabledRef.current = enabled;
+  }, [enabled]);
 
   useEffect(() => {
     if (!isAvailable) {
@@ -53,6 +58,7 @@ export function useSpeech(enabled: boolean) {
     return () => {
       window.speechSynthesis.removeEventListener("voiceschanged", prime);
       window.speechSynthesis.cancel();
+      utterRef.current = null;
       setIsSpeaking(false);
     };
   }, [isAvailable]);
@@ -66,9 +72,15 @@ export function useSpeech(enabled: boolean) {
     setIsSpeaking(false);
   }, [isAvailable]);
 
+  useEffect(() => {
+    if (!enabled) {
+      cancel();
+    }
+  }, [cancel, enabled]);
+
   const speak = useCallback(
     (text: string, options: SpeakOptions = {}) => {
-      if (!enabled || !isAvailable || !text.trim()) {
+      if (!enabledRef.current || !isAvailable || !text.trim()) {
         return Promise.resolve(false);
       }
 
@@ -86,23 +98,25 @@ export function useSpeech(enabled: boolean) {
         utter.rate = options.rate ?? 0.92;
         utter.pitch = options.pitch ?? 1.05;
 
-        utter.onstart = () => setIsSpeaking(true);
-        utter.onend = () => {
+        const finish = (ok: boolean) => {
           setIsSpeaking(false);
           utterRef.current = null;
-          resolve(true);
+          resolve(ok);
         };
-        utter.onerror = () => {
-          setIsSpeaking(false);
-          utterRef.current = null;
-          resolve(false);
+
+        utter.onstart = () => {
+          if (enabledRef.current) {
+            setIsSpeaking(true);
+          }
         };
+        utter.onend = () => finish(true);
+        utter.onerror = () => finish(false);
 
         utterRef.current = utter;
         window.speechSynthesis.speak(utter);
       });
     },
-    [cancel, enabled, isAvailable],
+    [cancel, isAvailable],
   );
 
   return { speak, cancel, isSpeaking, isAvailable };

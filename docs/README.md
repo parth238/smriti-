@@ -3,7 +3,7 @@
 ## START HERE
 - **AI Agent:** → `01-execution/AI_AGENT_BOOT_PROTOCOL.md` *(The definitive initialization protocol for AI assistants).*
 - **Project Master:** → `01-execution/MASTER_EXECUTION.md` *(The complete operational playbook that ties docs to teams).*
-- **Who does what next (2026-08-31):** → `05-project-management/NEXT_PLAN.md`, `TEAM_STATUS.md`, and `CONTRIBUTION_LEDGER.md`.
+- **Who does what next (2026-08-31):** → `05-project-management/PROJECT_STATUS_AND_PLAN.md` *(single master status/plan doc)*.
 
 ## Source of Truth
 *These documents define what is being built.*
@@ -49,11 +49,11 @@
 - `04-github-and-workflow/CONTRIBUTING.md`: Contributor rules.
 
 ## Project Management
-*Living tracking documents. Snapshot 2026-08-31: Anirudh built MVP foundation from scratch; teammates own refinement per `NEXT_PLAN.md`.*
-- `05-project-management/CONTRIBUTION_LEDGER.md`: Who built what from scratch (Anirudh foundation) and honest completion %.
+*Living tracking documents. Snapshot 2026-08-31: Anirudh built MVP foundation from scratch; teammates own refinement per master plan.*
+- `05-project-management/PROJECT_STATUS_AND_PLAN.md`: **Master doc** — honest ratings, stack, contributions, PDF checklist, teammate steps, judge script, Dexie schema, voice reality.
+- `05-project-management/task-registry.yaml`: Machine-readable task board aligned to master doc.
+- `05-project-management/NEXT_PLAN.md`: Redirect stub → master doc.
 - `01-execution/DEVELOPMENT_CHECKLIST.md`: Master checklist of all MVP tasks (honest PARTIAL notes).
-- `05-project-management/NEXT_PLAN.md`: Per-owner gamification and polish tasks (Srujna art, Ananya offline, Rehan copy, Parth dashboard).
-- `05-project-management/TEAM_STATUS.md`: Who works on what next, plus what is actually landed.
 - `05-project-management/DECISION_LOG.md`: Living ADR tracking recent architectural decisions.
 - `05-project-management/INTEGRATION_CHECKLIST.md`: Cross-service testing list.
 - `05-project-management/CHANGE_IMPACT.md`: Covering-land impact and blockers.

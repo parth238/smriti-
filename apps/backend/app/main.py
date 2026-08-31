@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -22,6 +23,24 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.exception_handler(RequestValidationError)
+async def request_validation_handler(
+    _request: Request, exc: RequestValidationError
+) -> JSONResponse:
+    errors = exc.errors()
+    first = errors[0] if errors else {}
+    loc = first.get("loc", ())
+    field_parts = [str(part) for part in loc if part not in ("body", "query", "path")]
+    field = ".".join(field_parts) if field_parts else None
+    message = str(first.get("msg", "Request validation failed"))
+    payload: dict[str, dict[str, str]] = {
+        "error": {"code": "VALIDATION_ERROR", "message": message}
+    }
+    if field:
+        payload["error"]["field"] = field
+    return JSONResponse(status_code=422, content=payload)
 
 
 @app.exception_handler(SmritiError)

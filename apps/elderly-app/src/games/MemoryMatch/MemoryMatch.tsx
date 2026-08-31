@@ -11,12 +11,11 @@ import {
   type MemoryIconId,
 } from "../../data/gameAssets";
 import { useMemoryMatch } from "../../hooks/useMemoryMatch";
-import { useSpeakOnMount, useSpeakText } from "../../voice/CompanionVoice";
+import { useSpeakText } from "../../voice/CompanionVoice";
 
 export function MemoryMatch() {
   const { tx } = useI18n();
   const { ready, cards, open, matched, pairCount, nudge, bloomKey, onTap } = useMemoryMatch();
-  useSpeakOnMount("memoryHint", 500);
   useSpeakText(nudge, ready);
 
   if (!ready) {

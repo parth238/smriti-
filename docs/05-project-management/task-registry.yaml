@@ -1,5 +1,6 @@
 # Last reconciled: 2026-08-31 against feature/phase1-close-gaps (Anirudh audit).
-# Honest overall MVP completion: ~18% (themed scaffold + partial flows; not demo-ready).
+# Honest overall MVP completion: ~55% Tier 1 scaffold, ~20% full PDF vision.
+# Master doc: docs/05-project-management/PROJECT_STATUS_AND_PLAN.md
 # Status: DONE | PARTIAL | NOT_STARTED
 # covering: who landed the start. member: who owns next work.
 
@@ -215,7 +216,7 @@ tasks:
     checkpoints: ["CP-06"]
     tests: ["npm run test"]
     reviewer: "Srujna"
-    handoff: "All four use adaptive hooks + reference sprite sheets (memory NER icons, attention tap targets, daily routine sequencing, naming objects). Hill splash, grandmother walk, grandfather on login, Bihu reminiscence art. Assamese i18n corrected. Srujna owns community QA and final art polish."
+    handoff: "All four games use adaptive hooks + sprite sheets / family photos. Voice wired. Srujna owns community QA and final art polish."
     status: "PARTIAL"
 
   - task_id: "T2-FE-001"

@@ -9,7 +9,7 @@ merged:
   - "PR 6 analytics API game_type and full metrics"
   - "PR 7 adaptive difficulty tests"
   - "PR 8 analytics engine all metrics"
-plan_doc: "docs/05-project-management/NEXT_PLAN.md"
+plan_doc: "docs/05-project-management/PROJECT_STATUS_AND_PLAN.md"
 
 covering:
   author: "Anirudh P.S Yadav"

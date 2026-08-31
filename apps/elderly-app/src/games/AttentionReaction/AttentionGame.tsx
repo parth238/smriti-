@@ -17,12 +17,11 @@ import {
 } from "../../data/gameAssets";
 
 import { useAttentionGame } from "../../hooks/useAttentionGame";
-import { useSpeakOnMount, useSpeakText } from "../../voice/CompanionVoice";
+import { useSpeakText } from "../../voice/CompanionVoice";
 
 export function AttentionGame() {
   const { tx } = useI18n();
   const { ready, slot, icon, round, rounds, hint, tap, slots } = useAttentionGame();
-  useSpeakOnMount("attentionHint", 500);
   useSpeakText(hint, ready);
 
 

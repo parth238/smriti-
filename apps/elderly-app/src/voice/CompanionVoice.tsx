@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -37,19 +38,28 @@ function readVoiceEnabled(): boolean {
 export function CompanionVoiceProvider({ children }: { children: ReactNode }) {
   const { language, tx } = useI18n();
   const [voiceEnabled, setVoiceEnabledState] = useState(readVoiceEnabled);
-  const { speak, isSpeaking, isAvailable: speechAvailable } = useSpeech(voiceEnabled);
+  const { speak, cancel, isSpeaking, isAvailable: speechAvailable } = useSpeech(voiceEnabled);
   const { listen, isListening, isAvailable: listenAvailable } = useListening(voiceEnabled);
 
-  const setVoiceEnabled = useCallback((on: boolean) => {
-    window.localStorage.setItem(voiceKey, on ? "on" : "off");
-    setVoiceEnabledState(on);
-  }, []);
+  const setVoiceEnabled = useCallback(
+    (on: boolean) => {
+      window.localStorage.setItem(voiceKey, on ? "on" : "off");
+      setVoiceEnabledState(on);
+      if (!on) {
+        cancel();
+      }
+    },
+    [cancel],
+  );
 
   const speakText = useCallback(
     (text: string) => {
+      if (!voiceEnabled) {
+        return;
+      }
       void speak(text, { language });
     },
-    [language, speak],
+    [language, speak, voiceEnabled],
   );
 
   const speakKey = useCallback(
@@ -60,9 +70,12 @@ export function CompanionVoiceProvider({ children }: { children: ReactNode }) {
   );
 
   const listenOnce = useCallback(async () => {
+    if (!voiceEnabled) {
+      return null;
+    }
     const result = await listen(language);
     return result?.transcript ?? null;
-  }, [language, listen]);
+  }, [language, listen, voiceEnabled]);
 
   const value = useMemo<CompanionVoiceValue>(
     () => ({
@@ -105,12 +118,23 @@ export function useCompanionVoice(): CompanionVoiceValue {
 /** Speaks a prompt once when the screen mounts (respects voice toggle). */
 export function useSpeakOnMount(key: MessageKey, delayMs = 600) {
   const { voiceEnabled, speakKey } = useCompanionVoice();
+  const spokeRef = useRef(false);
+
+  useEffect(() => {
+    spokeRef.current = false;
+  }, [key]);
 
   useEffect(() => {
     if (!voiceEnabled) {
       return undefined;
     }
-    const timer = window.setTimeout(() => speakKey(key), delayMs);
+    if (spokeRef.current) {
+      return undefined;
+    }
+    const timer = window.setTimeout(() => {
+      spokeRef.current = true;
+      speakKey(key);
+    }, delayMs);
     return () => window.clearTimeout(timer);
   }, [delayMs, key, speakKey, voiceEnabled]);
 }
@@ -118,12 +142,19 @@ export function useSpeakOnMount(key: MessageKey, delayMs = 600) {
 /** Speaks when visible instruction/nudge text changes (pair found, gentle retry, etc.). */
 export function useSpeakText(text: string, enabled = true, delayMs = 350) {
   const { voiceEnabled, speakText } = useCompanionVoice();
+  const lastSpokenRef = useRef("");
 
   useEffect(() => {
     if (!voiceEnabled || !enabled || !text.trim()) {
       return undefined;
     }
-    const timer = window.setTimeout(() => speakText(text), delayMs);
+    if (lastSpokenRef.current === text) {
+      return undefined;
+    }
+    const timer = window.setTimeout(() => {
+      lastSpokenRef.current = text;
+      speakText(text);
+    }, delayMs);
     return () => window.clearTimeout(timer);
   }, [delayMs, enabled, speakText, text, voiceEnabled]);
 }

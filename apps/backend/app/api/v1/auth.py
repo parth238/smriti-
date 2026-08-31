@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
@@ -38,6 +38,15 @@ from app.schemas.auth import (
 router = APIRouter()
 
 
+def _client_ip(request: Request) -> str:
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    if request.client:
+        return request.client.host
+    return "unknown"
+
+
 def _issue_tokens(
     db: Session,
     subject_id: UUID,
@@ -69,8 +78,14 @@ def _issue_tokens(
 
 @router.post("/caregiver/register", response_model=TokenPairResponse, status_code=201)
 def caregiver_register(
-    body: CaregiverRegisterRequest, db: Session = Depends(get_db)
+    body: CaregiverRegisterRequest,
+    request: Request,
+    db: Session = Depends(get_db),
 ) -> TokenPairResponse:
+    ip_key = f"register-ip:{_client_ip(request)}"
+    phone_key = f"register:{body.phone.lower()}"
+    assert_not_locked(ip_key)
+    assert_not_locked(phone_key)
     existing = (
         db.query(Caregiver)
         .filter(
@@ -79,6 +94,8 @@ def caregiver_register(
         .first()
     )
     if existing is not None:
+        record_failure(ip_key)
+        record_failure(phone_key)
         raise ConflictError("An account with this phone or email already exists")
     caregiver = Caregiver(
         full_name=body.name,

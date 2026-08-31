@@ -177,7 +177,7 @@ sync_events (audit/log of offline sync batches)
 ## 4. Client-Side (IndexedDB via Dexie) Mirror
 
 **Implementation:** `apps/elderly-app/src/db/dexie.ts` (database name `smriti_elderly`).  
-**Handoff FAQ for offline owner:** `docs/05-project-management/ANANYA_OFFLINE_FAQ.md`
+**Handoff FAQ for offline owner:** `docs/05-project-management/PROJECT_STATUS_AND_PLAN.md` §5
 
 Doc table names below use `_local` suffix for clarity vs Postgres; code uses shorter names (`sessions` = `game_sessions_local`, etc.).
 
