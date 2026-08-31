@@ -1,37 +1,17 @@
-import { Link } from "react-router-dom";
-
 import { Chrome } from "../../components/Chrome";
 import { GameCompanion } from "../../components/companion/GameCompanion";
 import { Instruction } from "../../components/game/Instruction";
 import { ProgressDots } from "../../components/game/ProgressDots";
 import { LargeButton } from "../../components/LargeButton";
 import { useI18n } from "../../context/LanguageContext";
-import { GAME_ASSETS } from "../../data/gameAssets";
 import { useFaceRecallGame } from "../../hooks/useFaceRecallGame";
 import { useSpeakOnMount, useSpeakText } from "../../voice/CompanionVoice";
 
 export function FaceRecallGame() {
   const { tx } = useI18n();
-  const { ready, empty, current, index, total, nudge, choose } = useFaceRecallGame();
+  const { ready, current, index, total, nudge, choose } = useFaceRecallGame();
   useSpeakOnMount("faceRecallHint", 500);
   useSpeakText(nudge, ready);
-
-  if (empty) {
-    return (
-      <main>
-        <Chrome backTo="/games" />
-        <Instruction>{tx("faceRecallHint")}</Instruction>
-        <div className="photo-plate mb-6 flex items-center justify-center p-4">
-          <img src={GAME_ASSETS.grandmother} alt="" className="h-40 w-40 object-contain" />
-        </div>
-        <p className="text-body-lg text-mist-blue">{tx("memoriesEmpty")}</p>
-        <Link to="/memories/personal" className="mt-6 block">
-          <LargeButton>{tx("myMemories")}</LargeButton>
-        </Link>
-        <GameCompanion />
-      </main>
-    );
-  }
 
   if (!ready || !current) {
     return (

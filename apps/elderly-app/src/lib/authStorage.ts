@@ -32,6 +32,13 @@ export function persistAuthSession(accessToken: string, userId?: string): void {
   }
 }
 
+export function clearAuthSession(): void {
+  for (const key of [ACCESS_KEY, USER_KEY, PAIRED_KEY]) {
+    window.sessionStorage.removeItem(key);
+    window.localStorage.removeItem(key);
+  }
+}
+
 export function deviceId(): string {
   const existing = window.localStorage.getItem(DEVICE_KEY);
   if (existing) {

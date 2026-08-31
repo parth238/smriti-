@@ -141,6 +141,9 @@
   "faceDemoAlt3": "Uncle",
   "moreActivities": "More activities",
   "needHint": "Need a hint?",
-  "pathComplete": "You reached the top. Well done."
+  "pathComplete": "You reached the top. Well done.",
+  "micUnavailable": "This device cannot listen for your voice. You can still tap the words on screen.",
+  "syncFailed": "Some saved items could not reach the server yet. We will keep trying when you are online.",
+  "voiceListenEnglishNote": "Voice input works in English on this device. Please tap the Assamese word on screen."
 }
 

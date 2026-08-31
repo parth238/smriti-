@@ -1,6 +1,6 @@
 """Rule-based staircase adaptive difficulty (v1 — not ML).
 
-Tunable constants from docs/00-source-of-truth/12-config.md §5.
+Tunable constants from docs/SMRITI_MASTER.md adaptive section.
 """
 
 from __future__ import annotations

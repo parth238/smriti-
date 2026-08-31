@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { flushOutbox, pendingOutboxCount } from "../db/syncOutbox";
+import { flushOutbox, failedOutboxCount, pendingOutboxCount } from "../db/syncOutbox";
 import { readAccessToken } from "../lib/authStorage";
 
 const RETRY_MS = [5000, 15000, 45000, 120000];
@@ -13,15 +13,20 @@ export function useOfflineSync() {
   );
   const [lastFlush, setLastFlush] = useState(0);
   const [pending, setPending] = useState(0);
+  const [failed, setFailed] = useState(0);
 
   useEffect(() => {
     let retryTimer: number | undefined;
     let attempt = 0;
 
+    async function refreshCounts() {
+      setPending(await pendingOutboxCount());
+      setFailed(await failedOutboxCount());
+    }
+
     async function runFlush() {
       const count = await flushOutbox(readAccessToken());
-      const remaining = await pendingOutboxCount();
-      setPending(remaining);
+      await refreshCounts();
       if (count > 0) {
         setLastFlush(Date.now());
         attempt = 0;
@@ -80,5 +85,5 @@ export function useOfflineSync() {
     };
   }, []);
 
-  return { online, lastFlush, pending };
+  return { online, lastFlush, pending, failed };
 }

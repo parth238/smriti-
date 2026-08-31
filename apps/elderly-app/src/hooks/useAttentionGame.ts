@@ -94,15 +94,19 @@ export function useAttentionGame() {
 
   const tap = useCallback(
     (index: number) => {
-      if (slot === null || index !== slot) {
+      if (phase === "wait" || slot === null) {
+        return;
+      }
+      if (index !== slot) {
         setPhase("retry");
         errors.current += 1;
+        window.setTimeout(() => setPhase("tap"), 600);
         return;
       }
       reactions.current.push(Date.now() - shownAt.current);
       setRound((current) => current + 1);
     },
-    [slot],
+    [phase, slot],
   );
 
   const hint =

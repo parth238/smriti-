@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { Chrome } from "../../components/Chrome";
 import { GameCompanion } from "../../components/companion/GameCompanion";
 import { GameSprite } from "../../components/GameSprite";
@@ -20,10 +22,11 @@ function spokenMatches(transcript: string, key: MessageKey, tx: (k: MessageKey) 
 }
 
 export function NamingGame() {
-  const { tx } = useI18n();
+  const { tx, language } = useI18n();
   const { ready, current, index, total, nudge, reveal, choices, choose } = useNamingGame();
   const { voiceEnabled, listenAvailable, listenOnce } = useCompanionVoice();
-  useSpeakText(nudge, ready);
+  const [voiceNudge, setVoiceNudge] = useState("");
+  useSpeakText(voiceNudge || nudge, ready);
 
   if (!ready || !current) {
     return (
@@ -36,11 +39,12 @@ export function NamingGame() {
   }
 
   const iconIndex = spriteIndex(NAMING_ICONS, current.show);
+  const showVoiceButton = voiceEnabled && listenAvailable && language === "en";
 
   return (
     <main className="page-enter game-scene-naming">
       <Chrome backTo="/games" />
-      <Instruction>{nudge}</Instruction>
+      <Instruction>{voiceNudge || nudge}</Instruction>
       <ProgressDots total={total} filled={index} />
       <div
         className={`photo-plate mb-8 flex items-center justify-center transition-opacity duration-300 ${reveal ? "opacity-100" : "opacity-0"}`}
@@ -58,24 +62,29 @@ export function NamingGame() {
             {tx(choice)}
           </LargeButton>
         ))}
-        {voiceEnabled && listenAvailable ? (
+        {showVoiceButton ? (
           <LargeButton
             tone="quiet"
             onClick={() => {
+              setVoiceNudge("");
               void listenOnce().then((said) => {
                 if (!said) {
+                  setVoiceNudge(tx("tryAgainGentle"));
                   return;
                 }
                 if (spokenMatches(said, current.yes, tx)) {
                   choose(current.yes);
                 } else {
-                  choose(current.no);
+                  setVoiceNudge(tx("tryAgainGentle"));
                 }
               });
             }}
           >
             {tx("namingSpeak")}
           </LargeButton>
+        ) : null}
+        {language === "as" && voiceEnabled ? (
+          <p className="text-body text-mist-blue">{tx("voiceListenEnglishNote")}</p>
         ) : null}
       </div>
       <GameCompanion />

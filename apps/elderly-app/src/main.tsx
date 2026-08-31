@@ -5,6 +5,7 @@ import { registerSW } from "virtual:pwa-register";
 
 import { App } from "./App";
 import { LanguageProvider } from "./context/LanguageContext";
+import { OfflineSyncProvider } from "./context/OfflineSyncContext";
 import { CompanionVoiceProvider } from "./voice/CompanionVoice";
 import "./index.css";
 
@@ -19,9 +20,11 @@ createRoot(root).render(
   <StrictMode>
     <LanguageProvider>
       <CompanionVoiceProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <OfflineSyncProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </OfflineSyncProvider>
       </CompanionVoiceProvider>
     </LanguageProvider>
   </StrictMode>,

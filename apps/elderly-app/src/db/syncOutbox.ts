@@ -130,6 +130,10 @@ export async function pendingOutboxCount(): Promise<number> {
   return db.outbox.count();
 }
 
+export async function failedOutboxCount(): Promise<number> {
+  return db.outbox.filter((item) => item.attempts >= 8).count();
+}
+
 export async function flushOutbox(token: string | null): Promise<number> {
   if (!token || !navigator.onLine) {
     return 0;
@@ -144,8 +148,11 @@ export async function flushOutbox(token: string | null): Promise<number> {
 
   for (let index = 0; index < items.length; index += 1) {
     const item = items[index];
-    if (!item.id || item.attempts >= 8) {
+    if (!item.id) {
       continue;
+    }
+    if (item.attempts >= 8) {
+      await db.outbox.update(item.id, { attempts: 4 });
     }
     const batchOk = batchResults.get(index);
     try {

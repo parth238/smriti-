@@ -50,7 +50,7 @@ export function usePathMazeGame() {
             gameType: "path_maze",
             gamePath: "/games/path-maze",
             difficulty: adaptive.difficulty,
-            accuracy: Math.max(60, 100 - errors.current * 10),
+            accuracy: Math.max(0, 100 - errors.current * 10),
             reactionTimeMs: Math.round((elapsedSec() * 1000) / path.length),
             errors: errors.current,
             sessionDurationSec: elapsedSec(),

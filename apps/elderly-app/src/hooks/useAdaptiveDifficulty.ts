@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { recentSessionsForGame } from "../db/syncOutbox";
+import { ADAPTIVE_REFRESH_EVENT } from "../lib/adaptiveEvents";
 import {
   DEFAULT_DIFFICULTY,
   attentionDelayMs,
@@ -27,21 +28,35 @@ export function useAdaptiveDifficulty(gameType: string): AdaptiveProfile {
   const [difficulty, setDifficulty] = useState(DEFAULT_DIFFICULTY);
   const [ready, setReady] = useState(false);
 
+  const reload = useCallback(async () => {
+    const rows = await recentSessionsForGame(gameType);
+    const accuracies = rows.map((row) => row.accuracy);
+    setDifficulty(nextDifficulty(DEFAULT_DIFFICULTY, accuracies));
+    setReady(true);
+  }, [gameType]);
+
   useEffect(() => {
     let cancelled = false;
-    void (async () => {
-      const rows = await recentSessionsForGame(gameType);
+    void reload().then(() => {
       if (cancelled) {
         return;
       }
-      const accuracies = rows.map((row) => row.accuracy);
-      setDifficulty(nextDifficulty(DEFAULT_DIFFICULTY, accuracies));
-      setReady(true);
-    })();
+    });
     return () => {
       cancelled = true;
     };
-  }, [gameType]);
+  }, [reload]);
+
+  useEffect(() => {
+    function onRecorded(event: Event) {
+      const detail = (event as CustomEvent<{ gameType: string }>).detail;
+      if (detail?.gameType === gameType) {
+        void reload();
+      }
+    }
+    window.addEventListener(ADAPTIVE_REFRESH_EVENT, onRecorded);
+    return () => window.removeEventListener(ADAPTIVE_REFRESH_EVENT, onRecorded);
+  }, [gameType, reload]);
 
   return {
     difficulty,

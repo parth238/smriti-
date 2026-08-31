@@ -22,8 +22,8 @@ const games: {
   { to: "/games/attention-reaction", key: "attention", hint: "attentionHint", sheet: GAME_ASSETS.attentionSheet, index: 1, count: 5 },
   { to: "/games/sequencing", key: "sequencing", hint: "sequenceHint", sheet: GAME_ASSETS.sequencingSheet, index: 0, count: 5 },
   { to: "/games/picture-naming", key: "pictureNaming", hint: "namingHint", sheet: GAME_ASSETS.namingSheet, index: 2, count: 6 },
-  { to: "/games/arithmetic", key: "simpleArithmetic", hint: "arithmeticHint", sheet: GAME_ASSETS.namingSheet, index: 4, count: 6 },
-  { to: "/games/path-maze", key: "pathMaze", hint: "pathMazeHint", sheet: GAME_ASSETS.memorySheet, index: 4, count: MEMORY_ICONS.length },
+  { to: "/games/arithmetic", key: "simpleArithmetic", hint: "arithmeticHint", sheet: GAME_ASSETS.attentionSheet, index: 2, count: 5 },
+  { to: "/games/path-maze", key: "pathMaze", hint: "pathMazeHint", sheet: GAME_ASSETS.grandfather, index: 0, count: 1 },
   { to: "/games/face-recall", key: "faceRecall", hint: "faceRecallHint", sheet: GAME_ASSETS.grandmother, index: 0, count: 1 },
 ];
 

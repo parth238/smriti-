@@ -5,6 +5,7 @@ import { API_BASE } from "../api/auth";
 import { GAME_IDS } from "../api/games";
 import { db } from "../db/dexie";
 import { enqueueSession, saveLocalSession } from "../db/syncOutbox";
+import { notifyAdaptiveRefresh } from "../lib/adaptiveEvents";
 import { rememberGame } from "../store/sessionPrefs";
 
 export type GameSessionInput = {
@@ -70,6 +71,7 @@ export function useGameSession() {
     };
 
     await saveLocalSession(session);
+    notifyAdaptiveRefresh(input.gameType);
     window.sessionStorage.setItem(
       "smriti.lastSave",
       navigator.onLine ? "saved" : "queued",

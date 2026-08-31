@@ -7,10 +7,11 @@ import { LargeButton } from "../components/LargeButton";
 import { useI18n } from "../context/LanguageContext";
 import { useCompanionVoice, useSpeakOnMount } from "../voice/CompanionVoice";
 
+import { readPairedFlag } from "../lib/authStorage";
+
 function goNext(navigate: ReturnType<typeof useNavigate>) {
   window.sessionStorage.setItem("smriti.splash", "1");
-  const paired = window.sessionStorage.getItem("smriti.paired");
-  navigate(paired === "1" ? "/" : "/login", { replace: true });
+  navigate(readPairedFlag() ? "/" : "/login", { replace: true });
 }
 
 export function Splash() {

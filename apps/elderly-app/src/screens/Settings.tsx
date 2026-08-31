@@ -4,11 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { Chrome } from "../components/Chrome";
 import { LargeButton } from "../components/LargeButton";
 import { useI18n } from "../context/LanguageContext";
+import { clearAuthSession } from "../lib/authStorage";
 import { useCompanionVoice } from "../voice/CompanionVoice";
 
 export function Settings() {
   const { tx, language, setLanguage, textSize, setTextSize } = useI18n();
-  const { voiceEnabled, setVoiceEnabled, speechAvailable } = useCompanionVoice();
+  const { voiceEnabled, setVoiceEnabled, speechAvailable, listenAvailable } = useCompanionVoice();
   const [confirm, setConfirm] = useState(false);
   const navigate = useNavigate();
 
@@ -70,6 +71,9 @@ export function Settings() {
             </LargeButton>
           </div>
         )}
+        {speechAvailable && !listenAvailable ? (
+          <p className="mt-3 text-body text-mist-blue">{tx("micUnavailable")}</p>
+        ) : null}
       </section>
       <section className="mt-10">
         {confirm ? (
@@ -77,7 +81,8 @@ export function Settings() {
             <p className="text-body-lg">{tx("signOutConfirm")}</p>
             <LargeButton
               onClick={() => {
-                window.sessionStorage.clear();
+                clearAuthSession();
+                window.sessionStorage.removeItem("smriti.splash");
                 navigate("/login", { replace: true });
               }}
             >
