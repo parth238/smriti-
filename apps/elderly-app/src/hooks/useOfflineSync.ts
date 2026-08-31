@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 
-import { flushOutbox } from "../db/syncOutbox";
+import { flushOutbox, pendingOutboxCount } from "../db/syncOutbox";
 
 const ACCESS_KEY = "smriti.access";
+const RETRY_MS = [5000, 15000, 45000, 120000];
 
 export function readAccessToken(): string | null {
   return window.sessionStorage.getItem(ACCESS_KEY) ?? window.localStorage.getItem(ACCESS_KEY);
@@ -13,29 +14,73 @@ export function useOfflineSync() {
     typeof navigator === "undefined" ? true : navigator.onLine,
   );
   const [lastFlush, setLastFlush] = useState(0);
+  const [pending, setPending] = useState(0);
 
   useEffect(() => {
+    let retryTimer: number | undefined;
+    let attempt = 0;
+
+    async function runFlush() {
+      const count = await flushOutbox(readAccessToken());
+      const remaining = await pendingOutboxCount();
+      setPending(remaining);
+      if (count > 0) {
+        setLastFlush(Date.now());
+        attempt = 0;
+      }
+      return count;
+    }
+
+    function scheduleRetry() {
+      const delay = RETRY_MS[Math.min(attempt, RETRY_MS.length - 1)];
+      retryTimer = window.setTimeout(async () => {
+        attempt += 1;
+        const count = await runFlush();
+        if (count === 0 && navigator.onLine && (await pendingOutboxCount()) > 0) {
+          scheduleRetry();
+        }
+      }, delay);
+    }
+
     function onOnline() {
       setOnline(true);
-      void flushOutbox(readAccessToken()).then((count) => {
-        if (count > 0) {
-          setLastFlush(Date.now());
+      void runFlush().then(async (count) => {
+        if (count === 0 && (await pendingOutboxCount()) > 0) {
+          scheduleRetry();
         }
       });
     }
+
     function onOffline() {
       setOnline(false);
+      if (retryTimer) {
+        window.clearTimeout(retryTimer);
+      }
     }
+
     window.addEventListener("online", onOnline);
     window.addEventListener("offline", onOffline);
-    if (navigator.onLine) {
-      void flushOutbox(readAccessToken());
-    }
+    void runFlush().then(async (count) => {
+      if (count === 0 && navigator.onLine && (await pendingOutboxCount()) > 0) {
+        scheduleRetry();
+      }
+    });
+
+    const interval = window.setInterval(() => {
+      if (navigator.onLine) {
+        void runFlush();
+      }
+    }, 60000);
+
     return () => {
       window.removeEventListener("online", onOnline);
       window.removeEventListener("offline", onOffline);
+      if (retryTimer) {
+        window.clearTimeout(retryTimer);
+      }
+      window.clearInterval(interval);
     };
   }, []);
 
-  return { online, lastFlush };
+  return { online, lastFlush, pending };
 }

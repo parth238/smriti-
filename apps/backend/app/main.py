@@ -1,12 +1,19 @@
+from pathlib import Path
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.api.router import api_router
 from app.core.config import settings
 from app.core.errors import SmritiError
 
 app = FastAPI(title=settings.app_name, docs_url="/docs", redoc_url="/redoc")
+
+media_dir = Path(__file__).resolve().parent.parent / "media"
+media_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/media", StaticFiles(directory=str(media_dir)), name="media")
 
 app.add_middleware(
     CORSMiddleware,
@@ -28,6 +35,10 @@ async def smriti_error_handler(_request: Request, exc: SmritiError) -> JSONRespo
 
 
 app.include_router(api_router)
+
+upload_root = Path(settings.upload_dir)
+upload_root.mkdir(parents=True, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=str(upload_root)), name="uploads")
 
 
 @app.get("/health")

@@ -7,7 +7,7 @@ export function CompanionWalk({ moving = true }: WalkProps) {
   const bobClass = moving ? "companion-bob" : "";
 
   return (
-    <div className={`${walkClass} w-28`} aria-hidden="true">
+    <div className={`${walkClass} w-28 companion-sway`} aria-hidden="true">
       <div className={bobClass}>
         <svg viewBox="0 0 140 200" className="h-44 w-28">
           <ellipse cx="72" cy="190" rx="38" ry="8" fill="#7C93A3" opacity="0.28" />

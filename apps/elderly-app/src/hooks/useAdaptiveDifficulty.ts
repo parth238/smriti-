@@ -7,7 +7,9 @@ import {
   attentionRounds,
   memoryMismatchMs,
   memoryPairCount,
+  namingItemCount,
   nextDifficulty,
+  sequencingStepCount,
 } from "../lib/adaptive";
 
 export type AdaptiveProfile = {
@@ -16,6 +18,8 @@ export type AdaptiveProfile = {
   mismatchMs: number;
   flowerDelayMs: () => number;
   rounds: number;
+  stepCount: number;
+  namingCount: number;
   ready: boolean;
 };
 
@@ -45,6 +49,8 @@ export function useAdaptiveDifficulty(gameType: string): AdaptiveProfile {
     mismatchMs: memoryMismatchMs(difficulty),
     flowerDelayMs: () => attentionDelayMs(difficulty),
     rounds: attentionRounds(difficulty),
+    stepCount: sequencingStepCount(difficulty),
+    namingCount: namingItemCount(difficulty),
     ready,
   };
 }

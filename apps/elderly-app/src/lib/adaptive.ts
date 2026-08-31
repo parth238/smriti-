@@ -76,3 +76,17 @@ export function attentionDelayMs(difficulty: number): number {
 export function attentionRounds(difficulty: number): number {
   return 4 + Math.min(2, Math.max(0, clampDifficulty(difficulty) - 2));
 }
+
+/** Sequencing: fewer steps at lower difficulty (tea ritual). */
+export function sequencingStepCount(difficulty: number): number {
+  const level = clampDifficulty(difficulty);
+  if (level <= 2) {
+    return 3;
+  }
+  return 4;
+}
+
+/** Picture naming: more rounds as difficulty rises. */
+export function namingItemCount(difficulty: number): number {
+  return Math.min(4, 2 + Math.max(0, clampDifficulty(difficulty) - 1));
+}

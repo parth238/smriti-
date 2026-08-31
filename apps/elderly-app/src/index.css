@@ -76,6 +76,46 @@ input {
   pointer-events: none;
 }
 
+.splash-path {
+  bottom: 22%;
+}
+
+.splash-mist {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(124, 147, 163, 0.12) 0%,
+    rgba(251, 249, 244, 0) 38%,
+    rgba(124, 147, 163, 0.18) 100%
+  );
+  animation: mist-breathe 6s ease-in-out infinite;
+}
+
+.hill-drift {
+  animation: hill-drift 14s ease-in-out infinite alternate;
+}
+
+@keyframes mist-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+@keyframes hill-drift {
+  from {
+    transform: scale(1.02) translateY(0);
+  }
+  to {
+    transform: scale(1.05) translateY(-6px);
+  }
+}
+
 .hill-window {
   position: relative;
   height: 7.25rem;
@@ -151,19 +191,33 @@ input {
 }
 
 .companion-walk {
-  animation: companion-step 2.8s ease-in-out forwards;
+  animation: companion-step 3.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .companion-bob {
-  animation: companion-bob 900ms ease-in-out infinite;
+  animation: companion-bob 760ms ease-in-out infinite;
+}
+
+.companion-sway {
+  animation: companion-sway 3.6s ease-in-out infinite;
 }
 
 @keyframes companion-step {
   from {
-    transform: translateX(0.75rem);
+    transform: translateX(-0.5rem);
   }
   to {
-    transform: translateX(13.5rem);
+    transform: translateX(14.5rem);
+  }
+}
+
+@keyframes companion-sway {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-1.2deg);
   }
 }
 

@@ -1,4 +1,4 @@
-# Last reconciled: 2026-08-30 against main (PR 5 stack + Rehan PRs 6-8) and leftover docs on feature/sih-2026.
+# Last reconciled: 2026-08-31 against feature/sih-2026 sprint (Anirudh covering teams).
 # Status: DONE | PARTIAL | NOT_STARTED
 # covering: who landed the start. member: who owns next work.
 
@@ -101,7 +101,7 @@ tasks:
     checkpoints: ["CP-01", "CP-06"]
     tests: ["pytest apps/backend/app/tests/test_security.py"]
     reviewer: "Harshit Divekar"
-    handoff: "verify_user_access exists on games/analytics. Audit remaining routes."
+    handoff: "require_caregiver, require_elderly, verify_caregiver_linked on new routes. No route-level deny integration tests yet."
     status: "PARTIAL"
 
   - task_id: "T1-BE-005"
@@ -134,8 +134,8 @@ tasks:
     checkpoints: ["CP-01", "CP-06", "CP-07", "CP-08"]
     tests: ["pytest"]
     reviewer: "Ananya"
-    handoff: "Not built. Client currently POSTs one game session. Decide batch vs keep POST."
-    status: "NOT_STARTED"
+    handoff: "POST /sync/batch + GET /sync/status. Client uses batch with per-item fallback."
+    status: "DONE"
 
   - task_id: "T1-BE-007"
     team: "TEAM 1"
@@ -150,8 +150,8 @@ tasks:
     checkpoints: ["CP-01", "CP-06", "CP-07", "CP-08"]
     tests: ["pytest"]
     reviewer: "Parth Shrivastav"
-    handoff: "Table exists. No CRUD. This is Harshit's next product API."
-    status: "NOT_STARTED"
+    handoff: "Full CRUD + elderly acknowledge. Dashboard wired."
+    status: "DONE"
 
   - task_id: "T1-BE-008"
     team: "TEAM 1"
@@ -166,8 +166,8 @@ tasks:
     checkpoints: ["CP-01", "CP-06", "CP-07", "CP-08"]
     tests: ["pytest"]
     reviewer: "Parth Shrivastav"
-    handoff: "Table exists. No upload or signed URL routes."
-    status: "NOT_STARTED"
+    handoff: "Multipart upload to /uploads, cultural-pack JSON, dashboard upload form."
+    status: "DONE"
 
   - task_id: "T1-FE-001"
     team: "TEAM 1"
@@ -214,7 +214,7 @@ tasks:
     checkpoints: ["CP-06"]
     tests: ["npm run test"]
     reviewer: "Srujna"
-    handoff: "All four persist. Memory Match and Attention deepened. Sequencing and Naming need craft."
+    handoff: "All four use adaptive hooks. Sequencing/Naming have transitions + progress dots. Splash polish still open."
     status: "PARTIAL"
 
   - task_id: "T2-FE-001"
@@ -298,8 +298,8 @@ tasks:
     checkpoints: ["CP-01", "CP-06"]
     tests: ["manual create/edit against API"]
     reviewer: "Mohd Rehan"
-    handoff: "Pages exist with demo.ts only. Blocked on reminder/memory APIs."
-    status: "NOT_STARTED"
+    handoff: "Reminders + Memories pages hit live API with labeled demo fallback."
+    status: "PARTIAL"
 
   - task_id: "T2-AI-001"
     team: "TEAM 2"
@@ -417,7 +417,7 @@ tasks:
     checkpoints: ["CP-06"]
     tests: ["offline play then reconnect"]
     reviewer: "Harshit Divekar"
-    handoff: "game_session only. Reminders/memories not queued."
+    handoff: "game_session + reminder_ack outbox. Batch POST with per-item fallback."
     status: "PARTIAL"
 
   - task_id: "T3-OS-003"
@@ -450,5 +450,5 @@ tasks:
     checkpoints: ["CP-01", "CP-06"]
     tests: ["offline then online flush"]
     reviewer: "Harshit Divekar"
-    handoff: "Not started. Current path is window online event."
-    status: "NOT_STARTED"
+    handoff: "Batch flush on online + 30s retry poll. Pull via GET /sync/status. Not Workbox Background Sync API."
+    status: "PARTIAL"

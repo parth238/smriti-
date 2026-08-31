@@ -19,6 +19,46 @@ Elderly app (T1-FE-001+): `cd apps/elderly-app && npm ci && npm run dev` on port
 
 Caregiver dashboard (T2-FE-001): `cd apps/caregiver-dashboard && npm ci && npm run dev` on port 5174.
 
+## Deploy (MVP)
+
+### Local full stack
+
+```bash
+docker compose up -d
+# API: http://localhost:8000/docs
+# Elderly: cd apps/elderly-app && VITE_API_URL=http://localhost:8000/api/v1 npm run dev
+# Caregiver: cd apps/caregiver-dashboard && VITE_API_URL=http://localhost:8000/api/v1 npm run dev
+```
+
+### Environment variables
+
+| App | Variable | Example |
+|---|---|---|
+| Backend | `DATABASE_URL` | `postgresql://smriti:smriti_dev@localhost:5432/smriti_dev` |
+| Backend | `JWT_SECRET_KEY` | 32+ random bytes |
+| Backend | `ALLOWED_ORIGINS` | `http://localhost:5173,http://localhost:5174` |
+| Backend | `UPLOAD_DIR` | `uploads` (local) or mounted volume in Docker |
+| Elderly / Caregiver | `VITE_API_URL` | `http://localhost:8000/api/v1` |
+
+Copy `apps/backend/.env.example` to `.env` before first run.
+
+### Hosted Postgres (Supabase / Neon)
+
+1. Create a project and copy the connection string into `DATABASE_URL`.
+2. Run `alembic upgrade head` from `apps/backend`.
+3. Point Render/Railway/Fly API deploy at the same env vars.
+4. Set `ALLOWED_ORIGINS` to your Vercel URLs.
+
+### Vercel frontends
+
+- Elderly PWA: root `apps/elderly-app`, set `VITE_API_URL` to production API.
+- Caregiver dashboard: root `apps/caregiver-dashboard`, same `VITE_API_URL`.
+- `vercel.json` in each app enables SPA routing.
+
+### CI
+
+GitHub Actions (`.github/workflows/ci.yml`) runs backend pytest + frontend `tsc` + build on PRs to `main`.
+
 Who does what next: `docs/05-project-management/NEXT_PLAN.md`. Status: `docs/05-project-management/TEAM_STATUS.md`.
 
 ## Repository Structure

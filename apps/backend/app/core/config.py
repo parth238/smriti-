@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     elderly_access_token_expire_days: int = 30
     refresh_token_expire_days: int = 30
 
+    storage_public_url_base: str = ""
+
     allowed_origins: str = (
         "http://localhost:5173,http://localhost:5174,"
         "https://app.smriti.in,https://caregiver.smriti.in"
@@ -26,6 +28,8 @@ class Settings(BaseSettings):
 
     login_max_attempts: int = 5
     login_lockout_minutes: int = 15
+
+    upload_dir: str = "uploads"
 
     @property
     def allowed_origins_list(self) -> list[str]:
