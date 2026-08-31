@@ -1,4 +1,5 @@
 import { Chrome } from "../../components/Chrome";
+import { GameCompanion } from "../../components/companion/GameCompanion";
 import { Instruction } from "../../components/game/Instruction";
 import { ProgressDots } from "../../components/game/ProgressDots";
 import { LargeButton } from "../../components/LargeButton";
@@ -37,6 +38,7 @@ export function NamingGame() {
           </LargeButton>
         ))}
       </div>
+      <GameCompanion />
     </main>
   );
 }

@@ -54,11 +54,27 @@ export type PairedUserRow = {
   pairedAt: string;
 };
 
+export type MemoryCacheRow = {
+  id: string;
+  userId: string;
+  mediaUrl: string;
+  mediaType: string;
+  category: string;
+  title: Record<string, string>;
+  description: string | null;
+  peopleTagged: string[] | null;
+  year: number | null;
+  location: string | null;
+  promptText: Record<string, string> | null;
+  cachedAt: string;
+};
+
 class SmritiDb extends Dexie {
   sessions!: EntityTable<LocalGameSession, "id">;
   outbox!: EntityTable<OutboxItem, "id">;
   reminders!: EntityTable<ReminderCacheRow, "id">;
   paired!: EntityTable<PairedUserRow, "id">;
+  memoryItems!: EntityTable<MemoryCacheRow, "id">;
 
   constructor() {
     super("smriti_elderly");
@@ -73,6 +89,13 @@ class SmritiDb extends Dexie {
       outbox: "++id, kind, createdAt",
       reminders: "id, scheduledTime, updatedAt",
       paired: "id, phone",
+    });
+    this.version(3).stores({
+      sessions: "++id, clientGeneratedId, userId, gameType, playedAt, synced",
+      outbox: "++id, kind, createdAt",
+      reminders: "id, scheduledTime, updatedAt",
+      paired: "id, phone",
+      memoryItems: "id, userId, cachedAt",
     });
   }
 }

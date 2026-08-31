@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useI18n } from "../context/LanguageContext";
+import { MOTIF_MEMORY_PROMPTS } from "../data/motifPrompts";
 import { dealMemoryCards, type MemoryCard } from "../games/memory";
 import { evaluateFlip } from "../games/memory/flip";
 import { MOTIFS, type MotifId } from "../games/memory/deal";
@@ -100,7 +101,8 @@ export function useMemoryMatch() {
         setMatched((current) => [...current, result.motif]);
         setOpen([]);
         setBloomMotif(result.motif);
-        setNudge(tx("pairFound"));
+        const promptKey = MOTIF_MEMORY_PROMPTS[result.motif];
+        setNudge(`${tx("pairFound")} ${tx(promptKey)}`);
         window.setTimeout(() => setBloomMotif(null), 480);
         return;
       }

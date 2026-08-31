@@ -1,4 +1,5 @@
-# Last reconciled: 2026-08-31 against feature/sih-2026 sprint (Anirudh covering teams).
+# Last reconciled: 2026-08-31 against feature/phase1-close-gaps (Anirudh audit).
+# Honest overall MVP completion: ~14% (scaffold + partial flows; not demo-ready).
 # Status: DONE | PARTIAL | NOT_STARTED
 # covering: who landed the start. member: who owns next work.
 
@@ -214,7 +215,7 @@ tasks:
     checkpoints: ["CP-06"]
     tests: ["npm run test"]
     reviewer: "Srujna"
-    handoff: "All four use adaptive hooks. Sequencing/Naming have transitions + progress dots. Splash polish still open."
+    handoff: "All four use adaptive hooks. Cultural reminiscence prompts in memory match. Companion on game screens. Splash walk animation improved. Voice, full NER i18n, clinical polish still open."
     status: "PARTIAL"
 
   - task_id: "T2-FE-001"
@@ -383,7 +384,7 @@ tasks:
     checkpoints: ["CP-01"]
     tests: ["JSON review with community names"]
     reviewer: "Ananya"
-    handoff: "Assam + Hornbill JSON. Verify. No generic AI stock."
+    handoff: "Assam + Hornbill + Manipuri POC JSON. Bundled offline in PWA public/. Community review still required."
     status: "PARTIAL"
 
   - task_id: "T3-OS-001"
@@ -400,7 +401,7 @@ tasks:
     checkpoints: ["CP-01", "CP-06"]
     tests: ["Chrome DevTools IndexedDB"]
     reviewer: "Srujna"
-    handoff: "sessions, outbox, reminders cache, paired. Extend. Do not rewrite."
+    handoff: "sessions, outbox, reminders cache, paired, memoryItems v3. Family photos cache offline."
     status: "PARTIAL"
 
   - task_id: "T3-OS-002"
@@ -434,7 +435,7 @@ tasks:
     checkpoints: ["CP-06"]
     tests: ["Chrome Application tab"]
     reviewer: "Anirudh P.S Yadav"
-    handoff: "vite-plugin-pwa. Polish still Ananya. Install prompt is Phase 2."
+    handoff: "vite-plugin-pwa precaches cultural JSON in public/. App shell offline. Install prompt is Phase 2."
     status: "PARTIAL"
 
   - task_id: "T3-OS-004"

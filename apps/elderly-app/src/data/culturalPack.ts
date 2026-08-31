@@ -1,3 +1,7 @@
+import assamesePack from "../../../../packages/content-packs/assamese/cultural-media.json";
+import englishPack from "../../../../packages/content-packs/english/cultural-media.json";
+import manipuriPack from "../../../../packages/content-packs/manipuri/cultural-media.json";
+
 export type CulturalSceneId =
   | "bihu"
   | "tea"
@@ -5,6 +9,22 @@ export type CulturalSceneId =
   | "gamosa"
   | "kaziranga"
   | "hornbill";
+
+type PackItem = {
+  id: string;
+  scene: CulturalSceneId;
+  titleKey: string;
+  promptKey: string;
+  state: string;
+  source: string;
+};
+
+type PackFile = {
+  region: string;
+  language: string;
+  source: string;
+  items: PackItem[];
+};
 
 export type CulturalItem = {
   id: string;
@@ -15,65 +35,45 @@ export type CulturalItem = {
     | "culturalRiver"
     | "culturalGamosa"
     | "culturalKaziranga"
-    | "culturalHornbill";
+    | "culturalHornbill"
+    | "culturalYaoshang"
+    | "culturalLoktak"
+    | "culturalSangai";
   promptKey:
     | "promptBihu"
     | "promptTea"
     | "promptRiver"
     | "promptGamosa"
     | "promptKaziranga"
-    | "promptHornbill";
+    | "promptHornbill"
+    | "promptYaoshang"
+    | "promptLoktak"
+    | "promptSangai";
   state: string;
   source: string;
 };
 
-export const CULTURAL_PACK: CulturalItem[] = [
-  {
-    id: "bihu",
-    scene: "bihu",
-    titleKey: "culturalBihu",
-    promptKey: "promptBihu",
-    state: "Assam",
-    source: "Rongali Bihu, Assam harvest festival",
-  },
-  {
-    id: "tea",
-    scene: "tea",
-    titleKey: "culturalTea",
-    promptKey: "promptTea",
-    state: "Assam",
-    source: "Assam tea gardens, Brahmaputra valley",
-  },
-  {
-    id: "river",
-    scene: "river",
-    titleKey: "culturalRiver",
-    promptKey: "promptRiver",
-    state: "Assam",
-    source: "Brahmaputra river as a living place name",
-  },
-  {
-    id: "gamosa",
-    scene: "gamosa",
-    titleKey: "culturalGamosa",
-    promptKey: "promptGamosa",
-    state: "Assam",
-    source: "Assamese gamosa, woven honour cloth",
-  },
-  {
-    id: "kaziranga",
-    scene: "kaziranga",
-    titleKey: "culturalKaziranga",
-    promptKey: "promptKaziranga",
-    state: "Assam",
-    source: "Kaziranga, public landmark of Assam",
-  },
-  {
-    id: "hornbill",
-    scene: "hornbill",
-    titleKey: "culturalHornbill",
-    promptKey: "promptHornbill",
-    state: "Nagaland",
-    source: "Hornbill Festival, Nagaland public cultural event named in product docs",
-  },
-];
+const PACKS: Record<string, PackFile> = {
+  as: assamesePack as PackFile,
+  en: englishPack as PackFile,
+  mni: manipuriPack as PackFile,
+};
+
+function normalizeItem(item: PackItem): CulturalItem {
+  return {
+    id: item.id,
+    scene: item.scene,
+    titleKey: item.titleKey as CulturalItem["titleKey"],
+    promptKey: item.promptKey as CulturalItem["promptKey"],
+    state: item.state,
+    source: item.source,
+  };
+}
+
+export function loadBundledCulturalPack(language: string): CulturalItem[] {
+  const pack = PACKS[language] ?? PACKS.as;
+  return pack.items.map(normalizeItem);
+}
+
+/** Primary Assam + NER pack bundled for offline reminiscence and games. */
+export const CULTURAL_PACK: CulturalItem[] = loadBundledCulturalPack("as");

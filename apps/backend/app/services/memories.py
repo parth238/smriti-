@@ -16,9 +16,22 @@ from app.core.config import settings
 from app.core.errors import NotFoundError, ValidationError
 from app.models.memory_item import MemoryItem
 
-REPO_ROOT = Path(__file__).resolve().parents[5]
+REPO_ROOT = Path(__file__).resolve().parents[4]
 CONTENT_PACKS = REPO_ROOT / "packages" / "content-packs"
 ALLOWED_MEDIA = {"image/jpeg", "image/png", "image/webp", "image/gif"}
+ALLOWED_CATEGORIES = {"family", "cultural", "personal"}
+MAX_UPLOAD_BYTES = 5 * 1024 * 1024
+
+PACK_LANGUAGE_MAP = {
+    "as": "assamese",
+    "assamese": "assamese",
+    "en": "english",
+    "english": "english",
+    "mni": "manipuri",
+    "manipuri": "manipuri",
+    "hi": "hindi",
+    "hindi": "hindi",
+}
 
 
 def list_memory_items(
@@ -59,6 +72,8 @@ def create_memory_item(
 ) -> MemoryItem:
     if not title.get("en"):
         raise ValidationError("title.en is required", field="title")
+    if category not in ALLOWED_CATEGORIES:
+        raise ValidationError("category is not supported", field="category")
     item = MemoryItem(
         user_id=user_id,
         uploaded_by_caregiver_id=caregiver_id,
@@ -115,6 +130,10 @@ def delete_memory_item(db: Session, item: MemoryItem) -> None:
 
 async def save_upload(file: UploadFile, *, user_id: UUID) -> tuple[str, str]:
     content = await file.read()
+    if len(content) > MAX_UPLOAD_BYTES:
+        raise ValidationError("Image must be 5 MB or smaller", field="file")
+    if not content:
+        raise ValidationError("Upload file is empty", field="file")
     media_type = file.content_type or mimetypes.guess_type(file.filename or "")[0] or "image/jpeg"
     if media_type not in ALLOWED_MEDIA:
         raise ValidationError("Only image uploads are supported", field="file")
@@ -130,7 +149,7 @@ async def save_upload(file: UploadFile, *, user_id: UUID) -> tuple[str, str]:
 
 
 def load_cultural_pack(language: str) -> dict:
-    folder = "assamese" if language in {"as", "assamese"} else "english"
+    folder = PACK_LANGUAGE_MAP.get(language.lower(), "english")
     path = CONTENT_PACKS / folder / "cultural-media.json"
     if not path.is_file():
         raise NotFoundError("Cultural pack was not found")

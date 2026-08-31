@@ -56,7 +56,7 @@ def get_memory_items(
 
 
 @router.get("/memory-items/cultural-pack", response_model=CulturalPackResponse)
-def cultural_pack(language: str = Query("as")) -> CulturalPackResponse:
+def cultural_pack(language: str = Query("as", min_length=2, max_length=12)) -> CulturalPackResponse:
     data = load_cultural_pack(language)
     items = [
         CulturalPackItem(

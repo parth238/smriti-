@@ -1,4 +1,5 @@
 import { Chrome } from "../../components/Chrome";
+import { GameCompanion } from "../../components/companion/GameCompanion";
 import { Instruction } from "../../components/game/Instruction";
 import { ProgressDots } from "../../components/game/ProgressDots";
 import { Motif } from "../../components/Motif";
@@ -46,6 +47,7 @@ export function MemoryMatch() {
           );
         })}
       </div>
+      <GameCompanion />
     </main>
   );
 }

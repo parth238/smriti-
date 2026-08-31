@@ -1,4 +1,5 @@
 import { Chrome } from "../../components/Chrome";
+import { GameCompanion } from "../../components/companion/GameCompanion";
 import { Instruction } from "../../components/game/Instruction";
 import { ProgressDots } from "../../components/game/ProgressDots";
 import { TeaStep } from "../../components/Motif";
@@ -47,6 +48,7 @@ export function SequencingGame() {
           );
         })}
       </div>
+      <GameCompanion />
     </main>
   );
 }

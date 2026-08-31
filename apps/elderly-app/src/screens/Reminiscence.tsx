@@ -41,7 +41,7 @@ export function MemoryPersonal() {
   return (
     <main>
       <Chrome backTo="/memories" />
-      {offline ? (
+      {offline && rows.length > 0 ? (
         <p className="mb-4 text-body text-mist-blue">{tx("memoriesOffline")}</p>
       ) : null}
       {loading ? (

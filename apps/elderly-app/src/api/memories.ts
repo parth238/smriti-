@@ -1,3 +1,4 @@
+import { cacheFamilyMemories, readCachedFamilyMemories } from "../db/memoryCache";
 import { API_BASE } from "./auth";
 
 export type ApiMemoryItem = {
@@ -38,8 +39,11 @@ export function resolveMediaUrl(mediaUrl: string): string {
 export async function loadFamilyMemories(): Promise<ApiMemoryItem[]> {
   const token = readToken();
   const userId = readUserId();
-  if (!token || !userId || !navigator.onLine) {
+  if (!userId) {
     return [];
+  }
+  if (!token || !navigator.onLine) {
+    return readCachedFamilyMemories(userId);
   }
   try {
     const response = await fetch(
@@ -47,10 +51,12 @@ export async function loadFamilyMemories(): Promise<ApiMemoryItem[]> {
       { headers: { Authorization: `Bearer ${token}`, Accept: "application/json" } },
     );
     if (!response.ok) {
-      return [];
+      return readCachedFamilyMemories(userId);
     }
-    return (await response.json()) as ApiMemoryItem[];
+    const items = (await response.json()) as ApiMemoryItem[];
+    await cacheFamilyMemories(userId, items);
+    return items;
   } catch {
-    return [];
+    return readCachedFamilyMemories(userId);
   }
 }

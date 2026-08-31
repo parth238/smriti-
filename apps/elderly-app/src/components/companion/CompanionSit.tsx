@@ -1,45 +1,45 @@
 export function CompanionSit() {
   return (
-    <div className="companion-enter w-36" aria-hidden="true">
-      <svg viewBox="0 0 180 210" className="h-48 w-36">
-        <ellipse cx="96" cy="198" rx="52" ry="9" fill="#7C93A3" opacity="0.22" />
-        <rect x="58" y="142" width="76" height="12" rx="3" fill="#1E2A2F" />
-        <path d="M66 154v40M126 154v40" stroke="#1E2A2F" strokeWidth="7" strokeLinecap="round" />
-        <path d="M70 154h40v38H70z" fill="#1E2A2F" opacity="0.12" />
-        <path d="M48 96c8 28 18 46 48 50 30-2 42-22 50-50-8-18-30-28-50-28s-40 12-48 28z" fill="#4B6E58" />
-        <path d="M54 118c16 22 56 24 78 2" fill="#1E2A2F" opacity="0.2" />
-        <path d="M42 108h96" stroke="#FBF9F4" strokeWidth="11" strokeLinecap="round" />
-        <path d="M42 108h96" stroke="#A8342A" strokeWidth="5.5" strokeLinecap="round" />
+    <div className="companion-enter w-36 companion-sit-breathe" aria-hidden="true">
+      <svg viewBox="0 0 180 220" className="h-52 w-36">
+        <ellipse cx="96" cy="208" rx="54" ry="10" fill="#7C93A3" opacity="0.24" />
+        <rect x="54" y="148" width="80" height="14" rx="4" fill="#1E2A2F" opacity="0.9" />
+        <path d="M62 162v44M126 162v44" stroke="#1E2A2F" strokeWidth="8" strokeLinecap="round" />
+        <path d="M66 162h44v40H66z" fill="#1E2A2F" opacity="0.1" />
+        <path d="M46 100c10 30 20 48 50 52 30-2 42-24 50-52-8-20-32-30-52-30s-42 14-48 30z" fill="#4B6E58" />
+        <path d="M50 122c18 24 60 26 84 2" fill="#A8342A" opacity="0.8" />
+        <path d="M40 114h96" stroke="#FBF9F4" strokeWidth="12" strokeLinecap="round" />
+        <path d="M40 114h96" stroke="#A8342A" strokeWidth="6" strokeLinecap="round" />
         <path
-          d="M28 92c22-16 42-8 58 8"
+          d="M26 98c24-18 44-10 60 10"
           stroke="#FBF9F4"
-          strokeWidth="13"
+          strokeWidth="14"
           fill="none"
           strokeLinecap="round"
         />
         <path
-          d="M28 92c22-16 42-8 58 8"
+          d="M26 98c24-18 44-10 60 10"
           stroke="#A8342A"
-          strokeWidth="6"
+          strokeWidth="6.5"
           fill="none"
           strokeLinecap="round"
         />
         <path
-          d="M118 88c14 10 16 26 4 38"
+          d="M120 92c16 12 18 28 6 42"
           stroke="#1E2A2F"
-          strokeWidth="7"
+          strokeWidth="8"
           fill="none"
           strokeLinecap="round"
         />
-        <circle cx="90" cy="58" r="24" fill="#E8C9A8" />
-        <path d="M68 52c10-22 36-24 46-2" fill="#F4EEE4" />
-        <circle cx="108" cy="44" r="11" fill="#F7F3EC" />
-        <circle cx="82" cy="60" r="2.2" fill="#1E2A2F" />
-        <circle cx="100" cy="60" r="2.2" fill="#1E2A2F" />
+        <circle cx="92" cy="60" r="26" fill="#E8C9A8" />
+        <path d="M68 54c12-24 40-26 50-2" fill="#F4EEE4" />
+        <ellipse cx="112" cy="44" rx="12" ry="11" fill="#F7F3EC" />
+        <circle cx="84" cy="62" r="2.4" fill="#1E2A2F" />
+        <circle cx="102" cy="62" r="2.4" fill="#1E2A2F" />
         <path
-          d="M82 72c7 5 16 5 22 0"
+          d="M84 74c8 5 18 5 24 0"
           stroke="#1E2A2F"
-          strokeWidth="2"
+          strokeWidth="2.2"
           fill="none"
           strokeLinecap="round"
         />
