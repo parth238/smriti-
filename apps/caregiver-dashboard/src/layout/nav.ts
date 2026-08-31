@@ -6,4 +6,5 @@ export const NAV = [
   { to: "/memories", label: "Memories" },
   { to: "/alerts", label: "Alerts" },
   { to: "/settings", label: "Settings" },
+  { to: "/story", label: "Our story" },
 ] as const;

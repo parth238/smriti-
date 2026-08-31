@@ -54,7 +54,79 @@ input {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .page-fade {
-    animation: none;
+  .page-fade,
+  .story-hidden,
+  .story-visible,
+  .story-line-draw,
+  .story-card {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
+}
+
+/* Story mode — scroll narrative for judges */
+.story-scroll {
+  height: 100vh;
+  overflow-y: auto;
+  scroll-snap-type: y proximity;
+}
+
+.story-hero {
+  background:
+    radial-gradient(ellipse at 80% 20%, rgba(224, 165, 66, 0.12), transparent 40%),
+    radial-gradient(ellipse at 10% 80%, rgba(75, 110, 88, 0.15), transparent 45%),
+    #fbf9f4;
+}
+
+.story-hidden {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 700ms ease-out,
+    transform 700ms ease-out;
+}
+
+.story-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.story-line-draw {
+  animation: line-grow 1.2s ease-out forwards;
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+@keyframes line-grow {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.story-card {
+  transition: transform 400ms ease, box-shadow 400ms ease;
+}
+
+.story-visible .story-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(30, 42, 47, 0.08);
+}
+
+.story-bullet {
+  padding-left: 1.25rem;
+  position: relative;
+}
+
+.story-bullet::before {
+  content: "◆";
+  position: absolute;
+  left: 0;
+  color: #e0a542;
+  font-size: 0.65rem;
+  top: 0.35rem;
+}
+
+.font-display {
+  font-family: Inter, "Segoe UI", sans-serif;
 }

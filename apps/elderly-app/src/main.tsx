@@ -7,9 +7,21 @@ import { App } from "./App";
 import { LanguageProvider } from "./context/LanguageContext";
 import { OfflineSyncProvider } from "./context/OfflineSyncContext";
 import { CompanionVoiceProvider } from "./voice/CompanionVoice";
+import { startReminderScheduler } from "./lib/reminderScheduler";
 import "./index.css";
 
 registerSW({ immediate: true });
+
+startReminderScheduler();
+
+if ("serviceWorker" in navigator && "SyncManager" in window) {
+  void navigator.serviceWorker.ready.then((registration) => {
+    const syncReg = registration as ServiceWorkerRegistration & {
+      sync?: { register: (tag: string) => Promise<void> };
+    };
+    void syncReg.sync?.register("smriti-outbox-flush");
+  });
+}
 
 const root = document.getElementById("root");
 if (!root) {

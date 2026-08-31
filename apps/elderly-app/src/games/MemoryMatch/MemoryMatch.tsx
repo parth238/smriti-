@@ -10,12 +10,14 @@ import {
   spriteIndex,
   type MemoryIconId,
 } from "../../data/gameAssets";
+import { LargeButton } from "../../components/LargeButton";
 import { useMemoryMatch } from "../../hooks/useMemoryMatch";
 import { useSpeakText } from "../../voice/CompanionVoice";
 
 export function MemoryMatch() {
   const { tx } = useI18n();
-  const { ready, cards, open, matched, pairCount, nudge, bloomKey, onTap } = useMemoryMatch();
+  const { ready, cards, open, matched, pairCount, difficulty, nudge, bloomKey, onTap, requestHint } =
+    useMemoryMatch();
   useSpeakText(nudge, ready);
 
   if (!ready) {
@@ -32,6 +34,9 @@ export function MemoryMatch() {
     <main className="game-scene-memory">
       <Chrome backTo="/games" />
       <Instruction>{nudge}</Instruction>
+      <p className="mb-2 text-body text-mist-blue">
+        {tx("adaptiveLevel")} {difficulty}
+      </p>
       <ProgressDots total={pairCount} filled={matched.length} />
       <div className="grid grid-cols-2 gap-3">
         {cards.map((card) => {
@@ -68,6 +73,11 @@ export function MemoryMatch() {
             </button>
           );
         })}
+      </div>
+      <div className="mt-4">
+        <LargeButton tone="quiet" onClick={requestHint}>
+          {tx("needHint")}
+        </LargeButton>
       </div>
       <GameCompanion />
     </main>

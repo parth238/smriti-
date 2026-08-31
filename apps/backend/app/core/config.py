@@ -41,6 +41,10 @@ class Settings(BaseSettings):
 
     upload_dir: str = "uploads"
 
+    bhashini_api_key: str = ""
+    bhashini_tts_service_id: str = ""
+    bhashini_tts_gender: str = "female"
+
     @field_validator("jwt_secret_key")
     @classmethod
     def jwt_secret_must_be_strong(cls, value: str, info) -> str:
