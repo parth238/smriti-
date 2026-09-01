@@ -4,13 +4,22 @@ import { db, type ReminderCacheRow } from "./dexie";
 
 const LEGACY_KEY = "smriti.reminders";
 
+export function demoUserKey(userId: string): string {
+  return userId.replace(/[^a-zA-Z0-9_-]/g, "_");
+}
+
+export function buildDemoReminderId(userId: string, kind: "med-evening" | "water"): string {
+  return `demo-${demoUserKey(userId)}-${kind}`;
+}
+
 /** Demo rows shown only when Dexie cache is empty and API is unreachable. */
-export function buildSeedReminders(locale: string): ReminderCacheRow[] {
+export function buildSeedReminders(locale: string, userId: string): ReminderCacheRow[] {
   const dict = locale === "as" ? as : en;
   const now = new Date().toISOString();
   return [
     {
-      id: "demo-med-evening",
+      id: buildDemoReminderId(userId, "med-evening"),
+      userId,
       type: "medicine",
       title: dict.reminderMedicine,
       scheduledTime: now,
@@ -19,7 +28,8 @@ export function buildSeedReminders(locale: string): ReminderCacheRow[] {
       updatedAt: now,
     },
     {
-      id: "demo-water",
+      id: buildDemoReminderId(userId, "water"),
+      userId,
       type: "hydration",
       title: dict.reminderWater,
       scheduledTime: now,
@@ -43,13 +53,13 @@ export function purgeLegacyReminderStorage(): void {
   }
 }
 
-export async function ensureSeedReminders(locale: string): Promise<ReminderCacheRow[]> {
+export async function ensureSeedReminders(locale: string, userId: string): Promise<ReminderCacheRow[]> {
   purgeLegacyReminderStorage();
-  const existing = await db.reminders.count();
+  const existing = await db.reminders.where("userId").equals(userId).count();
   if (existing > 0) {
-    return db.reminders.orderBy("scheduledTime").toArray();
+    return db.reminders.where("userId").equals(userId).sortBy("scheduledTime");
   }
-  const seeds = buildSeedReminders(locale);
+  const seeds = buildSeedReminders(locale, userId);
   await db.reminders.bulkPut(seeds);
   return seeds;
 }

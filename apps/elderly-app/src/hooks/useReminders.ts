@@ -7,7 +7,8 @@ import {
 } from "../api/reminders";
 import { useI18n } from "../context/LanguageContext";
 import type { ReminderCacheRow } from "../db/dexie";
-import { readAccessToken, readUserId } from "../lib/authStorage";
+import { captureAuthScopedSnapshot, isAuthScopedSnapshotCurrent } from "../lib/authLoadScope";
+import { AUTH_SESSION_CHANGED_EVENT, readAccessToken, readUserId } from "../lib/authStorage";
 import { onServerPullComplete } from "../lib/syncEvents";
 
 export function shouldRefreshForPullEvent(eventUserId: string, currentUserId: string | null): boolean {
@@ -21,14 +22,28 @@ export function useReminders() {
   const previousLanguage = useRef(language);
 
   const loadCache = useCallback(async () => {
+    const snapshot = captureAuthScopedSnapshot();
     setLoading(true);
     const rows = await loadRemindersFromCache(language);
+    if (!isAuthScopedSnapshotCurrent(snapshot)) {
+      return;
+    }
     setItems(rows);
     setLoading(false);
   }, [language]);
 
   useEffect(() => {
     void loadCache();
+  }, [loadCache]);
+
+  useEffect(() => {
+    function onAuthSessionChanged() {
+      setItems([]);
+      setLoading(true);
+      void loadCache();
+    }
+    window.addEventListener(AUTH_SESSION_CHANGED_EVENT, onAuthSessionChanged);
+    return () => window.removeEventListener(AUTH_SESSION_CHANGED_EVENT, onAuthSessionChanged);
   }, [loadCache]);
 
   useEffect(() => {
@@ -48,22 +63,38 @@ export function useReminders() {
     if (!navigator.onLine || !readAccessToken()) {
       return;
     }
+    const snapshot = captureAuthScopedSnapshot();
     void syncReminders(language).then((rows) => {
+      if (!isAuthScopedSnapshotCurrent(snapshot)) {
+        return;
+      }
       setItems(rows);
     });
   }, [language]);
 
   const markDone = useCallback(
     async (id: string) => {
+      const snapshot = captureAuthScopedSnapshot();
       const rows = await acknowledgeReminder(id, language);
-      setItems(rows.length ? rows : await loadRemindersFromCache(language));
+      if (!isAuthScopedSnapshotCurrent(snapshot)) {
+        return;
+      }
+      const nextRows = rows.length ? rows : await loadRemindersFromCache(language);
+      if (!isAuthScopedSnapshotCurrent(snapshot)) {
+        return;
+      }
+      setItems(nextRows);
     },
     [language],
   );
 
   const refresh = useCallback(async () => {
+    const snapshot = captureAuthScopedSnapshot();
     if (navigator.onLine && readAccessToken()) {
       const rows = await syncReminders(language);
+      if (!isAuthScopedSnapshotCurrent(snapshot)) {
+        return;
+      }
       setItems(rows);
       return;
     }

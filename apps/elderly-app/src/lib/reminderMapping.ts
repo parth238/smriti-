@@ -13,6 +13,7 @@ export function formatReminderTime(iso: string, locale: string): string {
 
 export function mapReminderToCacheRow(input: {
   id: string;
+  userId: string;
   type: string;
   title: Record<string, string>;
   scheduledTime: string;
@@ -30,6 +31,7 @@ export function mapReminderToCacheRow(input: {
         : 0;
   return {
     id: input.id,
+    userId: input.userId,
     type: input.type,
     title,
     scheduledTime: input.scheduledTime,

@@ -1,4 +1,5 @@
 import { beforeEach, vi } from "vitest";
+import "fake-indexeddb/auto";
 
 const localStore = new Map<string, string>();
 

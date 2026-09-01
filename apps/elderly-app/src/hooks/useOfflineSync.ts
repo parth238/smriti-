@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { failedOutboxCount, pendingOutboxCount } from "../db/syncOutbox";
+import { captureAuthScopedSnapshot, isAuthScopedSnapshotCurrent } from "../lib/authLoadScope";
 import { readAccessToken } from "../lib/authStorage";
 import { AUTH_SESSION_CHANGED_EVENT, runSyncCycle } from "../lib/syncCycle";
 
@@ -21,12 +22,24 @@ export function useOfflineSync() {
     let attempt = 0;
 
     async function refreshCounts() {
-      setPending(await pendingOutboxCount());
-      setFailed(await failedOutboxCount());
+      const snapshot = captureAuthScopedSnapshot();
+      const [nextPending, nextFailed] = await Promise.all([
+        pendingOutboxCount(),
+        failedOutboxCount(),
+      ]);
+      if (!isAuthScopedSnapshotCurrent(snapshot)) {
+        return;
+      }
+      setPending(nextPending);
+      setFailed(nextFailed);
     }
 
     async function runCycle() {
+      const snapshot = captureAuthScopedSnapshot();
       const { flushed } = await runSyncCycle();
+      if (!isAuthScopedSnapshotCurrent(snapshot)) {
+        return flushed;
+      }
       await refreshCounts();
       if (flushed > 0) {
         setLastFlush(Date.now());
@@ -63,6 +76,9 @@ export function useOfflineSync() {
     }
 
     function onAuthSessionChanged() {
+      setPending(0);
+      setFailed(0);
+      void refreshCounts();
       if (navigator.onLine && readAccessToken()) {
         void runCycle();
       }

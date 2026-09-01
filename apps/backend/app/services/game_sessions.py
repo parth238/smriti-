@@ -8,7 +8,7 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
-from app.core.errors import NotFoundError, ValidationError
+from app.core.errors import ConflictError, NotFoundError, ValidationError
 from app.models.game_session import GameSession
 from app.services.adaptive_difficulty import DEFAULT_DIFFICULTY, next_difficulty
 from app.services.game_catalog import get_game_by_id, get_game_by_type
@@ -40,6 +40,11 @@ def create_game_session(
         .first()
     )
     if existing is not None:
+        if existing.user_id != user_id:
+            raise ConflictError(
+                "client_generated_id is already associated with another user",
+                field="client_generated_id",
+            )
         nxt = _recommended_difficulty(db, user_id, existing.game_id)
         return existing, nxt, False
 

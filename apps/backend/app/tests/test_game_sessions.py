@@ -5,7 +5,7 @@ from uuid import uuid4
 
 import pytest
 
-from app.core.errors import NotFoundError, ValidationError
+from app.core.errors import ConflictError, NotFoundError, ValidationError
 from app.services.game_sessions import create_game_session
 
 
@@ -32,9 +32,11 @@ def test_create_session_idempotent_on_client_id(
     )
 
     client_id = uuid4()
+    user_id = uuid4()
+    existing.user_id = user_id
     session, nxt, created = create_game_session(
         db,
-        user_id=uuid4(),
+        user_id=user_id,
         game_id=existing.game_id,
         game_type=None,
         difficulty=3,
@@ -50,6 +52,38 @@ def test_create_session_idempotent_on_client_id(
     assert session is existing
     assert created is False
     assert nxt == 3
+    db.add.assert_not_called()
+
+
+def test_create_session_rejects_cross_user_client_id(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    existing = MagicMock()
+    existing.id = uuid4()
+    existing.game_id = uuid4()
+    existing.user_id = uuid4()
+
+    db = MagicMock()
+    db.query.return_value.filter.return_value.first.return_value = existing
+
+    with pytest.raises(ConflictError) as exc:
+        create_game_session(
+            db,
+            user_id=uuid4(),
+            game_id=existing.game_id,
+            game_type=None,
+            difficulty=3,
+            accuracy=80,
+            reaction_time_ms=900,
+            errors=0,
+            hints_used=0,
+            session_duration_sec=120,
+            completed_or_quit="completed",
+            client_generated_id=uuid4(),
+            played_at=datetime.now(timezone.utc),
+        )
+    assert "another user" in exc.value.message
+    assert str(existing.id) not in exc.value.message
     db.add.assert_not_called()
 
 

@@ -2,9 +2,12 @@ import { readLanguage } from "../i18n";
 import { pullServerChanges } from "../db/syncPull";
 import { flushOutbox } from "../db/syncOutbox";
 import { AUTH_SESSION_CHANGED_EVENT, readAccessToken, readUserId } from "./authStorage";
-
-let activeCycle: Promise<{ flushed: number }> | null = null;
-let activeCycleUserId: string | null = null;
+import { sessionsMatch } from "./sessionGuard";
+import {
+  clearActiveSyncCycle,
+  getActiveSyncCycle,
+  setActiveSyncCycle,
+} from "./syncCycleState";
 
 export async function runSyncCycle(): Promise<{ flushed: number }> {
   if (typeof navigator !== "undefined" && !navigator.onLine) {
@@ -16,36 +19,41 @@ export async function runSyncCycle(): Promise<{ flushed: number }> {
     return { flushed: 0 };
   }
 
-  if (activeCycle && activeCycleUserId === userId) {
-    return activeCycle;
+  const existing = getActiveSyncCycle(userId);
+  if (existing) {
+    return existing;
   }
 
+  const capturedToken = token;
+  const capturedUserId = userId;
   const locale = readLanguage();
-  activeCycleUserId = userId;
-  activeCycle = (async () => {
+
+  const cycle = (async () => {
+    if (!sessionsMatch(capturedUserId, capturedToken)) {
+      return { flushed: 0 };
+    }
     let flushed = 0;
     try {
-      flushed = await flushOutbox(token);
+      flushed = await flushOutbox(capturedToken, capturedUserId);
     } catch {
       // Push failure must not block incremental pull.
     }
+    if (!sessionsMatch(capturedUserId, capturedToken)) {
+      return { flushed };
+    }
     try {
-      await pullServerChanges(token, userId, locale);
+      await pullServerChanges(capturedToken, capturedUserId, locale);
     } catch {
       // Pull failures must not affect outbox attempt counts.
     }
     return { flushed };
   })().finally(() => {
-    activeCycle = null;
-    activeCycleUserId = null;
+    clearActiveSyncCycle(capturedUserId, cycle);
   });
 
-  return activeCycle;
+  setActiveSyncCycle(capturedUserId, cycle);
+  return cycle;
 }
 
-export function resetSyncCycleForTests(): void {
-  activeCycle = null;
-  activeCycleUserId = null;
-}
-
+export { resetSyncCycleForTests, invalidateActiveSyncCycles } from "./syncCycleState";
 export { AUTH_SESSION_CHANGED_EVENT };

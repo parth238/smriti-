@@ -2,6 +2,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import * as authStorage from "./authStorage";
 import { resetSyncCycleForTests, runSyncCycle } from "./syncCycle";
+import {
+  clearActiveSyncCycle,
+  getActiveSyncCycle,
+  setActiveSyncCycle,
+} from "./syncCycleState";
 
 const flushOutbox = vi.fn();
 const pullServerChanges = vi.fn();
@@ -41,6 +46,8 @@ describe("sync cycle orchestration", () => {
 
     await runSyncCycle();
     expect(order).toEqual(["push", "pull"]);
+    expect(flushOutbox).toHaveBeenCalledWith("token", "user-1");
+    expect(pullServerChanges).toHaveBeenCalledWith("token", "user-1", "en");
   });
 
   it("still pulls after failed push", async () => {
@@ -56,7 +63,7 @@ describe("sync cycle orchestration", () => {
     expect(pullServerChanges).toHaveBeenCalledOnce();
   });
 
-  it("shares one active cycle for simultaneous triggers", async () => {
+  it("shares one active cycle for simultaneous triggers of the same user", async () => {
     let resolvePush: (value: number) => void = () => undefined;
     flushOutbox.mockImplementation(
       () =>
@@ -76,6 +83,18 @@ describe("sync cycle orchestration", () => {
     await Promise.all([first, second]);
     expect(flushOutbox).toHaveBeenCalledTimes(1);
     expect(pullServerChanges).toHaveBeenCalledTimes(1);
+  });
+
+  it("tracks active cycles independently per user", async () => {
+    const cycleA = Promise.resolve({ flushed: 0 });
+    const cycleB = Promise.resolve({ flushed: 1 });
+    setActiveSyncCycle("user-a", cycleA);
+    setActiveSyncCycle("user-b", cycleB);
+    expect(getActiveSyncCycle("user-a")).toBe(cycleA);
+    expect(getActiveSyncCycle("user-b")).toBe(cycleB);
+    clearActiveSyncCycle("user-a", cycleA);
+    expect(getActiveSyncCycle("user-a")).toBeUndefined();
+    expect(getActiveSyncCycle("user-b")).toBe(cycleB);
   });
 
   it("runs when browser reconnects online", async () => {

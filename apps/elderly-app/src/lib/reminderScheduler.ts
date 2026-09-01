@@ -1,4 +1,5 @@
 import { db } from "../db/dexie";
+import { readUserId } from "./authStorage";
 
 const notifiedKeys = new Set<string>();
 
@@ -24,8 +25,16 @@ async function fireDueReminders(): Promise<void> {
   if (typeof Notification === "undefined" || Notification.permission !== "granted") {
     return;
   }
+  const userId = readUserId();
+  if (!userId) {
+    return;
+  }
   const now = Date.now();
-  const rows = await db.reminders.filter((row) => row.done === 0).toArray();
+  const rows = await db.reminders
+    .where("userId")
+    .equals(userId)
+    .filter((row) => row.done === 0)
+    .toArray();
   for (const row of rows) {
     const due = new Date(row.scheduledTime).getTime();
     if (Number.isNaN(due)) {

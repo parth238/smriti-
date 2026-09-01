@@ -14,7 +14,11 @@ import {
 
 const reminders = new Map<string, ReminderCacheRow>();
 const memoryItems = new Map<string, MemoryCacheRow>();
-let outboxRows: Array<{ kind: string; payload: { reminderId: string } }> = [];
+let outboxRows: Array<{
+  kind: string;
+  userId: string;
+  payload: { reminderId: string; userId: string; acknowledgedAt: string };
+}> = [];
 let transactionShouldFail = false;
 
 vi.mock("./dexie", () => ({
@@ -42,8 +46,8 @@ vi.mock("./dexie", () => ({
     },
     outbox: {
       where: () => ({
-        equals: () => ({
-          toArray: async () => outboxRows,
+        equals: (userId: string) => ({
+          toArray: async () => outboxRows.filter((row) => row.userId === userId),
         }),
       }),
     },
@@ -64,6 +68,7 @@ describe("sync pull merge helpers", () => {
   it("skips older reminder replay", () => {
     const existing: ReminderCacheRow = {
       id: "r1",
+      userId: "user-1",
       type: "medicine",
       title: "New",
       scheduledTime: "2026-01-01T08:00:00.000Z",
@@ -129,13 +134,16 @@ describe("sync pull merge helpers", () => {
 });
 
 describe("mergeSyncStatusIntoDexie", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     reminders.clear();
     memoryItems.clear();
     outboxRows = [];
     transactionShouldFail = false;
+    vi.spyOn(await import("../lib/authStorage"), "readUserId").mockReturnValue("user-1");
+    vi.spyOn(await import("../lib/authStorage"), "readAccessToken").mockReturnValue("token");
     reminders.set("keep", {
       id: "keep",
+      userId: "user-1",
       type: "other",
       title: "Keep me",
       scheduledTime: "2026-01-01T09:00:00.000Z",
@@ -162,6 +170,7 @@ describe("mergeSyncStatusIntoDexie", () => {
   it("upserts without clearing unrelated rows", async () => {
     await mergeSyncStatusIntoDexie(
       "user-1",
+      "token",
       "en",
       [
         {
@@ -202,8 +211,8 @@ describe("mergeSyncStatusIntoDexie", () => {
       updated_at: "2026-01-02T00:00:00.000Z",
       last_acknowledged_at: null,
     };
-    await mergeSyncStatusIntoDexie("user-1", "en", [payload], []);
-    await mergeSyncStatusIntoDexie("user-1", "en", [payload], []);
+    await mergeSyncStatusIntoDexie("user-1", "token", "en", [payload], []);
+    await mergeSyncStatusIntoDexie("user-1", "token", "en", [payload], []);
     expect(reminders.size).toBe(2);
     expect(reminders.get("r1")?.title).toBe("Medicine");
   });
@@ -211,6 +220,7 @@ describe("mergeSyncStatusIntoDexie", () => {
   it("does not overwrite newer cached reminder with older replay", async () => {
     reminders.set("r1", {
       id: "r1",
+      userId: "user-1",
       type: "medicine",
       title: "Newer",
       scheduledTime: "2026-01-01T08:00:00.000Z",
@@ -220,6 +230,7 @@ describe("mergeSyncStatusIntoDexie", () => {
     });
     await mergeSyncStatusIntoDexie(
       "user-1",
+      "token",
       "en",
       [
         {
@@ -241,6 +252,7 @@ describe("mergeSyncStatusIntoDexie", () => {
   it("preserves optimistic done state while ack is pending in outbox", async () => {
     reminders.set("r1", {
       id: "r1",
+      userId: "user-1",
       type: "medicine",
       title: "Med",
       scheduledTime: "2026-01-01T08:00:00.000Z",
@@ -248,9 +260,10 @@ describe("mergeSyncStatusIntoDexie", () => {
       done: 1,
       updatedAt: "2026-01-02T00:00:00.000Z",
     });
-    outboxRows = [{ kind: "reminder_ack", payload: { reminderId: "r1" } }];
+    outboxRows = [{ kind: "reminder_ack", userId: "user-1", payload: { reminderId: "r1", userId: "user-1", acknowledgedAt: "2026-01-01T00:00:00.000Z" } }];
     await mergeSyncStatusIntoDexie(
       "user-1",
+      "token",
       "en",
       [
         {
@@ -274,6 +287,7 @@ describe("mergeSyncStatusIntoDexie", () => {
     await expect(
       mergeSyncStatusIntoDexie(
         "user-1",
+        "token",
         "en",
         [
           {

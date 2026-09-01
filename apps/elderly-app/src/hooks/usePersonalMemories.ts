@@ -3,7 +3,8 @@ import { useCallback, useEffect, useState } from "react";
 import { type ApiMemoryItem } from "../api/memories";
 import { readCachedFamilyMemories } from "../db/memoryCache";
 import { useI18n } from "../context/LanguageContext";
-import { readUserId } from "../lib/authStorage";
+import { captureAuthScopedSnapshot, isAuthScopedSnapshotCurrent } from "../lib/authLoadScope";
+import { AUTH_SESSION_CHANGED_EVENT, readUserId } from "../lib/authStorage";
 import { onServerPullComplete } from "../lib/syncEvents";
 import { shouldRefreshForPullEvent } from "./useReminders";
 
@@ -14,21 +15,38 @@ export function usePersonalMemories() {
   const [offline, setOffline] = useState(!navigator.onLine);
 
   const loadCache = useCallback(async () => {
+    const snapshot = captureAuthScopedSnapshot();
     setOffline(!navigator.onLine);
     setLoading(true);
-    const userId = readUserId();
+    const userId = snapshot.userId;
     if (!userId) {
+      if (!isAuthScopedSnapshotCurrent(snapshot)) {
+        return;
+      }
       setRows([]);
       setLoading(false);
       return;
     }
     const items = await readCachedFamilyMemories(userId);
+    if (!isAuthScopedSnapshotCurrent(snapshot)) {
+      return;
+    }
     setRows(items);
     setLoading(false);
   }, []);
 
   useEffect(() => {
     void loadCache();
+  }, [loadCache]);
+
+  useEffect(() => {
+    function onAuthSessionChanged() {
+      setRows([]);
+      setLoading(true);
+      void loadCache();
+    }
+    window.addEventListener(AUTH_SESSION_CHANGED_EVENT, onAuthSessionChanged);
+    return () => window.removeEventListener(AUTH_SESSION_CHANGED_EVENT, onAuthSessionChanged);
   }, [loadCache]);
 
   useEffect(() => {

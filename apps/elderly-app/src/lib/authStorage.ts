@@ -1,5 +1,8 @@
 /** Auth/session keys — localStorage survives offline re-login; sessionStorage is tab-scoped. */
 
+import { bumpAuthLoadGeneration } from "./authLoadGeneration";
+import { invalidateActiveSyncCycles } from "./syncCycleState";
+
 export const AUTH_SESSION_CHANGED_EVENT = "smriti:auth-session-changed";
 
 const ACCESS_KEY = "smriti.access";
@@ -32,6 +35,8 @@ export function persistAuthSession(accessToken: string, userId?: string): void {
     window.sessionStorage.setItem(USER_KEY, userId);
     window.localStorage.setItem(USER_KEY, userId);
   }
+  invalidateActiveSyncCycles();
+  bumpAuthLoadGeneration();
   window.dispatchEvent(new CustomEvent(AUTH_SESSION_CHANGED_EVENT));
 }
 
@@ -40,6 +45,8 @@ export function clearAuthSession(): void {
     window.sessionStorage.removeItem(key);
     window.localStorage.removeItem(key);
   }
+  invalidateActiveSyncCycles();
+  bumpAuthLoadGeneration();
   window.dispatchEvent(new CustomEvent(AUTH_SESSION_CHANGED_EVENT));
 }
 

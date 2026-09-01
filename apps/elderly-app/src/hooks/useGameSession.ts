@@ -1,10 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 
 import { readAccessToken } from "./useOfflineSync";
-import { API_BASE } from "../api/auth";
-import { GAME_IDS } from "../api/games";
-import { db } from "../db/dexie";
-import { enqueueSession, saveLocalSession } from "../db/syncOutbox";
+import { persistCompletedGameSession } from "../db/syncOutbox";
 import { notifyAdaptiveRefresh } from "../lib/adaptiveEvents";
 import { markActiveGameCompleted } from "../lib/gameSessionRegistry";
 import { rememberGame } from "../store/sessionPrefs";
@@ -26,6 +23,7 @@ async function readUserId(): Promise<string> {
   if (fromSession) {
     return fromSession;
   }
+  const { db } = await import("../db/dexie");
   const paired = await db.paired.toCollection().first();
   return paired?.id ?? "local-demo-user";
 }
@@ -62,56 +60,15 @@ export function useGameSession() {
       synced: 0,
     };
 
-    await saveLocalSession(session);
+    const token = readAccessToken();
+    const outcome = await persistCompletedGameSession(session, token);
     notifyAdaptiveRefresh(input.gameType);
     markActiveGameCompleted();
     window.sessionStorage.setItem("smriti.lastDifficulty", String(session.difficulty));
     window.sessionStorage.setItem("smriti.lastGameType", session.gameType);
     window.sessionStorage.setItem("smriti.lastAccuracy", String(session.accuracy));
-    window.sessionStorage.setItem(
-      "smriti.lastSave",
-      navigator.onLine ? "saved" : "queued",
-    );
-
-    const token = readAccessToken();
-    if (navigator.onLine && token && userId !== "local-demo-user") {
-      try {
-        const gameId = GAME_IDS[input.gameType];
-        const response = await fetch(`${API_BASE}/game-sessions`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            user_id: userId,
-            game_id: gameId,
-            game_type: input.gameType,
-            difficulty: session.difficulty,
-            accuracy: session.accuracy,
-            reaction_time_ms: session.reactionTimeMs,
-            errors: session.errors,
-            hints_used: session.hintsUsed,
-            session_duration_sec: session.sessionDurationSec,
-            completed_or_quit: session.completedOrQuit,
-            client_generated_id: session.clientGeneratedId,
-            played_at: session.playedAt,
-          }),
-        });
-        if (response.ok || response.status === 409) {
-          await saveLocalSession({ ...session, synced: 1 });
-          setSaveState("saved");
-          window.sessionStorage.setItem("smriti.lastSave", "saved");
-          return;
-        }
-      } catch {
-        // fall through to outbox
-      }
-    }
-
-    await enqueueSession(session);
-    setSaveState("queued");
-    window.sessionStorage.setItem("smriti.lastSave", "queued");
+    window.sessionStorage.setItem("smriti.lastSave", outcome);
+    setSaveState(outcome === "saved" ? "saved" : "queued");
   }, [elapsedSec]);
 
   return { markStarted, recordResult, saveState, elapsedSec };
