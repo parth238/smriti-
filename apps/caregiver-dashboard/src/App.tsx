@@ -23,10 +23,11 @@ function Gate({ children }: { children: ReactNode }) {
 export function App() {
   return (
     <Routes>
-      <Route path="/story" element={<StoryMode />} />
+      <Route path="/" element={<StoryMode />} />
+      <Route path="/story" element={<Navigate to="/" replace />} />
       <Route path="/login" element={<Login />} />
       <Route
-        path="/"
+        path="/dashboard"
         element={
           <Gate>
             <Overview />
