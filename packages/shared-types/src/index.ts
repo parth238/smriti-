@@ -3,6 +3,9 @@ export const GAME_TYPES = [
   "attention_reaction",
   "sequencing",
   "picture_naming",
+  "simple_arithmetic",
+  "path_maze",
+  "face_recall",
 ] as const;
 
 export type GameType = (typeof GAME_TYPES)[number];

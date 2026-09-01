@@ -281,7 +281,7 @@ Game picker: **4 per screen** + “More activities” (elderly max-4-choices rul
 
 Each game records: user_id, game_type, difficulty, accuracy, reaction_time, errors, hints_used, session_duration, completed_or_quit → Dexie → POST `/game-sessions` or account-scoped outbox.
 
-**Known drift:** `packages/shared-types` lists only 4 game types; backend catalog and elderly app use all 7. Shared types need alignment (§8).
+**Shared contract:** `packages/shared-types` `GAME_TYPES` lists all seven canonical API values in sync with `game_catalog.py` and `apps/elderly-app/src/api/games.ts`.
 
 ---
 
@@ -310,7 +310,7 @@ Each game records: user_id, game_type, difficulty, accuracy, reaction_time, erro
 
 | Issue | Status |
 |-------|--------|
-| **Seven-game shared-type drift** (`packages/shared-types` has 4 types; app/backend use 7) | Open |
+| ~~**Seven-game shared-type drift**~~ | **Resolved** — `packages/shared-types` now lists all 7 canonical `game_type` values |
 | **Vitest not in CI** — elderly unit tests run locally only | Open |
 | **Supabase Storage** for family photos | Not implemented |
 | **`Alert` / `PerformanceMetric` models** | Dead schema — no API routes |
