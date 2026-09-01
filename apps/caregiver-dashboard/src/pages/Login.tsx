@@ -23,15 +23,15 @@ export function Login() {
     if (result.offline) {
       setOffline(true);
     }
-    navigate("/", { replace: true });
+    navigate("/dashboard", { replace: true });
   }
 
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6">
       <p className="text-3xl font-semibold">Smriti</p>
       <div className="gamosa-line my-4" />
-      <Link to="/story" className="text-sm text-tea-garden hover:underline">
-        Read our story first →
+      <Link to="/" className="text-sm text-tea-garden hover:underline">
+        ← Back to home
       </Link>
       <h1 className="mt-6 text-xl font-semibold">Caregiver sign in</h1>
       <p className="mt-2 text-mist-blue">

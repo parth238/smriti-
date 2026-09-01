@@ -5,6 +5,12 @@ import { Chrome } from "../components/Chrome";
 import { LargeButton } from "../components/LargeButton";
 import { useI18n } from "../context/LanguageContext";
 import { clearAuthSession } from "../lib/authStorage";
+import {
+  canRequestReminderAlerts,
+  handleReminderAlertButtonClick,
+  readReminderNotificationPermissionState,
+  reminderAlertLabelKey,
+} from "../lib/reminderNotificationPermission";
 import { useCompanionVoice } from "../voice/CompanionVoice";
 
 export function Settings() {
@@ -12,6 +18,7 @@ export function Settings() {
   const { voiceEnabled, setVoiceEnabled, speechAvailable, listenAvailable, bhashiniAvailable } =
     useCompanionVoice();
   const [confirm, setConfirm] = useState(false);
+  const [alertPermission, setAlertPermission] = useState(readReminderNotificationPermissionState);
   const navigate = useNavigate();
 
   return (
@@ -78,6 +85,22 @@ export function Settings() {
         {bhashiniAvailable ? (
           <p className="mt-3 text-body text-tea-garden">{tx("bhashiniVoiceOn")}</p>
         ) : null}
+      </section>
+      <section className="mt-8">
+        <p className="mb-3 text-body">{tx("reminderAlerts")}</p>
+        <LargeButton
+          tone={
+            alertPermission === "default" || alertPermission === "granted" ? "secondary" : "quiet"
+          }
+          disabled={!canRequestReminderAlerts(alertPermission)}
+          onClick={() => {
+            void handleReminderAlertButtonClick(() =>
+              setAlertPermission(readReminderNotificationPermissionState()),
+            );
+          }}
+        >
+          {tx(reminderAlertLabelKey(alertPermission))}
+        </LargeButton>
       </section>
       <section className="mt-10">
         {confirm ? (

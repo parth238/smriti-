@@ -1,10 +1,22 @@
 # Smriti
 
+## Final SIH 2026 build — 7/10
+
 Cognitive gaming and memory assistance for elderly dementia/MCI patients in Assam (SIH26003).
 
 **Built by Anirudh P.S Yadav** — teammates polish per [`docs/SMRITI_MASTER.md`](docs/SMRITI_MASTER.md) §11.
 
 [![CI](https://github.com/Rehan-2024/smriti-/actions/workflows/ci.yml/badge.svg)](https://github.com/Rehan-2024/smriti-/actions/workflows/ci.yml)
+
+## Clone (full product on `main`)
+
+All feature work is merged into **`main`** — one branch, latest build.
+
+```bash
+git clone https://github.com/AnirudhPratapSinghYadav/SIH2026.git
+cd SIH2026
+# default branch main = elderly PWA + caregiver dashboard + Story Mode + API
+```
 
 ## Quick start
 

@@ -15,7 +15,7 @@ export function Sidebar() {
           <NavLink
             key={item.to}
             to={item.to}
-            end={item.to === "/"}
+            end={item.to === "/dashboard"}
             className={({ isActive }) =>
               `rounded-lg px-3 py-2.5 text-[15px] ${
                 isActive ? "bg-tea-garden text-rice-white" : "text-rice-white/80 hover:bg-white/10"

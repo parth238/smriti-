@@ -148,6 +148,11 @@
   "adaptiveLevel": "স্তৰ",
   "adaptiveEasier": "পৰৱৰ্তী খেল অলপ সহজ হ’ব পাৰে।",
   "adaptiveHarder": "পৰৱৰ্তী খেল অলপ কঠিন হ’ব পাৰে।",
-  "bhashiniVoiceOn": "এই যন্ত্ৰত অসমীয়া কণ্ঠ (ভাষিনী) সক্ৰিয়।"
+  "bhashiniVoiceOn": "এই যন্ত্ৰত অসমীয়া কণ্ঠ (ভাষিনী) সক্ৰিয়।",
+  "reminderAlerts": "স্মাৰকৰ সতর্কতা",
+  "enableReminderAlerts": "স্মাৰকৰ সতর্কতা অন কৰক",
+  "reminderAlertsEnabled": "স্মাৰকৰ সতর্কতা অন আছে",
+  "reminderAlertsBlocked": "স্মাৰকৰ সতর্কতা বন্ধ",
+  "reminderAlertsUnavailable": "স্মাৰকৰ সতর্কতা উপলব্ধ নহয়"
 }
 

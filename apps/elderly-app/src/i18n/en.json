@@ -148,6 +148,11 @@
   "adaptiveLevel": "Level",
   "adaptiveEasier": "Next round may be a little easier.",
   "adaptiveHarder": "Next round may be a little harder.",
-  "bhashiniVoiceOn": "Assamese voice (Bhashini) is active on this device."
+  "bhashiniVoiceOn": "Assamese voice (Bhashini) is active on this device.",
+  "reminderAlerts": "Reminder alerts",
+  "enableReminderAlerts": "Enable reminder alerts",
+  "reminderAlertsEnabled": "Reminder alerts enabled",
+  "reminderAlertsBlocked": "Reminder alerts blocked",
+  "reminderAlertsUnavailable": "Reminder alerts unavailable"
 }
 

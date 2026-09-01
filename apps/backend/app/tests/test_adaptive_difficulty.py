@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+
 from app.services.adaptive_difficulty import (
     DEFAULT_DIFFICULTY,
     MAX_DIFFICULTY,
@@ -72,7 +74,7 @@ def test_mid_range_breaks_streak() -> None:
 
 
 def test_get_difficulty_summary() -> None:
-    game_accuracies = {
+    game_accuracies: dict[str, Sequence[float]] = {
         "game1": [80, 80, 80],  # should level up from default (3) -> 4
         "game2": [40, 40],  # should level down from current (4) -> 3
         "game3": [60, 60],  # should stay at default (3) -> 3

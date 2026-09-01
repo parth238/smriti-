@@ -1,5 +1,5 @@
 export const NAV = [
-  { to: "/", label: "Overview" },
+  { to: "/dashboard", label: "Overview" },
   { to: "/analytics", label: "Analytics" },
   { to: "/sessions", label: "Sessions" },
   { to: "/reminders", label: "Reminders" },

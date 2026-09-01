@@ -5,6 +5,10 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        cream: "#FDF6E9",
+        charcoal: "#1F2937",
+        terracotta: "#B5342A",
+        olive: "#4A6B4E",
         "rice-white": "#FBF9F4",
         "deep-hill": "#1E2A2F",
         "gamosa-red": "#A8342A",
