@@ -34,7 +34,7 @@
 | Elderly PWA | Splash, login, home, **7 games**, Dexie, Workbox, i18n en/as, companions, Web Speech voice |
 | Caregiver dashboard | Sidebar, Recharts, reminders/memories API, patient switcher, Story Mode `/story` |
 | Content & assets | Assamese/English cultural JSON, game PNG sprites, judge seed script |
-| Docs & CI | This master doc, GitHub Actions (pytest + build; Vitest not in CI — see §8) |
+| Docs & CI | This master doc, GitHub Actions (pytest + elderly Vitest + shared contract type-check + build) |
 
 **Teammates do not rebuild.** They polish per §11.
 
@@ -261,7 +261,7 @@ npx tsc --noEmit                # Gate 4B: pass
 npm run build                   # Gate 4B: pass (chunk size warning only)
 ```
 
-**CI today:** GitHub Actions runs backend pytest + ruff/black and frontend `tsc` + build. **Vitest is not run in CI** (see §8).
+**CI today:** GitHub Actions runs backend pytest + ruff/black; frontend `tsc` + build; elderly Vitest (`npm test -- --maxWorkers=1 --minWorkers=1`); and shared-types compile assertions via the elderly app's pinned TypeScript (`./node_modules/.bin/tsc -p ../../packages/shared-types/tsconfig.json`). Caregiver dashboard has no `test` script and is not asked to run Vitest. **Workflow change verified locally; a real GitHub Actions run remains pending until this branch is pushed.**
 
 ---
 
@@ -311,7 +311,7 @@ Each game records: user_id, game_type, difficulty, accuracy, reaction_time, erro
 | Issue | Status |
 |-------|--------|
 | ~~**Seven-game shared-type drift**~~ | **Resolved** — `packages/shared-types` now lists all 7 canonical `game_type` values |
-| **Vitest not in CI** — elderly unit tests run locally only | Open |
+| ~~**Vitest not in CI**~~ | **Resolved locally** — elderly Vitest and shared-types compile checks added to `.github/workflows/ci.yml`; remote GitHub Actions run pending push |
 | **Supabase Storage** for family photos | Not implemented |
 | **`Alert` / `PerformanceMetric` models** | Dead schema — no API routes |
 | **Playtest video** | [`docs/playtest/PLAYTEST.md`](playtest/PLAYTEST.md) template only |
