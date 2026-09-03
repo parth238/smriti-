@@ -8,9 +8,10 @@
   },
   "scripts": {
     "dev": "vite --port 5173",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build && npm run verify:pwa",
     "preview": "vite preview --port 5173",
-    "test": "vitest run"
+    "test": "vitest run",
+    "verify:pwa": "node scripts/verify-pwa-build.mjs"
   },
   "dependencies": {
     "dexie": "4.0.10",

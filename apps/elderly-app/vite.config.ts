@@ -8,15 +8,9 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: [
-        "manifest.json",
-        "icons/icon.svg",
-        "assets/games/*.png",
-        "content-packs/assamese/cultural-media.json",
-        "content-packs/english/cultural-media.json",
-        "content-packs/manipuri/cultural-media.json",
-      ],
+      includeManifestIcons: false,
       manifest: {
+        id: "/",
         name: "Smriti",
         short_name: "Smriti",
         start_url: "/",
@@ -25,6 +19,18 @@ export default defineConfig({
         theme_color: "#A8342A",
         lang: "en",
         icons: [
+          {
+            src: "/icons/icon-192.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "any",
+          },
+          {
+            src: "/icons/icon-512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any",
+          },
           {
             src: "/icons/icon.svg",
             sizes: "any",
