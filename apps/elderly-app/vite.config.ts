@@ -41,14 +41,14 @@ export default defineConfig({
       },
       workbox: {
         navigateFallback: "/index.html",
-        globPatterns: ["**/*.{js,css,html,svg,png,ico,json,woff2}"],
+        globPatterns: ["**/*.{js,css,html,svg,png,jpg,jpeg,ico,json,woff2}"],
         runtimeCaching: [
           {
             urlPattern: ({ url }) =>
               url.pathname.startsWith("/uploads/") || url.pathname.startsWith("/media/"),
             handler: "CacheFirst",
             options: {
-              cacheName: "smriti-family-photos",
+              cacheName: "smriti-family-photos-v2",
               expiration: { maxEntries: 48, maxAgeSeconds: 60 * 60 * 24 * 30 },
             },
           },

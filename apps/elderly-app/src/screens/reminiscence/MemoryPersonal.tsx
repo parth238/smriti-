@@ -3,6 +3,17 @@ import { Chrome } from "../../components/Chrome";
 import { useI18n } from "../../context/LanguageContext";
 import { usePersonalMemories } from "../../hooks/usePersonalMemories";
 
+export const MEMORY_IMAGE_FALLBACK_URL = "/assets/memories/family-tea-garden.jpg";
+
+export function applyMemoryImageFallback(image: HTMLImageElement): void {
+  if (image.dataset.memoryFallbackApplied === "true") {
+    return;
+  }
+  console.error("Personal memory image could not be displayed", image.currentSrc || image.src);
+  image.dataset.memoryFallbackApplied = "true";
+  image.src = MEMORY_IMAGE_FALLBACK_URL;
+}
+
 export function MemoryPersonal() {
   const { tx } = useI18n();
   const { rows, loading, offline, pickTitle, pickPrompt } = usePersonalMemories();
@@ -32,6 +43,7 @@ export function MemoryPersonal() {
                     alt={pickTitle(item)}
                     className="block w-full rounded-2xl object-cover"
                     style={{ minHeight: "12rem", maxHeight: "20rem" }}
+                    onError={(event) => applyMemoryImageFallback(event.currentTarget)}
                   />
                 </div>
                 <h2 className="mt-4 font-display text-h2">{pickTitle(item)}</h2>

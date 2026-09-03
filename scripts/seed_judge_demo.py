@@ -21,12 +21,16 @@ import sys
 import uuid
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
+from io import BytesIO
 from pathlib import Path
+
+from PIL import Image, UnidentifiedImageError
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 BACKEND_ROOT = REPO_ROOT / "apps" / "backend"
 sys.path.insert(0, str(BACKEND_ROOT))
 
+from app.core.config import settings  # noqa: E402
 from app.core.security import hash_password  # noqa: E402
 from app.db.session import SessionLocal  # noqa: E402
 from app.models.caregiver import Caregiver  # noqa: E402
@@ -50,146 +54,44 @@ DEMO_ELDERLY_PHONE = "9123456789"
 DEMO_ELDERLY_PIN = "2468"
 DEMO_ELDERLY_NAME = "Grandmother Demo"
 
-# 1x1 JPEG for seeded family photo placeholder
-MINI_JPEG = bytes(
-    [
-        0xFF,
-        0xD8,
-        0xFF,
-        0xDB,
-        0x00,
-        0x43,
-        0x00,
-        0x08,
-        0x06,
-        0x06,
-        0x07,
-        0x06,
-        0x05,
-        0x08,
-        0x07,
-        0x07,
-        0x07,
-        0x09,
-        0x09,
-        0x08,
-        0x0A,
-        0x0C,
-        0x14,
-        0x0D,
-        0x0C,
-        0x0B,
-        0x0B,
-        0x0C,
-        0x19,
-        0x12,
-        0x13,
-        0x0F,
-        0x14,
-        0x1D,
-        0x1A,
-        0x1F,
-        0x1E,
-        0x1D,
-        0x1A,
-        0x1C,
-        0x1C,
-        0x20,
-        0x24,
-        0x2E,
-        0x27,
-        0x20,
-        0x22,
-        0x2C,
-        0x23,
-        0x1C,
-        0x1C,
-        0x28,
-        0x37,
-        0x29,
-        0x2C,
-        0x30,
-        0x31,
-        0x34,
-        0x34,
-        0x34,
-        0x1F,
-        0x27,
-        0x39,
-        0x3D,
-        0x30,
-        0x31,
-        0x2F,
-        0xFF,
-        0xC0,
-        0x00,
-        0x0B,
-        0x08,
-        0x00,
-        0x01,
-        0x00,
-        0x01,
-        0x01,
-        0x01,
-        0x11,
-        0x00,
-        0xFF,
-        0xC4,
-        0x00,
-        0x14,
-        0x00,
-        0x01,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x08,
-        0xFF,
-        0xC4,
-        0x00,
-        0x14,
-        0x10,
-        0x01,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0xFF,
-        0xDA,
-        0x00,
-        0x08,
-        0x01,
-        0x01,
-        0x00,
-        0x00,
-        0x3F,
-        0x00,
-        0x37,
-        0xFF,
-        0xD9,
-    ]
+DEMO_MEMORY_SOURCE = (
+    REPO_ROOT
+    / "apps"
+    / "elderly-app"
+    / "public"
+    / "assets"
+    / "memories"
+    / "family-tea-garden.jpg"
 )
+DEMO_MEMORY_FILENAME = "demo-family.jpg"
+DEMO_MEMORY_MEDIA_TYPE = "image/jpeg"
+JPEG_MAGIC = b"\xff\xd8\xff"
+
+
+def _load_demo_memory_image() -> bytes:
+    """Load and fully decode the tracked JPEG before touching judge data."""
+    try:
+        content = DEMO_MEMORY_SOURCE.read_bytes()
+    except OSError as exc:
+        raise RuntimeError(
+            f"Judge demo image is missing or unreadable: {DEMO_MEMORY_SOURCE}"
+        ) from exc
+    if DEMO_MEMORY_SOURCE.suffix.lower() not in {".jpg", ".jpeg"}:
+        raise RuntimeError("Judge demo image must have a JPEG file extension")
+    if not content.startswith(JPEG_MAGIC):
+        raise RuntimeError("Judge demo image does not contain JPEG bytes")
+    try:
+        with Image.open(BytesIO(content)) as image:
+            image_format = image.format
+            dimensions = image.size
+            image.verify()
+    except (OSError, UnidentifiedImageError) as exc:
+        raise RuntimeError("Judge demo image cannot be decoded") from exc
+    if image_format != "JPEG":
+        raise RuntimeError("Judge demo image extension and decoded format disagree")
+    if dimensions[0] < 1 or dimensions[1] < 1:
+        raise RuntimeError("Judge demo image has invalid dimensions")
+    return content
 
 
 def _ensure_caregiver(db) -> Caregiver:
@@ -338,26 +240,31 @@ def _seed_sessions(db, user: User) -> None:
 
 
 def _seed_memory_photo(db, user: User, caregiver: Caregiver) -> None:
+    content = _load_demo_memory_image()
+    media_url = f"/uploads/memories/{user.id}/{DEMO_MEMORY_FILENAME}"
     existing = (
         db.query(MemoryItem)
-        .filter(MemoryItem.user_id == user.id, MemoryItem.category == "family")
+        .filter(MemoryItem.user_id == user.id, MemoryItem.media_url == media_url)
         .first()
     )
-    if existing is not None:
-        return
-    from app.core.config import settings  # noqa: E402
 
     upload_dir = Path(settings.upload_dir) / "memories" / str(user.id)
     upload_dir.mkdir(parents=True, exist_ok=True)
-    filename = "demo-family.jpg"
-    path = upload_dir / filename
-    path.write_bytes(MINI_JPEG)
-    media_url = f"/uploads/memories/{user.id}/{filename}"
+    path = upload_dir / DEMO_MEMORY_FILENAME
+    if not path.is_file() or path.read_bytes() != content:
+        path.write_bytes(content)
+
+    if existing is not None:
+        if existing.media_type != DEMO_MEMORY_MEDIA_TYPE:
+            existing.media_type = DEMO_MEMORY_MEDIA_TYPE
+            db.commit()
+        return
+
     item = MemoryItem(
         user_id=user.id,
         uploaded_by_caregiver_id=caregiver.id,
         media_url=media_url,
-        media_type="image/jpeg",
+        media_type=DEMO_MEMORY_MEDIA_TYPE,
         category="family",
         title={"en": "Family at the tea garden", "as": "চাহ বাগিছাত পৰিয়াল"},
         description="A quiet afternoon together.",

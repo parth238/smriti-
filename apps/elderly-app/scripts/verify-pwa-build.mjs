@@ -74,6 +74,10 @@ assert.equal(
   normalizedUrls.length,
   "generated precache contains conflicting normalized URLs",
 );
+assert(
+  normalizedUrls.includes("assets/memories/family-tea-garden.jpg"),
+  "the local family-memory fallback is missing from the generated precache",
+);
 
 const expectedGameAssets = readdirSync(join(appRoot, "public/assets/games"))
   .filter((name) => name.endsWith(".png"))

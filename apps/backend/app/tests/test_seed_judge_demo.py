@@ -4,16 +4,22 @@ from __future__ import annotations
 
 import importlib.util
 import sys
+from io import BytesIO
 from pathlib import Path
 from uuid import UUID
 
+import pytest
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from fastapi.testclient import TestClient
+from PIL import Image
 from sqlalchemy.orm import Session
 
 from app.models.caregiver import Caregiver
 from app.models.caregiver_user_link import CaregiverUserLink
 from app.models.game import Game
 from app.models.game_session import GameSession
+from app.models.memory_item import MemoryItem
 from app.models.reminder import Reminder
 from app.models.user import User
 from app.services.game_catalog import GAME_SEEDS, MEMORY_MATCH_ID, ensure_games
@@ -30,6 +36,10 @@ _ensure_caregiver = _seed._ensure_caregiver
 _ensure_elderly = _seed._ensure_elderly
 _seed_reminders = _seed._seed_reminders
 _seed_sessions = _seed._seed_sessions
+_seed_memory_photo = _seed._seed_memory_photo
+DEMO_MEMORY_FILENAME = _seed.DEMO_MEMORY_FILENAME
+DEMO_MEMORY_MEDIA_TYPE = _seed.DEMO_MEMORY_MEDIA_TYPE
+DEMO_MEMORY_SOURCE = _seed.DEMO_MEMORY_SOURCE
 DEMO_CAREGIVER_PHONE = _seed.DEMO_CAREGIVER_PHONE
 DEMO_CAREGIVER_EMAIL = _seed.DEMO_CAREGIVER_EMAIL
 DEMO_CAREGIVER_PASSWORD = _seed.DEMO_CAREGIVER_PASSWORD
@@ -42,6 +52,14 @@ LEGACY_MEMORY_MATCH_ID = UUID("11111111-1111-1111-1111-111111111111")
 LEGACY_ATTENTION_ID = UUID("22222222-2222-2222-2222-222222222222")
 LEGACY_SEQUENCING_ID = UUID("33333333-3333-3333-3333-333333333333")
 LEGACY_PICTURE_NAMING_ID = UUID("44444444-4444-4444-4444-444444444444")
+
+
+def _assert_decodable_jpeg(content: bytes) -> tuple[int, int]:
+    assert content.startswith(b"\xff\xd8\xff")
+    with Image.open(BytesIO(content)) as image:
+        assert image.format == "JPEG"
+        image.load()
+        return image.size
 
 
 def _insert_legacy_four_games(db: Session) -> None:
@@ -178,6 +196,90 @@ def test_seed_is_idempotent_and_credentials_survive_repeat(
         json={"phone": DEMO_ELDERLY_PHONE, "pin": DEMO_ELDERLY_PIN},
     )
     assert elderly.status_code == 200
+
+
+def test_demo_memory_source_is_a_decodable_jpeg() -> None:
+    assert DEMO_MEMORY_SOURCE.suffix == ".jpg"
+    assert _assert_decodable_jpeg(DEMO_MEMORY_SOURCE.read_bytes()) == (720, 480)
+
+
+def test_memory_photo_seed_repairs_file_without_duplicates_or_collateral_changes(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, db_session: Session
+) -> None:
+    caregiver = _ensure_caregiver(db_session)
+    user = _ensure_elderly(db_session, caregiver)
+    monkeypatch.setattr(_seed.settings, "upload_dir", str(tmp_path))
+
+    destination = tmp_path / "memories" / str(user.id) / DEMO_MEMORY_FILENAME
+    destination.parent.mkdir(parents=True)
+    destination.write_bytes(b"\xff\xd8\xffcorrupt")
+    unrelated = destination.parent / "unrelated-user-upload.jpg"
+    unrelated.write_bytes(b"leave-this-file-alone")
+
+    media_url = f"/uploads/memories/{user.id}/{DEMO_MEMORY_FILENAME}"
+    existing = MemoryItem(
+        user_id=user.id,
+        uploaded_by_caregiver_id=caregiver.id,
+        media_url=media_url,
+        media_type=DEMO_MEMORY_MEDIA_TYPE,
+        category="family",
+        title={"en": "Family at the tea garden"},
+        description="A quiet afternoon together.",
+        people_tagged=None,
+        year=1985,
+        location="Jorhat, Assam",
+        prompt_text={"en": "Do you remember this day?"},
+    )
+    db_session.add(existing)
+    db_session.commit()
+
+    _seed_memory_photo(db_session, user, caregiver)
+    first = db_session.query(MemoryItem).filter(MemoryItem.user_id == user.id).one()
+    assert first.media_url == media_url
+    assert first.media_type == DEMO_MEMORY_MEDIA_TYPE
+    assert _assert_decodable_jpeg(destination.read_bytes()) == (720, 480)
+
+    destination.write_bytes(b"\xff\xd8\xffcorrupt-again")
+    _seed_memory_photo(db_session, user, caregiver)
+
+    assert (
+        db_session.query(MemoryItem).filter(MemoryItem.user_id == user.id).count() == 1
+    )
+    assert _assert_decodable_jpeg(destination.read_bytes()) == (720, 480)
+    assert unrelated.read_bytes() == b"leave-this-file-alone"
+
+    static_app = FastAPI()
+    static_app.mount("/uploads", StaticFiles(directory=tmp_path), name="uploads")
+    with TestClient(static_app) as static_client:
+        response = static_client.get(first.media_url)
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "image/jpeg"
+    assert response.content
+    assert _assert_decodable_jpeg(response.content) == (720, 480)
+
+
+def test_memory_photo_seed_fails_loudly_for_missing_source(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, db_session: Session
+) -> None:
+    caregiver = _ensure_caregiver(db_session)
+    user = _ensure_elderly(db_session, caregiver)
+    monkeypatch.setattr(_seed, "DEMO_MEMORY_SOURCE", tmp_path / "missing.jpg")
+
+    with pytest.raises(RuntimeError, match="missing or unreadable"):
+        _seed_memory_photo(db_session, user, caregiver)
+
+
+def test_memory_photo_seed_fails_loudly_for_invalid_source(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, db_session: Session
+) -> None:
+    caregiver = _ensure_caregiver(db_session)
+    user = _ensure_elderly(db_session, caregiver)
+    invalid_source = tmp_path / "invalid.jpg"
+    invalid_source.write_bytes(b"not-an-image")
+    monkeypatch.setattr(_seed, "DEMO_MEMORY_SOURCE", invalid_source)
+
+    with pytest.raises(RuntimeError, match="does not contain JPEG bytes"):
+        _seed_memory_photo(db_session, user, caregiver)
 
 
 def test_ensure_games_does_not_replace_legacy_memory_match_id(
