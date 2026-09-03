@@ -1,15 +1,18 @@
 """Seed linked demo accounts for SIH judging (idempotent).
 
-Run from repo root after Postgres is up and migrations applied:
+Run from repo root after Postgres is up and migrations applied::
 
     cd apps/backend
     python -m venv .venv  # if needed
-    .venv\Scripts\activate
+    source .venv/bin/activate   # Windows: .venv\\Scripts\\activate
     pip install -r requirements.txt
     alembic upgrade head
     python ../../scripts/seed_judge_demo.py
 
 Prints caregiver + elderly login credentials for the 10-minute demo loop.
+
+Repeated runs leave existing judge accounts, links, reminders, catalog rows,
+and demo sessions in place. Documented credentials are not reset.
 """
 
 from __future__ import annotations
@@ -32,8 +35,11 @@ from app.models.game_session import GameSession  # noqa: E402
 from app.models.memory_item import MemoryItem  # noqa: E402
 from app.models.reminder import Reminder  # noqa: E402
 from app.models.user import User  # noqa: E402
-from app.services.game_catalog import ensure_games, MEMORY_MATCH_ID  # noqa: E402
+from app.services.game_catalog import ensure_games, get_game_by_type  # noqa: E402
 from app.services.reminders import create_reminder  # noqa: E402
+
+# Demo session history length — keep the early-exit threshold in sync.
+DEMO_SESSION_TARGET = 14
 
 DEMO_CAREGIVER_PHONE = "9876543210"
 DEMO_CAREGIVER_EMAIL = "demo@smriti.local"
@@ -281,12 +287,29 @@ def _seed_reminders(db, user: User, caregiver: Caregiver) -> None:
 
 
 def _seed_sessions(db, user: User) -> None:
+    """Insert demo sessions using the *persisted* catalog row for memory_match.
+
+    Fresh PostgreSQL databases receive four legacy game UUIDs from Alembic
+    ``0001_initial``. ``ensure_games`` only inserts missing *types*, so the
+    canonical ``MEMORY_MATCH_ID`` constant may never appear in ``games``.
+    Sessions must therefore resolve ``game_id`` from the row that actually
+    exists after catalog ensure — not from the Python constant alone.
+    """
     ensure_games(db)
+    memory_match = get_game_by_type(db, "memory_match")
+    if memory_match is None:
+        raise RuntimeError(
+            "Game catalog is missing memory_match after ensure_games; "
+            "cannot seed demo sessions"
+        )
+    game_id = memory_match.id
+
     existing = db.query(GameSession).filter(GameSession.user_id == user.id).count()
-    if existing >= 10:
+    if existing >= DEMO_SESSION_TARGET:
         return
     now = datetime.now(timezone.utc)
     accuracies = [72, 78, 80, 76, 82, 85, 79, 88, 84, 90, 83, 87, 81, 86]
+    assert len(accuracies) == DEMO_SESSION_TARGET
     for day_offset, accuracy in enumerate(accuracies):
         played_at = now - timedelta(days=len(accuracies) - day_offset - 1)
         client_id = uuid.uuid5(user.id, f"demo-session-{day_offset}")
@@ -298,7 +321,7 @@ def _seed_sessions(db, user: User) -> None:
             continue
         session = GameSession(
             user_id=user.id,
-            game_id=MEMORY_MATCH_ID,
+            game_id=game_id,
             difficulty=min(5, 2 + day_offset // 4),
             accuracy=Decimal(str(accuracy)),
             reaction_time_ms=1800 + day_offset * 40,
@@ -350,14 +373,31 @@ def _seed_memory_photo(db, user: User, caregiver: Caregiver) -> None:
     db.commit()
 
 
+def seed_judge_demo(db) -> None:
+    """Run the full judge demo seed against an open SQLAlchemy session.
+
+    Order is intentional:
+
+    1. Ensure the seven-game catalog (and any missing types) is persisted.
+    2. Create caregiver / elderly / link.
+    3. Seed reminders, then sessions that FK to catalog rows, then memory photo.
+
+    Repeated runs are idempotent: existing judge accounts, links, reminders,
+    catalog rows, and demo sessions are left in place. Credentials are not
+    reset on a second run — the documented password and PIN keep working.
+    """
+    ensure_games(db)
+    caregiver = _ensure_caregiver(db)
+    user = _ensure_elderly(db, caregiver)
+    _seed_reminders(db, user, caregiver)
+    _seed_sessions(db, user)
+    _seed_memory_photo(db, user, caregiver)
+
+
 def main() -> None:
     db = SessionLocal()
     try:
-        caregiver = _ensure_caregiver(db)
-        user = _ensure_elderly(db, caregiver)
-        _seed_reminders(db, user, caregiver)
-        _seed_sessions(db, user)
-        _seed_memory_photo(db, user, caregiver)
+        seed_judge_demo(db)
     finally:
         db.close()
 

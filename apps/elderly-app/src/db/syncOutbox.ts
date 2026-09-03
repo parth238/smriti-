@@ -1,8 +1,26 @@
 import { API_BASE } from "../api/auth";
-import { GAME_IDS } from "../api/games";
 import { deviceId, readUserId } from "../lib/authStorage";
 import { assertActiveSession, sessionsMatch, SessionChangedError } from "../lib/sessionGuard";
 import { db, type LocalGameSession, type OutboxItem } from "./dexie";
+
+/** Wire payload for POST /game-sessions and /sync/batch — game_type only, never assumed UUIDs. */
+export function buildGameSessionApiPayload(
+  session: LocalGameSession,
+): Record<string, string | number> {
+  return {
+    user_id: session.userId,
+    game_type: session.gameType,
+    difficulty: session.difficulty,
+    accuracy: session.accuracy,
+    reaction_time_ms: session.reactionTimeMs,
+    errors: session.errors,
+    hints_used: session.hintsUsed,
+    session_duration_sec: session.sessionDurationSec,
+    completed_or_quit: session.completedOrQuit,
+    client_generated_id: session.clientGeneratedId,
+    played_at: session.playedAt,
+  };
+}
 
 export const OUTBOX_QUARANTINE_ATTEMPTS = 99;
 
@@ -140,27 +158,13 @@ export async function saveLocalSession(session: LocalGameSession): Promise<void>
 }
 
 export async function postGameSession(session: LocalGameSession, token: string): Promise<boolean> {
-  const gameId = GAME_IDS[session.gameType];
   const response = await fetch(`${API_BASE}/game-sessions`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({
-      user_id: session.userId,
-      game_id: gameId ?? undefined,
-      game_type: session.gameType,
-      difficulty: session.difficulty,
-      accuracy: session.accuracy,
-      reaction_time_ms: session.reactionTimeMs,
-      errors: session.errors,
-      hints_used: session.hintsUsed,
-      session_duration_sec: session.sessionDurationSec,
-      completed_or_quit: session.completedOrQuit,
-      client_generated_id: session.clientGeneratedId,
-      played_at: session.playedAt,
-    }),
+    body: JSON.stringify(buildGameSessionApiPayload(session)),
   });
   return response.ok;
 }
@@ -196,23 +200,9 @@ async function postSession(session: LocalGameSession, token: string): Promise<bo
 
 function outboxPayload(item: OutboxItem): { type: string; payload: Record<string, unknown> } {
   if (item.kind === "game_session") {
-    const session = item.payload;
     return {
       type: "game_session",
-      payload: {
-        user_id: session.userId,
-        game_id: GAME_IDS[session.gameType] ?? undefined,
-        game_type: session.gameType,
-        difficulty: session.difficulty,
-        accuracy: session.accuracy,
-        reaction_time_ms: session.reactionTimeMs,
-        errors: session.errors,
-        hints_used: session.hintsUsed,
-        session_duration_sec: session.sessionDurationSec,
-        completed_or_quit: session.completedOrQuit,
-        client_generated_id: session.clientGeneratedId,
-        played_at: session.playedAt,
-      },
+      payload: buildGameSessionApiPayload(item.payload),
     };
   }
   return {

@@ -1,6 +1,6 @@
 import { GAME_TYPES, type GameType } from "./index";
 
-/** Backend catalog and elderly GAME_IDS — keep in sync with game_catalog.py. */
+/** Backend catalog game_type union — keep in sync with game_catalog.py. */
 type BackendGameType =
   | "memory_match"
   | "attention_reaction"
