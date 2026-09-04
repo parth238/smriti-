@@ -50,7 +50,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
         ))}
       </nav>
 
-      <div className="mt-6 border-t border-white/10 pt-4">
+      <div className="mt-auto border-t border-white/10 pt-4">
         <NavLink
           to="/settings"
           onClick={onClose}

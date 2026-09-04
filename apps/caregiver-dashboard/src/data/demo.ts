@@ -4,6 +4,7 @@ export type SessionRow = {
   id: string;
   game: string;
   playedAt: string;
+  playedAtIso?: string;
   accuracy: number;
   reactionMs: number;
   completed: boolean;

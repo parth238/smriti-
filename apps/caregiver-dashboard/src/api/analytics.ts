@@ -124,6 +124,7 @@ export async function loadCaregiverAnalytics(): Promise<AnalyticsBundle> {
       id: row.id,
       game: row.game_label || row.game_type || "Game",
       playedAt: formatPlayedAt(row.played_at),
+      playedAtIso: row.played_at,
       accuracy: row.accuracy,
       reactionMs: row.reaction_time_ms,
       completed: row.completed_or_quit === "completed",
