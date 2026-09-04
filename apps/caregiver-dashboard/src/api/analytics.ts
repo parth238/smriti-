@@ -1,42 +1,38 @@
-import { API_BASE, getCaregiverToken, getSelectedPatientId, setSelectedPatientId } from "../auth/session";
+import { API_BASE, getCaregiverToken } from "../auth/session";
+import type { SessionRow, TrendPoint } from "../data/demo";
 import {
-  PATIENT,
-  SESSIONS,
-  TRENDS,
-  type SessionRow,
-  type TrendPoint,
-} from "../data/demo";
-
-export type DataSource = "live" | "demo";
+  failureFromResponse,
+  noPatientFailure,
+  offlineFailure,
+  type CaregiverDataFailure,
+} from "./errors";
+import { loadLinkedPatients } from "./patients";
 
 export type PatientSummary = {
   label: string;
   language: string;
-  region: string;
-  baselineAccuracy: number;
-  baselineReactionMs: number;
-  userId: string | null;
+  baselineAccuracy: number | null;
+  baselineReactionMs: number | null;
+  userId: string;
 };
 
-export type AnalyticsBundle = {
-  source: DataSource;
-  updatedLabel: string;
-  patient: PatientSummary;
-  sessions: SessionRow[];
-  trends: TrendPoint[];
-  periodAccuracy: number | null;
-  periodReactionMs: number | null;
-  sessionsCount: number;
-  finishedCount: number;
-  note: string | null;
-};
-
-type LinkedPatient = {
-  user_id: string;
-  full_name: string;
-  preferred_language: string;
-  is_primary: boolean;
-};
+export type AnalyticsBundle =
+  | {
+      source: "live";
+      updatedLabel: string;
+      patient: PatientSummary;
+      sessions: SessionRow[];
+      trends: TrendPoint[];
+      periodAccuracy: number | null;
+      periodReactionMs: number | null;
+      sessionsCount: number;
+      finishedCount: number;
+      note: string | null;
+    }
+  | {
+      source: "error";
+      error: CaregiverDataFailure;
+    };
 
 function authHeaders(): HeadersInit {
   const token = getCaregiverToken();
@@ -59,74 +55,46 @@ function formatPlayedAt(iso: string): string {
   });
 }
 
-function demoBundle(label = "Demo sample · not live truth"): AnalyticsBundle {
-  return {
-    source: "demo",
-    updatedLabel: label,
-    patient: {
-      label: PATIENT.label,
-      language: PATIENT.language,
-      region: PATIENT.region,
-      baselineAccuracy: PATIENT.baselineAccuracy,
-      baselineReactionMs: PATIENT.baselineReactionMs,
-      userId: null,
-    },
-    sessions: SESSIONS,
-    trends: TRENDS,
-    periodAccuracy: PATIENT.baselineAccuracy,
-    periodReactionMs: PATIENT.baselineReactionMs,
-    sessionsCount: SESSIONS.length,
-    finishedCount: SESSIONS.filter((row) => row.completed).length,
-    note: "Reaction time is a bit higher than usual this week.",
-  };
-}
-
-async function resolvePatientId(): Promise<string | null> {
-  const existing = getSelectedPatientId();
-  if (existing) {
-    return existing;
-  }
-  const response = await fetch(`${API_BASE}/me/patients`, { headers: authHeaders() });
-  if (!response.ok) {
-    return null;
-  }
-  const rows = (await response.json()) as LinkedPatient[];
-  const primary = rows.find((row) => row.is_primary) ?? rows[0];
-  if (!primary) {
-    return null;
-  }
-  setSelectedPatientId(primary.user_id);
-  return primary.user_id;
+function languageLabel(code: string): string {
+  return code === "as" ? "Assamese" : "English";
 }
 
 export async function loadCaregiverAnalytics(): Promise<AnalyticsBundle> {
-  const token = getCaregiverToken();
-  if (!token || !navigator.onLine) {
-    return demoBundle(
-      token ? "Last cached / demo · API unreachable" : "Demo sample · sign in with API for live play",
-    );
+  const patientResult = await loadLinkedPatients();
+  if (!patientResult.ok) {
+    return { source: "error", error: patientResult.error };
+  }
+  const patient = patientResult.selected;
+  if (!patient) {
+    return { source: "error", error: noPatientFailure() };
   }
 
   try {
-    const userId = await resolvePatientId();
-    if (!userId) {
-      return demoBundle("Demo sample · no linked family member yet");
-    }
-
-    const [sessionsRes, analyticsRes, baselineRes, trendRes, patientsRes] = await Promise.all([
-      fetch(`${API_BASE}/users/${userId}/game-sessions?limit=30`, { headers: authHeaders() }),
-      fetch(`${API_BASE}/users/${userId}/analytics?period=7d`, { headers: authHeaders() }),
-      fetch(`${API_BASE}/users/${userId}/analytics/baseline`, { headers: authHeaders() }),
-      fetch(`${API_BASE}/users/${userId}/analytics/trend?metric=accuracy&days=7`, {
+    const responses = await Promise.all([
+      fetch(`${API_BASE}/users/${patient.user_id}/game-sessions?limit=30`, {
         headers: authHeaders(),
       }),
-      fetch(`${API_BASE}/me/patients`, { headers: authHeaders() }),
+      fetch(`${API_BASE}/users/${patient.user_id}/analytics?period=7d`, {
+        headers: authHeaders(),
+      }),
+      fetch(`${API_BASE}/users/${patient.user_id}/analytics/baseline`, {
+        headers: authHeaders(),
+      }),
+      fetch(`${API_BASE}/users/${patient.user_id}/analytics/trend?metric=accuracy&days=7`, {
+        headers: authHeaders(),
+      }),
     ]);
-
-    if (!sessionsRes.ok || !analyticsRes.ok || !baselineRes.ok || !trendRes.ok) {
-      return demoBundle("Last cached / demo · API returned an error");
+    const failedResponse =
+      responses.find((response) => response.status === 401) ??
+      responses.find((response) => !response.ok);
+    if (failedResponse) {
+      return {
+        source: "error",
+        error: await failureFromResponse(failedResponse, "Could not load caregiver analytics."),
+      };
     }
 
+    const [sessionsRes, analyticsRes, baselineRes, trendRes] = responses;
     const sessionsJson = (await sessionsRes.json()) as Array<{
       id: string;
       game_label?: string | null;
@@ -152,17 +120,6 @@ export async function loadCaregiverAnalytics(): Promise<AnalyticsBundle> {
       baseline_reaction_time_ms: number | null;
     };
 
-    let label = PATIENT.label;
-    let language = PATIENT.language;
-    if (patientsRes.ok) {
-      const patients = (await patientsRes.json()) as LinkedPatient[];
-      const match = patients.find((row) => row.user_id === userId) ?? patients[0];
-      if (match) {
-        label = match.full_name;
-        language = match.preferred_language === "as" ? "Assamese" : "English";
-      }
-    }
-
     const sessions: SessionRow[] = sessionsJson.map((row) => ({
       id: row.id,
       game: row.game_label || row.game_type || "Game",
@@ -172,25 +129,29 @@ export async function loadCaregiverAnalytics(): Promise<AnalyticsBundle> {
       completed: row.completed_or_quit === "completed",
     }));
 
-    const trends: TrendPoint[] = trendJson.points.map((point) => ({
-      day: point.day,
-      accuracy: point.accuracy ?? baselineJson.avg_accuracy ?? PATIENT.baselineAccuracy,
-      reactionMs: point.reaction_time_ms ?? baselineJson.avg_reaction_time_ms ?? PATIENT.baselineReactionMs,
-    }));
+    const baselineAccuracy = baselineJson.avg_accuracy ?? trendJson.baseline_accuracy;
+    const baselineReactionMs =
+      baselineJson.avg_reaction_time_ms ?? trendJson.baseline_reaction_time_ms;
+    const trends: TrendPoint[] = trendJson.points.flatMap((point) => {
+      const accuracy = point.accuracy ?? baselineAccuracy;
+      const reactionMs = point.reaction_time_ms ?? baselineReactionMs;
+      return accuracy === null || reactionMs === null
+        ? []
+        : [{ day: point.day, accuracy, reactionMs }];
+    });
 
     return {
       source: "live",
       updatedLabel: `Live · updated ${new Date().toLocaleTimeString()}`,
       patient: {
-        label,
-        language,
-        region: "Assam",
-        baselineAccuracy: baselineJson.avg_accuracy ?? PATIENT.baselineAccuracy,
-        baselineReactionMs: baselineJson.avg_reaction_time_ms ?? PATIENT.baselineReactionMs,
-        userId,
+        label: patient.full_name,
+        language: languageLabel(patient.preferred_language),
+        baselineAccuracy,
+        baselineReactionMs,
+        userId: patient.user_id,
       },
       sessions,
-      trends: trends.length ? trends : TRENDS,
+      trends,
       periodAccuracy: analyticsJson.avg_accuracy,
       periodReactionMs: analyticsJson.avg_reaction_time_ms,
       sessionsCount: analyticsJson.sessions_count,
@@ -198,6 +159,9 @@ export async function loadCaregiverAnalytics(): Promise<AnalyticsBundle> {
       note: analyticsJson.baseline_comparison?.note ?? null,
     };
   } catch {
-    return demoBundle("Last cached / demo · API unreachable");
+    return {
+      source: "error",
+      error: offlineFailure("The caregiver API could not be reached."),
+    };
   }
 }

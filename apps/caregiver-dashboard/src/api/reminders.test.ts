@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { caregiverLogin } from "./auth";
 import { loadLinkedPatients } from "./patients";
-import { createReminder, loadReminders } from "./reminders";
+import { createReminder, loadReminders, updateReminder } from "./reminders";
 
 const ACCESS_KEY = "smriti.caregiver.access";
 const PATIENT_KEY = "smriti.caregiver.patient";
@@ -181,6 +181,29 @@ describe("caregiver live-data failures", () => {
 
     expect(result.ok).toBe(false);
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("does not hide an expired session during reminder edits", async () => {
+    fetchMock.mockResolvedValueOnce(
+      jsonResponse(
+        { error: { code: "AUTHENTICATION_ERROR", message: "Token is invalid or expired" } },
+        401,
+      ),
+    );
+
+    const result = await updateReminder({
+      reminderId: waterReminder.id,
+      titleEn: "A glass of water",
+    });
+
+    expect(result).toEqual({
+      ok: false,
+      error: {
+        kind: "authentication",
+        status: 401,
+        message: "Your caregiver session expired. Sign in again.",
+      },
+    });
   });
 
   it("does not authenticate into demo mode when the API is unreachable", async () => {

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { loadReminders, type RemindersBundle } from "../api/reminders";
 import { PATIENT_CHANGE_EVENT } from "../api/patients";
+import { CaregiverDataError } from "../components/CaregiverDataError";
 import { Notice } from "../components/Notice";
 import { PageHeader } from "../components/PageHeader";
 
@@ -25,7 +26,7 @@ export function Alerts() {
     <>
       <PageHeader title="Alerts" hint="Calm notes only. Absence of alerts is good news." />
       {bundle?.source === "error" ? (
-        <Notice>{bundle.label}</Notice>
+        <CaregiverDataError error={bundle.error} />
       ) : null}
       {!bundle ? (
         <p className="text-tea-garden">Loading reminders…</p>

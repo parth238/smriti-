@@ -1,13 +1,27 @@
-import { API_BASE, getCaregiverToken, getSelectedPatientId, setSelectedPatientId } from "../auth/session";
-import { MEMORIES, type MemoryRow } from "../data/demo";
+import { API_BASE, getCaregiverToken } from "../auth/session";
+import type { MemoryRow } from "../data/demo";
+import {
+  failureFromResponse,
+  expiredSessionFailure,
+  noPatientFailure,
+  offlineFailure,
+  type ApiFailure,
+  type CaregiverDataFailure,
+} from "./errors";
+import { loadLinkedPatients } from "./patients";
 
-export type DataSource = "live" | "demo";
-
-export type MemoriesBundle = {
-  source: DataSource;
-  label: string;
-  rows: MemoryRow[];
-};
+export type MemoriesBundle =
+  | {
+      source: "live";
+      label: string;
+      rows: MemoryRow[];
+      patientId: string;
+    }
+  | {
+      source: "error";
+      error: CaregiverDataFailure;
+      rows: [];
+    };
 
 type ApiMemory = {
   id: string;
@@ -24,94 +38,77 @@ function authHeaders(): HeadersInit {
     : { Accept: "application/json" };
 }
 
-async function resolvePatientId(): Promise<string | null> {
-  const existing = getSelectedPatientId();
-  if (existing) {
-    return existing;
-  }
-  const response = await fetch(`${API_BASE}/me/patients`, { headers: authHeaders() });
-  if (!response.ok) {
-    return null;
-  }
-  const rows = (await response.json()) as Array<{ user_id: string; is_primary?: boolean }>;
-  const primary = rows.find((row) => row.is_primary) ?? rows[0];
-  if (!primary) {
-    return null;
-  }
-  setSelectedPatientId(primary.user_id);
-  return primary.user_id;
-}
-
 export async function loadMemories(): Promise<MemoriesBundle> {
-  const token = getCaregiverToken();
-  if (!token || !navigator.onLine) {
-    return {
-      source: "demo",
-      label: "Demo sample · sign in with API for live memories",
-      rows: MEMORIES,
-    };
+  const patientResult = await loadLinkedPatients();
+  if (!patientResult.ok) {
+    return { source: "error", error: patientResult.error, rows: [] };
   }
+  const patient = patientResult.selected;
+  if (!patient) {
+    return { source: "error", error: noPatientFailure(), rows: [] };
+  }
+
   try {
-    const userId = await resolvePatientId();
-    if (!userId) {
-      return {
-        source: "demo",
-        label: "Demo sample · no linked family member yet",
-        rows: MEMORIES,
-      };
-    }
-    const response = await fetch(`${API_BASE}/memory-items?user_id=${userId}`, {
+    const response = await fetch(`${API_BASE}/memory-items?user_id=${patient.user_id}`, {
       headers: authHeaders(),
     });
     if (!response.ok) {
       return {
-        source: "demo",
-        label: "Demo sample · API returned an error",
-        rows: MEMORIES,
-      };
-    }
-    const rows = (await response.json()) as ApiMemory[];
-    if (rows.length === 0) {
-      return {
-        source: "live",
-        label: "Live · no family photos uploaded yet",
+        source: "error",
+        error: await failureFromResponse(response, "Could not load memories."),
         rows: [],
       };
     }
+    const rows = (await response.json()) as ApiMemory[];
     return {
       source: "live",
-      label: `Live · ${rows.length} memory items`,
+      label:
+        rows.length === 0
+          ? "Live · no family photos uploaded yet"
+          : `Live · ${rows.length} memory items`,
+      patientId: patient.user_id,
       rows: rows.map((row) => ({
         id: row.id,
         title: row.title.en || row.title.as || "Memory",
-        region: row.location || "Assam",
+        region: row.location || "Location not set",
         kind: row.category === "cultural" ? "cultural" : "family",
       })),
     };
   } catch {
     return {
-      source: "demo",
-      label: "Demo sample · API unreachable",
-      rows: MEMORIES,
+      source: "error",
+      error: offlineFailure("The caregiver API could not be reached."),
+      rows: [],
     };
   }
 }
 
+export type MemoryMutationResult =
+  | { ok: true }
+  | { ok: false; error: ApiFailure };
+
 export async function uploadMemory(input: {
+  userId: string;
   file: File;
   titleEn: string;
   titleAs?: string;
   location?: string;
   year?: number;
   peopleTagged?: string;
-}): Promise<boolean> {
+}): Promise<MemoryMutationResult> {
   const token = getCaregiverToken();
-  const userId = await resolvePatientId();
-  if (!token || !userId) {
-    return false;
+  if (!token) {
+    return {
+      ok: false,
+      error: expiredSessionFailure(),
+    };
   }
+  if (!navigator.onLine) {
+    return { ok: false, error: offlineFailure("A memory cannot be uploaded while offline.") };
+  }
+
   const form = new FormData();
-  form.append("user_id", userId);
+  form.append("user_id", input.userId);
   form.append("category", "family");
   form.append("title_en", input.titleEn);
   if (input.titleAs) {
@@ -127,10 +124,21 @@ export async function uploadMemory(input: {
     form.append("people_tagged", input.peopleTagged);
   }
   form.append("file", input.file);
-  const response = await fetch(`${API_BASE}/memory-items`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-    body: form,
-  });
-  return response.ok;
+
+  try {
+    const response = await fetch(`${API_BASE}/memory-items`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: form,
+    });
+    if (!response.ok) {
+      return {
+        ok: false,
+        error: await failureFromResponse(response, "The memory could not be uploaded."),
+      };
+    }
+    return { ok: true };
+  } catch {
+    return { ok: false, error: offlineFailure("The caregiver API could not be reached.") };
+  }
 }

@@ -6,6 +6,7 @@ import {
 } from "../auth/session";
 import {
   failureFromResponse,
+  expiredSessionFailure,
   offlineFailure,
   type ApiFailure,
 } from "./errors";
@@ -44,10 +45,7 @@ export async function loadLinkedPatients(): Promise<LinkedPatientsResult> {
   if (!token) {
     return {
       ok: false,
-      error: {
-        kind: "authentication",
-        message: "Your caregiver session expired. Sign in again.",
-      },
+      error: expiredSessionFailure(),
     };
   }
   if (!navigator.onLine) {

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 
 import { loadCaregiverAnalytics, type AnalyticsBundle } from "../api/analytics";
-import { Notice } from "../components/Notice";
+import { PATIENT_CHANGE_EVENT } from "../api/patients";
+import { CaregiverDataError } from "../components/CaregiverDataError";
 import { PageHeader } from "../components/PageHeader";
 
 export function Sessions() {
@@ -9,24 +10,28 @@ export function Sessions() {
 
   useEffect(() => {
     void loadCaregiverAnalytics().then(setBundle);
+    const onPatientChange = () => void loadCaregiverAnalytics().then(setBundle);
+    window.addEventListener(PATIENT_CHANGE_EVENT, onPatientChange);
+    return () => window.removeEventListener(PATIENT_CHANGE_EVENT, onPatientChange);
   }, []);
 
   if (!bundle) {
     return <p className="text-mist-blue">Loading sessions…</p>;
   }
 
+  if (bundle.source === "error") {
+    return (
+      <>
+        <PageHeader title="Session history" hint="Recent play, without score headlines." />
+        <CaregiverDataError error={bundle.error} />
+      </>
+    );
+  }
+
   return (
     <>
       <PageHeader title="Session history" hint="Recent play, without score headlines." />
       <p className="mb-4 text-sm text-mist-blue">{bundle.updatedLabel}</p>
-      {bundle.source === "demo" ? (
-        <div className="mb-5">
-          <Notice>
-            Session list is labeled demo or last-cached data. After a live elderly play online,
-            refresh this page to see it.
-          </Notice>
-        </div>
-      ) : null}
       {bundle.sessions.length === 0 ? (
         <p className="text-mist-blue">No game sessions recorded yet.</p>
       ) : (

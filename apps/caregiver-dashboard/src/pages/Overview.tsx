@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 
 import { loadCaregiverAnalytics, type AnalyticsBundle } from "../api/analytics";
+import type { CaregiverDataFailure } from "../api/errors";
 import { PATIENT_CHANGE_EVENT } from "../api/patients";
 import { loadReminders } from "../api/reminders";
+import { CaregiverDataError } from "../components/CaregiverDataError";
 import { Notice } from "../components/Notice";
 import { PageHeader } from "../components/PageHeader";
 import { StatTile } from "../components/StatTile";
@@ -10,11 +12,17 @@ import { StatTile } from "../components/StatTile";
 export function Overview() {
   const [bundle, setBundle] = useState<AnalyticsBundle | null>(null);
   const [missedNote, setMissedNote] = useState<string | null>(null);
-  const [reminderError, setReminderError] = useState<string | null>(null);
+  const [reminderError, setReminderError] = useState<CaregiverDataFailure | null>(null);
 
   async function refresh() {
+    setBundle(null);
     const analytics = await loadCaregiverAnalytics();
-    setBundle(analytics);
+    if (analytics.source === "error") {
+      setBundle(analytics);
+      setMissedNote(null);
+      setReminderError(null);
+      return;
+    }
     const reminders = await loadReminders();
     if (reminders.source === "live") {
       setReminderError(null);
@@ -29,8 +37,13 @@ export function Overview() {
       }
     } else {
       setMissedNote(null);
-      setReminderError(reminders.label);
+      setReminderError(reminders.error);
+      if (reminders.error.kind === "authentication") {
+        setBundle({ source: "error", error: reminders.error });
+        return;
+      }
     }
+    setBundle(analytics);
   }
 
   useEffect(() => {
@@ -44,21 +57,22 @@ export function Overview() {
     return <p className="text-mist-blue">Loading overview…</p>;
   }
 
+  if (bundle.source === "error") {
+    return (
+      <>
+        <PageHeader title="Caregiver overview" hint="Live information for your linked family member." />
+        <CaregiverDataError error={bundle.error} />
+      </>
+    );
+  }
+
   return (
     <>
       <PageHeader
         title={`${bundle.patient.label} this week`}
-        hint={`${bundle.patient.region} · ${bundle.patient.language}. Comparisons are against their own usual week, never a population range.`}
+        hint={`${bundle.patient.language}. Comparisons are against their own usual week, never a population range.`}
       />
       <p className="mb-4 text-sm text-mist-blue">{bundle.updatedLabel}</p>
-      {bundle.source === "demo" ? (
-        <div className="mb-5">
-          <Notice>
-            Showing labeled demo or last-cached sample data. This is not live session truth until
-            the API is reachable and a family member is linked.
-          </Notice>
-        </div>
-      ) : null}
       {missedNote ? (
         <div className="mb-5">
           <Notice>{missedNote}</Notice>
@@ -66,7 +80,7 @@ export function Overview() {
       ) : null}
       {reminderError ? (
         <div className="mb-5">
-          <Notice>{reminderError}</Notice>
+          <CaregiverDataError error={reminderError} />
         </div>
       ) : null}
       <div className="grid gap-4 sm:grid-cols-3">
@@ -82,7 +96,11 @@ export function Overview() {
         />
         <StatTile
           label="Usual accuracy"
-          value={`${Math.round(bundle.patient.baselineAccuracy)}%`}
+          value={
+            bundle.patient.baselineAccuracy === null
+              ? "Not set"
+              : `${Math.round(bundle.patient.baselineAccuracy)}%`
+          }
           hint="Personal baseline only"
         />
       </div>

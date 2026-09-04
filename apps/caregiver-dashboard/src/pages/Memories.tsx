@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { loadMemories, uploadMemory } from "../api/memories";
 import { PATIENT_CHANGE_EVENT } from "../api/patients";
-import { Notice } from "../components/Notice";
+import { CaregiverDataError } from "../components/CaregiverDataError";
 import { PageHeader } from "../components/PageHeader";
 
 export function Memories() {
@@ -11,6 +11,7 @@ export function Memories() {
   const [file, setFile] = useState<File | null>(null);
   const [consent, setConsent] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [actionMessage, setActionMessage] = useState("");
 
   useEffect(() => {
     void refresh();
@@ -25,16 +26,26 @@ export function Memories() {
 
   async function onUpload(event: React.FormEvent) {
     event.preventDefault();
-    if (!file || !title.trim() || !consent) {
+    if (!file || !title.trim() || !consent || bundle?.source !== "live") {
       return;
     }
     setBusy(true);
-    const ok = await uploadMemory({ file, titleEn: title.trim() });
+    const result = await uploadMemory({
+      userId: bundle.patientId,
+      file,
+      titleEn: title.trim(),
+    });
     setBusy(false);
-    if (ok) {
+    if (result.ok) {
+      setActionMessage("");
       setTitle("");
       setFile(null);
       await refresh();
+    } else {
+      setActionMessage(result.error.message);
+      if (result.error.kind === "authentication") {
+        await refresh();
+      }
     }
   }
 
@@ -46,7 +57,7 @@ export function Memories() {
         title="Memories"
         hint="Cultural pack is shared. Family photos wait for a caregiver upload."
       />
-      {bundle?.source === "demo" ? <Notice>{bundle.label}</Notice> : null}
+      {bundle?.source === "error" ? <CaregiverDataError error={bundle.error} /> : null}
       <form onSubmit={onUpload} className="mb-6 space-y-3 rounded-xl bg-white p-4">
         <label className="block text-sm text-mist-blue">
           Photo title
@@ -78,15 +89,21 @@ export function Memories() {
             reminiscence on the linked elderly account.
           </span>
         </label>
+        {bundle?.source === "error" ? (
+          <p className="text-sm text-gamosa-red">
+            Memory upload is unavailable: {bundle.error.message}
+          </p>
+        ) : null}
+        {actionMessage ? <p className="text-sm text-gamosa-red">{actionMessage}</p> : null}
         <button
           type="submit"
-          disabled={busy || !consent}
+          disabled={busy || !consent || bundle?.source !== "live"}
           className="rounded-xl bg-gamosa-red px-4 py-2 font-semibold text-rice-white disabled:opacity-60"
         >
           {busy ? "Uploading..." : "Upload family photo"}
         </button>
       </form>
-      {family.length === 0 ? (
+      {bundle?.source === "live" && family.length === 0 ? (
         <p className="mb-4 text-mist-blue">No family photos uploaded yet. Ask to add some when you can.</p>
       ) : null}
       <ul className="grid gap-3 sm:grid-cols-2">

@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 
 import {
   loadLinkedPatients,
@@ -7,6 +6,7 @@ import {
   selectPatient,
   type LinkedPatientsResult,
 } from "../api/patients";
+import { CaregiverSignInLink } from "./CaregiverDataError";
 
 export function PatientSwitcher() {
   const [result, setResult] = useState<LinkedPatientsResult | null>(null);
@@ -31,9 +31,7 @@ export function PatientSwitcher() {
       <p className="mt-3 text-xs text-mist-blue">
         {result.error.message}{" "}
         {result.error.kind === "authentication" ? (
-          <Link className="text-rice-white underline" to="/login">
-            Sign in
-          </Link>
+          <CaregiverSignInLink className="text-rice-white underline" />
         ) : null}
       </p>
     );

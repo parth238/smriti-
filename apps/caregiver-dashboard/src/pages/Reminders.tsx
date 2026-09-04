@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { PATIENT_CHANGE_EVENT } from "../api/patients";
 import { loadReminders, updateReminder, deactivateReminder, createReminder } from "../api/reminders";
+import { CaregiverDataError } from "../components/CaregiverDataError";
 import { Notice } from "../components/Notice";
 import { PageHeader } from "../components/PageHeader";
 import { getReminderStatusLabel } from "../lib/reminderStatus";
@@ -76,15 +77,36 @@ export function Reminders() {
       return;
     }
     setBusy(true);
-    const ok = await updateReminder({
+    const result = await updateReminder({
       reminderId,
       titleEn: editTitle.trim(),
       scheduledTime: new Date(editWhen).toISOString(),
     });
     setBusy(false);
-    if (ok) {
+    if (result.ok) {
+      setActionMessage("");
       setEditingId(null);
       await refresh();
+    } else {
+      setActionMessage(result.error.message);
+      if (result.error.kind === "authentication") {
+        await refresh();
+      }
+    }
+  }
+
+  async function deactivate(reminderId: string) {
+    setBusy(true);
+    const result = await deactivateReminder(reminderId);
+    setBusy(false);
+    if (result.ok) {
+      setActionMessage("");
+      await refresh();
+    } else {
+      setActionMessage(result.error.message);
+      if (result.error.kind === "authentication") {
+        await refresh();
+      }
     }
   }
 
@@ -94,7 +116,7 @@ export function Reminders() {
         title="Reminders"
         hint="Create and edit happens here. The elderly app only marks done."
       />
-      {bundle?.source === "error" ? <Notice>{bundle.label}</Notice> : null}
+      {bundle?.source === "error" ? <CaregiverDataError error={bundle.error} /> : null}
       <form onSubmit={onCreate} className="mb-6 space-y-3 rounded-xl bg-white p-4">
         <label className="block text-sm text-mist-blue">
           Title
@@ -188,7 +210,8 @@ export function Reminders() {
                     <button
                       type="button"
                       className="text-gamosa-red"
-                      onClick={() => void deactivateReminder(row.id).then(refresh)}
+                      disabled={busy}
+                      onClick={() => void deactivate(row.id)}
                     >
                       Deactivate
                     </button>

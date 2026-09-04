@@ -6,6 +6,10 @@ export type ApiFailure = {
   status?: number;
 };
 
+export type CaregiverDataFailure =
+  | ApiFailure
+  | { kind: "no-patient"; message: string };
+
 type ErrorEnvelope = {
   error?: {
     message?: unknown;
@@ -27,11 +31,7 @@ export async function failureFromResponse(
   }
 
   if (response.status === 401) {
-    return {
-      kind: "authentication",
-      status: response.status,
-      message: "Your caregiver session expired. Sign in again.",
-    };
+    return expiredSessionFailure(response.status);
   }
   return {
     kind: "api",
@@ -42,4 +42,19 @@ export async function failureFromResponse(
 
 export function offlineFailure(message: string): ApiFailure {
   return { kind: "offline", message };
+}
+
+export function expiredSessionFailure(status?: number): ApiFailure {
+  return {
+    kind: "authentication",
+    status,
+    message: "Your caregiver session expired. Sign in again.",
+  };
+}
+
+export function noPatientFailure(): CaregiverDataFailure {
+  return {
+    kind: "no-patient",
+    message: "No linked family member is available. Add or seed one before continuing.",
+  };
 }
