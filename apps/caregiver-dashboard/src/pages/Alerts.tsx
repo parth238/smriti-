@@ -19,17 +19,17 @@ export function Alerts() {
     return () => window.removeEventListener(PATIENT_CHANGE_EVENT, onPatientChange);
   }, []);
 
-  const missed = (bundle?.rows ?? []).filter((row) => row.missed);
+  const missed = (bundle?.rows ?? []).filter((row) => row.status === "missed");
 
   return (
     <>
       <PageHeader title="Alerts" hint="Calm notes only. Absence of alerts is good news." />
-      {bundle?.source === "demo" ? (
-        <p className="mb-4 text-body text-mist-blue">{bundle.label}</p>
+      {bundle?.source === "error" ? (
+        <Notice>{bundle.label}</Notice>
       ) : null}
       {!bundle ? (
         <p className="text-tea-garden">Loading reminders…</p>
-      ) : missed.length === 0 ? (
+      ) : bundle.source === "error" ? null : missed.length === 0 ? (
         <p className="text-tea-garden">No alerts yet. This is a good thing.</p>
       ) : (
         <div className="space-y-3">

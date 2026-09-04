@@ -30,7 +30,7 @@ export function useCaregiverNotifications(enabled = true): void {
         if (bundle.source !== "live") {
           return;
         }
-        for (const row of bundle.rows.filter((item) => item.missed)) {
+        for (const row of bundle.rows.filter((item) => item.status === "missed")) {
           const key = `miss:${row.id}:${row.time}`;
           if (notified.has(key)) {
             continue;

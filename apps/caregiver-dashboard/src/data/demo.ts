@@ -1,3 +1,5 @@
+import type { ReminderStatus } from "../lib/reminderStatus";
+
 export type SessionRow = {
   id: string;
   game: string;
@@ -17,7 +19,8 @@ export type ReminderRow = {
   id: string;
   title: string;
   time: string;
-  missed: boolean;
+  status: ReminderStatus;
+  acknowledgedTime?: string;
   type?: string;
   scheduledTime?: string;
   active?: boolean;
@@ -82,11 +85,6 @@ export const TRENDS: TrendPoint[] = [
   { day: "Fri", accuracy: 68, reactionMs: 1080 },
   { day: "Sat", accuracy: 70, reactionMs: 1120 },
   { day: "Sun", accuracy: 78, reactionMs: 975 },
-];
-
-export const REMINDERS: ReminderRow[] = [
-  { id: "r1", title: "Evening medicine", time: "8:00 in the evening", missed: true },
-  { id: "r2", title: "A glass of water", time: "When they are ready", missed: false },
 ];
 
 export const MEMORIES: MemoryRow[] = [

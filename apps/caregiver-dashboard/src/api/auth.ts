@@ -1,8 +1,8 @@
 import { API_BASE } from "../auth/session";
 
 export type CaregiverLoginResult =
-  | { ok: true; offline: boolean; accessToken?: string }
-  | { ok: false };
+  | { ok: true; accessToken: string }
+  | { ok: false; message: string };
 
 function readAccessToken(data: unknown): string | undefined {
   if (typeof data !== "object" || data === null || !("access_token" in data)) {
@@ -16,7 +16,7 @@ export async function caregiverLogin(
   password: string,
 ): Promise<CaregiverLoginResult> {
   if (!phoneOrEmail.trim() || password.length < 8) {
-    return { ok: false };
+    return { ok: false, message: "Enter a valid phone or email and password." };
   }
   try {
     const response = await fetch(`${API_BASE}/auth/caregiver/login`, {
@@ -25,16 +25,15 @@ export async function caregiverLogin(
       body: JSON.stringify({ phone_or_email: phoneOrEmail.trim(), password }),
     });
     if (!response.ok) {
-      return { ok: false };
+      return { ok: false, message: "Phone, email, or password is not correct." };
     }
     const data: unknown = await response.json();
     const accessToken = readAccessToken(data);
     if (!accessToken) {
-      return { ok: false };
+      return { ok: false, message: "The API did not return a valid caregiver session." };
     }
-    return { ok: true, offline: false, accessToken };
+    return { ok: true, accessToken };
   } catch {
-    // Dashboard may open with labeled demo data when the API is unreachable.
-    return { ok: true, offline: true };
+    return { ok: false, message: "The caregiver API could not be reached." };
   }
 }

@@ -1,15 +1,26 @@
-import { API_BASE, getCaregiverToken, getSelectedPatientId, setSelectedPatientId } from "../auth/session";
-import { REMINDERS, type ReminderRow } from "../data/demo";
+import { API_BASE, getCaregiverToken } from "../auth/session";
+import type { ReminderRow } from "../data/demo";
+import { getReminderStatus } from "../lib/reminderStatus";
+import { failureFromResponse, offlineFailure, type ApiFailure } from "./errors";
+import { loadLinkedPatients } from "./patients";
 
-export type DataSource = "live" | "demo";
+export type DataSource = "live" | "error";
 
-export type RemindersBundle = {
-  source: DataSource;
-  label: string;
-  rows: ReminderRow[];
-};
+export type RemindersBundle =
+  | {
+      source: "live";
+      label: string;
+      rows: ReminderRow[];
+      patientId: string;
+    }
+  | {
+      source: "error";
+      label: string;
+      rows: [];
+      error: ApiFailure | { kind: "no-patient"; message: string };
+    };
 
-type ApiReminder = {
+export type ApiReminder = {
   id: string;
   type: string;
   title: { en?: string; as?: string };
@@ -28,7 +39,7 @@ function authHeaders(): HeadersInit {
 function formatTime(iso: string): string {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) {
-    return iso;
+    return "Schedule unavailable";
   }
   return date.toLocaleString(undefined, {
     weekday: "short",
@@ -37,98 +48,127 @@ function formatTime(iso: string): string {
   });
 }
 
-async function resolvePatientId(): Promise<string | null> {
-  const existing = getSelectedPatientId();
-  if (existing) {
-    return existing;
-  }
-  const response = await fetch(`${API_BASE}/me/patients`, { headers: authHeaders() });
-  if (!response.ok) {
-    return null;
-  }
-  const rows = (await response.json()) as Array<{ user_id: string; is_primary?: boolean }>;
-  const primary = rows.find((row) => row.is_primary) ?? rows[0];
-  if (!primary) {
-    return null;
-  }
-  setSelectedPatientId(primary.user_id);
-  return primary.user_id;
+export function toReminderRow(row: ApiReminder, now: Date): ReminderRow {
+  return {
+    id: row.id,
+    title: row.title.en || row.title.as || "Reminder",
+    time: formatTime(row.scheduled_time),
+    status: getReminderStatus(
+      {
+        scheduledTime: row.scheduled_time,
+        lastAcknowledgedAt: row.last_acknowledged_at,
+        isActive: row.is_active,
+      },
+      now,
+    ),
+    acknowledgedTime: row.last_acknowledged_at
+      ? formatTime(row.last_acknowledged_at)
+      : undefined,
+    type: row.type,
+    scheduledTime: row.scheduled_time,
+    active: row.is_active,
+  };
 }
 
 export async function loadReminders(): Promise<RemindersBundle> {
-  const token = getCaregiverToken();
-  if (!token || !navigator.onLine) {
+  const patientResult = await loadLinkedPatients();
+  if (!patientResult.ok) {
     return {
-      source: "demo",
-      label: "Demo sample · sign in with API for live reminders",
-      rows: REMINDERS,
+      source: "error",
+      label: patientResult.error.message,
+      rows: [],
+      error: patientResult.error,
     };
   }
+  const patient = patientResult.selected;
+  if (!patient) {
+    const error = {
+      kind: "no-patient" as const,
+      message: "No linked family member is available. Add or seed one before creating reminders.",
+    };
+    return { source: "error", label: error.message, rows: [], error };
+  }
   try {
-    const userId = await resolvePatientId();
-    if (!userId) {
-      return {
-        source: "demo",
-        label: "Demo sample · no linked family member yet",
-        rows: REMINDERS,
-      };
-    }
-    const response = await fetch(`${API_BASE}/users/${userId}/reminders`, {
+    const response = await fetch(`${API_BASE}/users/${patient.user_id}/reminders`, {
       headers: authHeaders(),
     });
     if (!response.ok) {
+      const error = await failureFromResponse(response, "Could not load reminders.");
       return {
-        source: "demo",
-        label: "Demo sample · API returned an error",
-        rows: REMINDERS,
+        source: "error",
+        label: error.message,
+        rows: [],
+        error,
       };
     }
     const rows = (await response.json()) as ApiReminder[];
+    const now = new Date();
     return {
       source: "live",
-      label: `Live · ${rows.length} active reminders`,
-      rows: rows.map((row) => ({
-        id: row.id,
-        title: row.title.en || row.title.as || "Reminder",
-        time: formatTime(row.scheduled_time),
-        missed: row.is_active && !row.last_acknowledged_at,
-        type: row.type,
-        scheduledTime: row.scheduled_time,
-        active: row.is_active,
-      })),
+      label: `Live · ${rows.length} reminders`,
+      rows: rows.map((row) => toReminderRow(row, now)),
+      patientId: patient.user_id,
     };
   } catch {
+    const error = offlineFailure("The caregiver API could not be reached.");
     return {
-      source: "demo",
-      label: "Demo sample · API unreachable",
-      rows: REMINDERS,
+      source: "error",
+      label: error.message,
+      rows: [],
+      error,
     };
   }
 }
 
+export type ReminderMutationResult =
+  | { ok: true; row: ReminderRow }
+  | { ok: false; error: ApiFailure };
+
 export async function createReminder(input: {
+  userId: string;
   titleEn: string;
   titleAs?: string;
   type: string;
   scheduledTime: string;
-}): Promise<boolean> {
+}): Promise<ReminderMutationResult> {
   const token = getCaregiverToken();
-  const userId = await resolvePatientId();
-  if (!token || !userId) {
-    return false;
+  if (!token) {
+    return {
+      ok: false,
+      error: {
+        kind: "authentication",
+        message: "Your caregiver session expired. Sign in again.",
+      },
+    };
   }
-  const response = await fetch(`${API_BASE}/reminders`, {
-    method: "POST",
-    headers: { ...authHeaders(), "Content-Type": "application/json" },
-    body: JSON.stringify({
-      user_id: userId,
-      type: input.type,
-      title: { en: input.titleEn, as: input.titleAs || input.titleEn },
-      scheduled_time: input.scheduledTime,
-      recurrence_rule: "once",
-    }),
-  });
-  return response.ok;
+  if (!navigator.onLine) {
+    return { ok: false, error: offlineFailure("A reminder cannot be created while offline.") };
+  }
+  try {
+    const response = await fetch(`${API_BASE}/reminders`, {
+      method: "POST",
+      headers: { ...authHeaders(), "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user_id: input.userId,
+        type: input.type,
+        title: { en: input.titleEn, as: input.titleAs || input.titleEn },
+        scheduled_time: input.scheduledTime,
+        recurrence_rule: "once",
+      }),
+    });
+    if (!response.ok) {
+      return {
+        ok: false,
+        error: await failureFromResponse(response, "The reminder could not be created."),
+      };
+    }
+    return {
+      ok: true,
+      row: toReminderRow((await response.json()) as ApiReminder, new Date()),
+    };
+  } catch {
+    return { ok: false, error: offlineFailure("The caregiver API could not be reached.") };
+  }
 }
 
 export async function updateReminder(input: {

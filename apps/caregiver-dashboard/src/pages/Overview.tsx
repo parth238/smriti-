@@ -10,13 +10,15 @@ import { StatTile } from "../components/StatTile";
 export function Overview() {
   const [bundle, setBundle] = useState<AnalyticsBundle | null>(null);
   const [missedNote, setMissedNote] = useState<string | null>(null);
+  const [reminderError, setReminderError] = useState<string | null>(null);
 
   async function refresh() {
     const analytics = await loadCaregiverAnalytics();
     setBundle(analytics);
     const reminders = await loadReminders();
     if (reminders.source === "live") {
-      const missed = reminders.rows.filter((row) => row.missed);
+      setReminderError(null);
+      const missed = reminders.rows.filter((row) => row.status === "missed");
       if (missed.length > 0) {
         setMissedNote(
           missed.map((row) => `${row.title} at ${row.time}`).join(". ") +
@@ -27,6 +29,7 @@ export function Overview() {
       }
     } else {
       setMissedNote(null);
+      setReminderError(reminders.label);
     }
   }
 
@@ -59,6 +62,11 @@ export function Overview() {
       {missedNote ? (
         <div className="mb-5">
           <Notice>{missedNote}</Notice>
+        </div>
+      ) : null}
+      {reminderError ? (
+        <div className="mb-5">
+          <Notice>{reminderError}</Notice>
         </div>
       ) : null}
       <div className="grid gap-4 sm:grid-cols-3">

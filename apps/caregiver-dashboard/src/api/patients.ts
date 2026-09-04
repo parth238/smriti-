@@ -4,6 +4,11 @@ import {
   getSelectedPatientId,
   setSelectedPatientId,
 } from "../auth/session";
+import {
+  failureFromResponse,
+  offlineFailure,
+  type ApiFailure,
+} from "./errors";
 
 export type LinkedPatient = {
   user_id: string;
@@ -12,6 +17,10 @@ export type LinkedPatient = {
   is_primary: boolean;
 };
 
+export type LinkedPatientsResult =
+  | { ok: true; rows: LinkedPatient[]; selected: LinkedPatient | null }
+  | { ok: false; error: ApiFailure };
+
 function authHeaders(): HeadersInit {
   const token = getCaregiverToken();
   return token
@@ -19,35 +28,50 @@ function authHeaders(): HeadersInit {
     : { Accept: "application/json" };
 }
 
-export async function loadLinkedPatients(): Promise<LinkedPatient[]> {
+function selectCurrentPatient(rows: LinkedPatient[]): LinkedPatient | null {
+  if (rows.length === 0) {
+    return null;
+  }
+  const selectedId = getSelectedPatientId();
+  const selected = rows.find((row) => row.user_id === selectedId);
+  const current = selected ?? rows.find((row) => row.is_primary) ?? rows[0];
+  setSelectedPatientId(current.user_id);
+  return current;
+}
+
+export async function loadLinkedPatients(): Promise<LinkedPatientsResult> {
   const token = getCaregiverToken();
-  if (!token || !navigator.onLine) {
-    return [];
+  if (!token) {
+    return {
+      ok: false,
+      error: {
+        kind: "authentication",
+        message: "Your caregiver session expired. Sign in again.",
+      },
+    };
+  }
+  if (!navigator.onLine) {
+    return {
+      ok: false,
+      error: offlineFailure("The API is unavailable while this device is offline."),
+    };
   }
   try {
     const response = await fetch(`${API_BASE}/me/patients`, { headers: authHeaders() });
     if (!response.ok) {
-      return [];
+      return {
+        ok: false,
+        error: await failureFromResponse(response, "Could not load linked family members."),
+      };
     }
-    return (await response.json()) as LinkedPatient[];
+    const rows = (await response.json()) as LinkedPatient[];
+    return { ok: true, rows, selected: selectCurrentPatient(rows) };
   } catch {
-    return [];
+    return {
+      ok: false,
+      error: offlineFailure("The caregiver API could not be reached."),
+    };
   }
-}
-
-export async function ensureSelectedPatient(): Promise<LinkedPatient | null> {
-  const rows = await loadLinkedPatients();
-  if (rows.length === 0) {
-    return null;
-  }
-  const selected = getSelectedPatientId();
-  const match = rows.find((row) => row.user_id === selected);
-  if (match) {
-    return match;
-  }
-  const primary = rows.find((row) => row.is_primary) ?? rows[0];
-  setSelectedPatientId(primary.user_id);
-  return primary;
 }
 
 export const PATIENT_CHANGE_EVENT = "smriti-patient-change";

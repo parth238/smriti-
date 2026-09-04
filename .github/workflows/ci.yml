@@ -79,6 +79,10 @@ jobs:
         if: ${{ steps.check.outputs.exists == 'true' && matrix.app == 'elderly-app' }}
         working-directory: apps/${{ matrix.app }}
         run: npm test -- --maxWorkers=1 --minWorkers=1
+      - name: Run caregiver unit tests
+        if: ${{ steps.check.outputs.exists == 'true' && matrix.app == 'caregiver-dashboard' }}
+        working-directory: apps/${{ matrix.app }}
+        run: npm test -- --maxWorkers=1 --minWorkers=1
       - name: Type-check shared game contract
         if: ${{ steps.check.outputs.exists == 'true' && matrix.app == 'elderly-app' }}
         working-directory: apps/${{ matrix.app }}

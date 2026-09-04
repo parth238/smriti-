@@ -10,19 +10,15 @@ export function Login() {
   const [identity, setIdentity] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-  const [offline, setOffline] = useState(false);
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
     const result = await caregiverLogin(identity, password);
     if (!result.ok) {
-      setMessage("Let us try that phone or email and password again.");
+      setMessage(result.message);
       return;
     }
     signInCaregiver(result.accessToken);
-    if (result.offline) {
-      setOffline(true);
-    }
     navigate("/dashboard", { replace: true });
   }
 
@@ -58,11 +54,6 @@ export function Login() {
           />
         </label>
         {message ? <p className="text-tea-garden">{message}</p> : null}
-        {offline ? (
-          <p className="text-mist-blue">
-            API unreachable. Opening with clearly labeled demo data, not live truth.
-          </p>
-        ) : null}
         <button
           type="submit"
           className="w-full rounded-lg bg-gamosa-red px-4 py-3 font-semibold text-rice-white"

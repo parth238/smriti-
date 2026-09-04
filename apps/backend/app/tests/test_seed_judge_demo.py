@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import importlib.util
 import sys
+from datetime import datetime
 from io import BytesIO
 from pathlib import Path
 from uuid import UUID
@@ -148,7 +149,7 @@ def test_seed_is_idempotent_and_credentials_survive_repeat(
 ) -> None:
     _insert_legacy_four_games(db_session)
 
-    _run_core_seed(db_session)
+    user = _run_core_seed(db_session)
     counts_first = {
         "games": db_session.query(Game).count(),
         "caregivers": db_session.query(Caregiver).count(),
@@ -175,6 +176,13 @@ def test_seed_is_idempotent_and_credentials_survive_repeat(
     assert counts_first["reminders"] == 2
     assert counts_first["sessions"] == DEMO_SESSION_TARGET
 
+    seeded_reminders = db_session.query(Reminder).order_by(Reminder.created_at).all()
+    assert {row.title["en"] for row in seeded_reminders} == {
+        "Evening medicine",
+        "A glass of water",
+    }
+    assert all(row.scheduled_time is not None for row in seeded_reminders)
+
     cg_phone = client.post(
         "/api/v1/auth/caregiver/login",
         json={
@@ -191,6 +199,34 @@ def test_seed_is_idempotent_and_credentials_survive_repeat(
         },
     )
     assert cg_email.status_code == 200
+    caregiver_headers = {"Authorization": f"Bearer {cg_email.json()['access_token']}"}
+    patients = client.get("/api/v1/me/patients", headers=caregiver_headers)
+    assert patients.status_code == 200
+    assert patients.json() == [
+        {
+            "user_id": str(user.id),
+            "full_name": "Grandmother Demo",
+            "preferred_language": "as",
+            "is_primary": True,
+        }
+    ]
+
+    reminder_response = client.get(
+        f"/api/v1/users/{patients.json()[0]['user_id']}/reminders",
+        headers=caregiver_headers,
+    )
+    assert reminder_response.status_code == 200
+    serialized = reminder_response.json()
+    assert len(serialized) == 2
+    assert {row["title"]["en"] for row in serialized} == {
+        "Evening medicine",
+        "A glass of water",
+    }
+    parsed_schedules = [
+        datetime.fromisoformat(row["scheduled_time"]) for row in serialized
+    ]
+    assert len(parsed_schedules) == 2
+
     elderly = client.post(
         "/api/v1/auth/user/login",
         json={"phone": DEMO_ELDERLY_PHONE, "pin": DEMO_ELDERLY_PIN},
