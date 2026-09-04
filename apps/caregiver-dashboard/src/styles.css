@@ -67,9 +67,13 @@ input {
   }
 }
 
-/* Story landing — smooth native scroll */
+/* Story landing — typography & smooth native scroll */
 .story-page {
   min-height: 100vh;
+  font-family: "Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 html:has(.story-page) {

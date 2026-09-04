@@ -50,7 +50,7 @@ export function getReminderStatus(
 export function getReminderStatusLabel(input: {
   status: ReminderStatus;
   time: string;
-  acknowledgedTime?: string;
+  acknowledgedTime?: string | null;
 }): string {
   switch (input.status) {
     case "acknowledged":

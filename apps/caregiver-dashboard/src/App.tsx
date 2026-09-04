@@ -4,13 +4,12 @@ import type { ReactNode } from "react";
 import { isCaregiverSignedIn } from "./auth/session";
 import { AppShell } from "./layout/AppShell";
 import { Alerts } from "./pages/Alerts";
-import { Analytics } from "./pages/Analytics";
 import { Login } from "./pages/Login";
 import { StoryMode } from "./pages/StoryMode";
 import { Memories } from "./pages/Memories";
 import { Overview } from "./pages/Overview";
+import { Progress } from "./pages/Progress";
 import { Reminders } from "./pages/Reminders";
-import { Sessions } from "./pages/Sessions";
 import { Settings } from "./pages/Settings";
 
 function Gate({ children }: { children: ReactNode }) {
@@ -26,6 +25,7 @@ export function App() {
       <Route path="/" element={<StoryMode />} />
       <Route path="/story" element={<Navigate to="/" replace />} />
       <Route path="/login" element={<Login />} />
+
       <Route
         path="/dashboard"
         element={
@@ -34,22 +34,26 @@ export function App() {
           </Gate>
         }
       />
+
+      <Route
+        path="/progress"
+        element={
+          <Gate>
+            <Progress />
+          </Gate>
+        }
+      />
+
       <Route
         path="/analytics"
-        element={
-          <Gate>
-            <Analytics />
-          </Gate>
-        }
+        element={<Navigate to="/progress" replace />}
       />
+
       <Route
         path="/sessions"
-        element={
-          <Gate>
-            <Sessions />
-          </Gate>
-        }
+        element={<Navigate to="/progress" replace />}
       />
+
       <Route
         path="/reminders"
         element={
@@ -58,6 +62,7 @@ export function App() {
           </Gate>
         }
       />
+
       <Route
         path="/memories"
         element={
@@ -66,6 +71,7 @@ export function App() {
           </Gate>
         }
       />
+
       <Route
         path="/alerts"
         element={
@@ -74,6 +80,7 @@ export function App() {
           </Gate>
         }
       />
+
       <Route
         path="/settings"
         element={
@@ -82,6 +89,7 @@ export function App() {
           </Gate>
         }
       />
+
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

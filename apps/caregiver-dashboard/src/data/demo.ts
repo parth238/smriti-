@@ -20,10 +20,14 @@ export type ReminderRow = {
   title: string;
   time: string;
   status: ReminderStatus;
-  acknowledgedTime?: string;
+  missed?: boolean;
   type?: string;
   scheduledTime?: string;
+  recurrenceRule?: string | null;
   active?: boolean;
+  lastAcknowledgedAt?: string | null;
+  acknowledged?: boolean;
+  acknowledgedTime?: string | null;
 };
 
 export type MemoryRow = {
@@ -32,6 +36,10 @@ export type MemoryRow = {
   region: string;
   kind: "cultural" | "family";
   mediaUrl?: string;
+  description?: string | null;
+  createdAt?: string;
+  peopleTagged?: string[] | null;
+  year?: number | null;
 };
 
 export const PATIENT = {

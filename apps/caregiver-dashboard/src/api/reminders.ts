@@ -15,17 +15,17 @@ export type DataSource = "live" | "error";
 
 export type RemindersBundle =
   | {
-      source: "live";
-      label: string;
-      rows: ReminderRow[];
-      patientId: string;
-    }
+    source: "live";
+    label: string;
+    rows: ReminderRow[];
+    patientId: string;
+  }
   | {
-      source: "error";
-      label: string;
-      rows: [];
-      error: CaregiverDataFailure;
-    };
+    source: "error";
+    label: string;
+    rows: [];
+    error: CaregiverDataFailure;
+  };
 
 export type ApiReminder = {
   id: string;
@@ -34,20 +34,46 @@ export type ApiReminder = {
   scheduled_time: string;
   last_acknowledged_at: string | null;
   is_active: boolean;
+  recurrence_rule?: string | null;
 };
 
-function authHeaders(): HeadersInit {
-  const token = getCaregiverToken();
-  return token
-    ? { Authorization: `Bearer ${token}`, Accept: "application/json" }
-    : { Accept: "application/json" };
+export function isReminderAcknowledged(
+  _scheduledTime?: string,
+  lastAcknowledgedAt?: string | null,
+): boolean {
+  if (!lastAcknowledgedAt) {
+    return false;
+  }
+
+  const ack = new Date(lastAcknowledgedAt);
+  return !Number.isNaN(ack.getTime());
 }
 
 function formatTime(iso: string): string {
   const date = new Date(iso);
+
   if (Number.isNaN(date.getTime())) {
     return "Schedule unavailable";
   }
+
+  return date.toLocaleString(undefined, {
+    weekday: "short",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+function formatAckTime(iso?: string | null): string | null {
+  if (!iso) {
+    return null;
+  }
+
+  const date = new Date(iso);
+
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
   return date.toLocaleString(undefined, {
     weekday: "short",
     hour: "numeric",
@@ -56,29 +82,50 @@ function formatTime(iso: string): string {
 }
 
 export function toReminderRow(row: ApiReminder, now: Date): ReminderRow {
+  const status = getReminderStatus(
+    {
+      scheduledTime: row.scheduled_time,
+      lastAcknowledgedAt: row.last_acknowledged_at,
+      isActive: row.is_active,
+    },
+    now,
+  );
+  const acknowledged = status === "acknowledged";
+
   return {
     id: row.id,
     title: row.title.en || row.title.as || "Reminder",
     time: formatTime(row.scheduled_time),
-    status: getReminderStatus(
-      {
-        scheduledTime: row.scheduled_time,
-        lastAcknowledgedAt: row.last_acknowledged_at,
-        isActive: row.is_active,
-      },
-      now,
-    ),
+    status,
+    missed: status === "missed",
     acknowledgedTime: row.last_acknowledged_at
-      ? formatTime(row.last_acknowledged_at)
+      ? formatAckTime(row.last_acknowledged_at) ?? undefined
       : undefined,
     type: row.type,
     scheduledTime: row.scheduled_time,
     active: row.is_active,
+    recurrenceRule: row.recurrence_rule ?? "once",
+    lastAcknowledgedAt: row.last_acknowledged_at,
+    acknowledged,
   };
+}
+
+function authHeaders(): HeadersInit {
+  const token = getCaregiverToken();
+
+  return token
+    ? {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/json",
+    }
+    : {
+      Accept: "application/json",
+    };
 }
 
 export async function loadReminders(): Promise<RemindersBundle> {
   const patientResult = await loadLinkedPatients();
+
   if (!patientResult.ok) {
     return {
       source: "error",
@@ -87,17 +134,34 @@ export async function loadReminders(): Promise<RemindersBundle> {
       error: patientResult.error,
     };
   }
+
   const patient = patientResult.selected;
+
   if (!patient) {
     const error = noPatientFailure();
-    return { source: "error", label: error.message, rows: [], error };
+
+    return {
+      source: "error",
+      label: error.message,
+      rows: [],
+      error,
+    };
   }
+
   try {
-    const response = await fetch(`${API_BASE}/users/${patient.user_id}/reminders`, {
-      headers: authHeaders(),
-    });
+    const response = await fetch(
+      `${API_BASE}/users/${patient.user_id}/reminders`,
+      {
+        headers: authHeaders(),
+      },
+    );
+
     if (!response.ok) {
-      const error = await failureFromResponse(response, "Could not load reminders.");
+      const error = await failureFromResponse(
+        response,
+        "Could not load reminders.",
+      );
+
       return {
         source: "error",
         label: error.message,
@@ -105,8 +169,10 @@ export async function loadReminders(): Promise<RemindersBundle> {
         error,
       };
     }
+
     const rows = (await response.json()) as ApiReminder[];
     const now = new Date();
+
     return {
       source: "live",
       label: `Live · ${rows.length} reminders`,
@@ -114,7 +180,10 @@ export async function loadReminders(): Promise<RemindersBundle> {
       patientId: patient.user_id,
     };
   } catch {
-    const error = offlineFailure("The caregiver API could not be reached.");
+    const error = offlineFailure(
+      "The caregiver API could not be reached.",
+    );
+
     return {
       source: "error",
       label: error.message,
@@ -138,41 +207,71 @@ export async function createReminder(input: {
   titleAs?: string;
   type: string;
   scheduledTime: string;
+  recurrenceRule?: string;
+  recurrence?: "once" | "daily" | "weekly";
 }): Promise<ReminderMutationResult> {
   const token = getCaregiverToken();
+
   if (!token) {
     return {
       ok: false,
       error: expiredSessionFailure(),
     };
   }
+
   if (!navigator.onLine) {
-    return { ok: false, error: offlineFailure("A reminder cannot be created while offline.") };
+    return {
+      ok: false,
+      error: offlineFailure(
+        "A reminder cannot be created while offline.",
+      ),
+    };
   }
+
   try {
     const response = await fetch(`${API_BASE}/reminders`, {
       method: "POST",
-      headers: { ...authHeaders(), "Content-Type": "application/json" },
+      headers: {
+        ...authHeaders(),
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         user_id: input.userId,
         type: input.type,
-        title: { en: input.titleEn, as: input.titleAs || input.titleEn },
+        title: {
+          en: input.titleEn,
+          as: input.titleAs || input.titleEn,
+        },
         scheduled_time: input.scheduledTime,
-        recurrence_rule: "once",
+        recurrence_rule:
+          input.recurrenceRule ?? input.recurrence ?? "once",
       }),
     });
+
     if (!response.ok) {
       return {
         ok: false,
-        error: await failureFromResponse(response, "The reminder could not be created."),
+        error: await failureFromResponse(
+          response,
+          "The reminder could not be created.",
+        ),
       };
     }
+
     return {
       ok: true,
-      row: toReminderRow((await response.json()) as ApiReminder, new Date()),
+      row: toReminderRow(
+        (await response.json()) as ApiReminder,
+        new Date(),
+      ),
     };
   } catch {
-    return { ok: false, error: offlineFailure("The caregiver API could not be reached.") };
+    return {
+      ok: false,
+      error: offlineFailure(
+        "The caregiver API could not be reached.",
+      ),
+    };
   }
 }
 
@@ -181,69 +280,125 @@ export async function updateReminder(input: {
   titleEn?: string;
   scheduledTime?: string;
   type?: string;
+  recurrenceRule?: string;
 }): Promise<ReminderActionResult> {
   const token = getCaregiverToken();
+
   if (!token) {
     return {
       ok: false,
       error: expiredSessionFailure(),
     };
   }
+
   if (!navigator.onLine) {
-    return { ok: false, error: offlineFailure("A reminder cannot be updated while offline.") };
+    return {
+      ok: false,
+      error: offlineFailure(
+        "A reminder cannot be updated while offline.",
+      ),
+    };
   }
+
   const body: Record<string, unknown> = {};
+
   if (input.titleEn) {
     body.title = { en: input.titleEn };
   }
+
   if (input.scheduledTime) {
     body.scheduled_time = input.scheduledTime;
   }
+
   if (input.type) {
     body.type = input.type;
   }
+
+  if (input.recurrenceRule !== undefined) {
+    body.recurrence_rule = input.recurrenceRule;
+  }
+
   try {
-    const response = await fetch(`${API_BASE}/reminders/${input.reminderId}`, {
-      method: "PATCH",
-      headers: { ...authHeaders(), "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
+    const response = await fetch(
+      `${API_BASE}/reminders/${input.reminderId}`,
+      {
+        method: "PATCH",
+        headers: {
+          ...authHeaders(),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      },
+    );
+
     if (!response.ok) {
       return {
         ok: false,
-        error: await failureFromResponse(response, "The reminder could not be updated."),
+        error: await failureFromResponse(
+          response,
+          "The reminder could not be updated.",
+        ),
       };
     }
+
     return { ok: true };
   } catch {
-    return { ok: false, error: offlineFailure("The caregiver API could not be reached.") };
+    return {
+      ok: false,
+      error: offlineFailure(
+        "The caregiver API could not be reached.",
+      ),
+    };
   }
 }
 
-export async function deactivateReminder(reminderId: string): Promise<ReminderActionResult> {
+export async function deactivateReminder(
+  reminderId: string,
+): Promise<ReminderActionResult> {
   const token = getCaregiverToken();
+
   if (!token) {
     return {
       ok: false,
       error: expiredSessionFailure(),
     };
   }
+
   if (!navigator.onLine) {
-    return { ok: false, error: offlineFailure("A reminder cannot be deactivated while offline.") };
+    return {
+      ok: false,
+      error: offlineFailure(
+        "A reminder cannot be deactivated while offline.",
+      ),
+    };
   }
+
   try {
-    const response = await fetch(`${API_BASE}/reminders/${reminderId}`, {
-      method: "DELETE",
-      headers: authHeaders(),
-    });
+    const response = await fetch(
+      `${API_BASE}/reminders/${reminderId}`,
+      {
+        method: "DELETE",
+        headers: authHeaders(),
+      },
+    );
+
     if (!response.ok) {
       return {
         ok: false,
-        error: await failureFromResponse(response, "The reminder could not be deactivated."),
+        error: await failureFromResponse(
+          response,
+          "The reminder could not be deactivated.",
+        ),
       };
     }
+
     return { ok: true };
   } catch {
-    return { ok: false, error: offlineFailure("The caregiver API could not be reached.") };
+    return {
+      ok: false,
+      error: offlineFailure(
+        "The caregiver API could not be reached.",
+      ),
+    };
   }
 }

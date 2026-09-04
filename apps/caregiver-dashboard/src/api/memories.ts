@@ -12,16 +12,16 @@ import { loadLinkedPatients } from "./patients";
 
 export type MemoriesBundle =
   | {
-      source: "live";
-      label: string;
-      rows: MemoryRow[];
-      patientId: string;
-    }
+    source: "live";
+    label: string;
+    rows: MemoryRow[];
+    patientId: string;
+  }
   | {
-      source: "error";
-      error: CaregiverDataFailure;
-      rows: [];
-    };
+    source: "error";
+    error: CaregiverDataFailure;
+    rows: [];
+  };
 
 type ApiMemory = {
   id: string;
@@ -29,6 +29,10 @@ type ApiMemory = {
   category: string;
   media_url: string;
   location: string | null;
+  description?: string | null;
+  created_at?: string;
+  people_tagged?: string[] | null;
+  year?: number | null;
 };
 
 function authHeaders(): HeadersInit {
@@ -72,6 +76,11 @@ export async function loadMemories(): Promise<MemoriesBundle> {
         title: row.title.en || row.title.as || "Memory",
         region: row.location || "Location not set",
         kind: row.category === "cultural" ? "cultural" : "family",
+        description: row.description,
+        createdAt: row.created_at,
+        peopleTagged: row.people_tagged,
+        year: row.year,
+        mediaUrl: row.media_url,
       })),
     };
   } catch {
