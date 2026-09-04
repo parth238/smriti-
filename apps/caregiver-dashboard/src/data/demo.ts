@@ -12,6 +12,7 @@ export type SessionRow = {
 
 export type TrendPoint = {
   day: string;
+  date?: string;
   accuracy: number;
   reactionMs: number;
 };

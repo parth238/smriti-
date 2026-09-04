@@ -99,7 +99,7 @@ export function Alerts() {
           </div>
 
           <p className="font-serif text-xl font-medium text-deep-hill">
-            You're all caught up
+            You&apos;re all caught up
           </p>
           <p className="mt-1 text-xs text-mist-blue">
             No alerts need your attention right now.

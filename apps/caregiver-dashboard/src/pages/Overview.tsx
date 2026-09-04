@@ -321,9 +321,16 @@ export function Overview() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Left Column: Today's Timeline */}
         <section className="rounded-2xl border border-sand bg-white p-6 shadow-xs lg:col-span-2">
-          <h2 className="mb-4 font-serif text-xl font-medium tracking-tight text-deep-hill">
-            Today&apos;s Timeline
-          </h2>
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="font-serif text-xl font-medium tracking-tight text-deep-hill">
+              Today&apos;s Timeline
+            </h2>
+            {timeline.length > 0 ? (
+              <span className="text-xs text-mist-blue">
+                {timeline.length} activit{timeline.length !== 1 ? "ies" : "y"} today
+              </span>
+            ) : null}
+          </div>
 
           {timeline.length === 0 ? (
             <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-sand bg-sand/10 py-12 text-center">
@@ -335,62 +342,88 @@ export function Overview() {
               </p>
             </div>
           ) : (
-            <div className="relative space-y-3 pl-1">
-              {timeline.map((item) => {
-                const isPositive =
-                  item.status === "completed" || item.status === "done";
-                const isNegative = item.status === "missed";
+            <div className="relative py-1">
+              {/* Vertical timeline center line on desktop, left line on mobile */}
+              <div
+                className="absolute bottom-3 top-3 w-0.5 bg-sand/80 left-4 md:left-1/2 md:-translate-x-1/2"
+                aria-hidden="true"
+              />
 
-                return (
-                  <div
-                    key={item.id}
-                    className={`flex items-center justify-between rounded-xl border p-4 shadow-xs transition-shadow hover:shadow-sm ${
-                      isPositive
-                        ? "border-tea-garden/30 bg-tea-garden/5"
-                        : isNegative
-                          ? "border-gamosa-red/30 bg-gamosa-red/5"
-                          : "border-sand bg-white"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
+              <div className="space-y-2.5">
+                {timeline.map((item, index) => {
+                  const isEven = index % 2 === 0;
+                  const isPositive =
+                    item.status === "completed" || item.status === "done";
+                  const isNegative = item.status === "missed";
+
+                  const dotBg = isPositive
+                    ? "bg-tea-garden text-rice-white"
+                    : isNegative
+                      ? "bg-gamosa-red text-rice-white"
+                      : "bg-sand text-deep-hill";
+
+                  return (
+                    <div
+                      key={item.id}
+                      className="relative flex items-center md:justify-between"
+                    >
+                      {/* Center / Left circular marker dot */}
                       <div
-                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${
-                          isPositive
-                            ? "bg-tea-garden/15 text-tea-garden"
-                            : isNegative
-                              ? "bg-gamosa-red/15 text-gamosa-red"
-                              : "bg-sand/60 text-deep-hill"
-                        }`}
+                        className={`absolute left-4 top-1/2 z-10 flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-white text-[11px] font-bold shadow-2xs md:left-1/2 ${dotBg}`}
                       >
                         {isPositive ? "✓" : isNegative ? "!" : "•"}
                       </div>
 
-                      <div>
-                        <h3 className="font-medium text-deep-hill">
-                          {item.title}
-                        </h3>
-                        <p className="text-xs font-medium uppercase tracking-wider text-mist-blue">
-                          {item.type === "session" ? "SESSION" : "REMINDER"} · {item.timeLabel}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="text-right">
-                      <span
-                        className={`inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider ${
-                          isPositive
-                            ? "bg-tea-garden/15 text-tea-garden"
-                            : isNegative
-                              ? "bg-gamosa-red/15 text-gamosa-red"
-                              : "bg-sand/60 text-deep-hill"
+                      {/* Alternating left and right cards on desktop */}
+                      <div
+                        className={`w-full pl-9 md:w-[calc(50%-1.5rem)] md:pl-0 ${
+                          isEven ? "md:mr-auto" : "md:ml-auto"
                         }`}
                       >
-                        {item.statusLabel}
-                      </span>
+                        <div
+                          className={`rounded-xl border px-4 py-3 shadow-2xs transition-all hover:shadow-xs ${
+                            isPositive
+                              ? "border-tea-garden/30 bg-tea-garden/5"
+                              : isNegative
+                                ? "border-gamosa-red/30 bg-gamosa-red/5"
+                                : "border-sand bg-white"
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-2">
+                                <span className="text-[11px] font-semibold uppercase tracking-wider text-mist-blue">
+                                  {item.type === "session" ? "SESSION" : "REMINDER"}
+                                </span>
+                                <span className="text-mist-blue/50">•</span>
+                                <span className="text-xs text-mist-blue">
+                                  {item.timeLabel}
+                                </span>
+                              </div>
+
+                              <h3 className="mt-0.5 truncate font-serif text-sm font-medium text-deep-hill sm:text-base">
+                                {item.title}
+                              </h3>
+                            </div>
+
+                            <span
+                              className={`inline-flex shrink-0 items-center rounded-md px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider ${
+                                isPositive
+                                  ? "bg-tea-garden/15 text-tea-garden"
+                                  : isNegative
+                                    ? "bg-gamosa-red/15 text-gamosa-red"
+                                    : "bg-sand/60 text-deep-hill"
+                              }`}
+                            >
+                              {item.statusLabel}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           )}
         </section>
